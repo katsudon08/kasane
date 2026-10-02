@@ -1,0 +1,27 @@
+name: 決めること
+description: 仕様・設計・運用で未決の事柄を決める
+labels: ["decision"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: 決めたいこと
+    validations:
+      required: true
+
+  - type: textarea
+    id: options
+    attributes:
+      label: 選択肢
+      description: 分かっている範囲で。トレードオフがあれば添える
+    validations:
+      required: true
+
+  - type: input
+    id: target
+    attributes:
+      label: 決めたら書く場所
+      description: 決定を反映する docs のファイル名
+      placeholder: docs/spec/student-flow.md
+    validations:
+      required: true

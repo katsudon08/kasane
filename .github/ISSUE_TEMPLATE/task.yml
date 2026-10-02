@@ -1,0 +1,31 @@
+name: やること
+description: 実装・設定・文書化などの作業
+labels: ["task"]
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: やること
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: やらないこと
+    validations:
+      required: false
+
+  - type: textarea
+    id: done
+    attributes:
+      label: 完了条件
+    validations:
+      required: true

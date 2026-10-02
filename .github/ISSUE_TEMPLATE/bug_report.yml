@@ -1,0 +1,37 @@
+name: バグ報告
+description: 期待と違う動作を報告する
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 何が起きたか
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 再現手順
+      placeholder: |
+        1. ... を開く
+        2. ... を押す
+        3. ... になる
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する動作
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: 環境
+      description: 端末とブラウザ
+      placeholder: iPad / Safari
+    validations:
+      required: false

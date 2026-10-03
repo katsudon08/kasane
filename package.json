@@ -1,0 +1,6 @@
+{
+  "name": "kasane",
+  "private": true,
+  "packageManager": "pnpm@12.8.1",
+  "type": "module"
+}

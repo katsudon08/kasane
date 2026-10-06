@@ -1,0 +1,10 @@
+{
+  "name": "@kasane/student",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@kasane/core": "workspace:*",
+    "@kasane/ui": "workspace:*"
+  }
+}

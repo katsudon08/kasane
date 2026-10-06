@@ -52,7 +52,8 @@ kasane/
 │  ├─ teacher/   教師用フロントエンド
 │  └─ api/       バックエンド
 └─ packages/
-   └─ core/      apps 間で共有する型・スキーマ
+   ├─ core/      apps 間で共有する型・スキーマ
+   └─ ui/        apps/student・apps/teacher で共有する UI コンポーネント
 ```
 
 児童用と教師用のフロントエンドは別アプリとして分け、互いのコードを含めずに配信します。

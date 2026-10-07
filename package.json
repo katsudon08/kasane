@@ -9,5 +9,8 @@
     }
   },
   "packageManager": "pnpm@12.9.1",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
 }

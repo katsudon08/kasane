@@ -11,6 +11,13 @@
   "packageManager": "pnpm@12.9.1",
   "type": "module",
   "devDependencies": {
-    "typescript": "^7.0.2"
+    "turbo": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test"
   }
 }

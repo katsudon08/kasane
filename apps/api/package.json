@@ -4,6 +4,15 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@kasane/core": "workspace:*"
+    "@kasane/core": "workspace:*",
+    "elysia": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:"
+  },
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "test": "bun test --pass-with-no-tests",
+    "typecheck": "tsc"
   }
 }

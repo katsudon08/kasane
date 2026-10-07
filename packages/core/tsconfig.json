@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     // Vite / Bunで共通のTypeScript構文・APIのバージョンがES2023なのでそれに合わせる（BunはESNext）
-    "target": "es2023",
+    "target": "ES2023",
     "lib": ["ES2023"],
     "types": ["bun"]
   },

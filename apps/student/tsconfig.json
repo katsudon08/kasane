@@ -1,0 +1,5 @@
+{
+  // この tsconfig では何もチェックせず、tsc -b で references から app と node の tsconfig をたどって型チェックを行う
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+}

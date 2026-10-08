@@ -52,13 +52,16 @@ kasane/
 │  ├─ teacher/   教師用フロントエンド
 │  └─ api/       バックエンド
 └─ packages/
-   └─ core/      apps 間で共有する型・スキーマ
+   ├─ core/      apps 間で共有する型・スキーマ
+   └─ ui/        apps/student・apps/teacher で共有する UI コンポーネント
 ```
 
 児童用と教師用のフロントエンドは別アプリとして分け、互いのコードを含めずに配信します。
 `packages/` には、複数のワークスペースから利用されるものだけを置きます。
 
 ## 技術選定
+
+前提として、 `pnpm-workspace.yaml` において `catalogMode: strict` にすることで、パッケージ間で異なるライブラリのバージョンを追加してしまう問題を防ぎます。
 
 ### 共通
 
@@ -119,8 +122,15 @@ pnpm のバージョンは `package.json` の `packageManager` で指定しま�
 
 | 領域 | 採用 |
 | --- | --- |
-| 内容 | apps 間でやり取りするメッセージの型・スキーマ |
-| テスト | bun test |
+
+`apps` 間でやり取りするメッセージの型・スキーマを定義します。
+
+### packages/ui
+
+| 領域 | 採用 |
+| --- | --- |
+
+`apps/student` / `apps/teacher` 間で共有するためのUIコンポーネントを定義します。
 
 ### 導入しないもの
 

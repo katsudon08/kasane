@@ -1,0 +1,21 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "tasks": {
+    // 依存先のパッケージのファイル変更を伝達するためだけの空のタスク
+    "transit": { "dependsOn": ["^transit"] },
+    "dev": {
+      "persistent": true,
+      "cache": false
+    },
+    "build": {
+      // 依存先である core / ui には build スクリプトがない
+      // そのため、実際には何も実行されないが依存先のファイルの変更をトリガーに build タスクを再度実行する
+      "dependsOn": ["^build"],
+      // キャッシュがヒットした時に、 dist/ を復元する
+      "outputs": ["dist/**"]
+    },
+    // 依存先パッケージの変更でキャッシュを無効化しつつ、依存先のタスク完了を待たずに並列実行する
+    "typecheck": { "dependsOn": ["^transit"] },
+    "test": { "dependsOn": ["^transit"] }
+  }
+}

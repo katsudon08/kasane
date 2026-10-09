@@ -73,7 +73,7 @@ kasane/
 | ツールのバージョン管理 | mise（Node / Bun） |
 | スキーマ・検証 | zod |
 | 環境変数の検証 | t3-env |
-| Linter | oxlint |
+| Linter | oxlint + tsgolint（type-aware linting） |
 | Formatter | oxfmt |
 | Git Hooks | lefthook |
 | CI | GitHub Actions |

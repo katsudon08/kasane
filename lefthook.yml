@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: lint
+      run: "mise run lint {staged_files}"
+    - name: fmt
+      run: mise run fmt {staged_files}
+
+pre-push:
+  jobs:
+    - name: typecheck
+      run: mise run typecheck

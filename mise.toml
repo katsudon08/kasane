@@ -2,3 +2,29 @@
 bun = "1.4.2"
 node = "26.10.0"
 pnpm = "12.9.1"
+
+[tasks.dev]
+description = "apps/student・apps/teacher・apps/apiの開発サーバーを全て立ち上げる"
+run = "pnpm exec turbo run dev"
+
+[tasks.build]
+description = "apps/student・apps/teacher・apps/apiをビルドする"
+run = "pnpm exec turbo run build"
+
+[tasks.typecheck]
+run = "pnpm exec turbo run typecheck"
+
+[tasks.test]
+run = "pnpm exec turbo run test"
+
+[tasks.quality]
+run = "pnpm exec turbo run //#quality"
+
+[tasks."quality:fix"]
+run = "pnpm exec turbo run //#quality:fix"
+
+[tasks.lint]
+run = "pnpm exec turbo run //#lint --"
+
+[tasks.fmt]
+run = "pnpm exec turbo run //#fmt --"

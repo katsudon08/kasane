@@ -23,14 +23,17 @@
 ## 各領域の責務
 
 ### 児童ブラウザ（apps/student）
+
 - 児童の操作を受け取り、サーバーへ送信する
 - サーバーから受け取った状態・結果を描画する
 
 ### 教師ブラウザ（apps/teacher）
+
 - 教師の操作を受け取り、サーバーへ送信する
 - サーバーから受け取った各ペアの状態を描画する
 
 ### サーバー（apps/api）
+
 - 児童用・教師用の接続を受け付け、接続状態を管理する
 - 児童フローの進行状態を判断し、ペアの進行を**バリア同期**する
 - プログラムを解釈・実行し、結果を生成する
@@ -38,6 +41,7 @@
 - 接続に関する一時的な情報をメモリ上に保持する
 
 ### データベース
+
 - 児童フローの進行状態を正本（SoT）として保持する
 - プログラムや学習履歴を永続化する
 
@@ -65,70 +69,70 @@ kasane/
 
 ### 共通
 
-| 領域 | 採用 |
-| --- | --- |
-| 言語 | TypeScript |
-| パッケージマネージャ | pnpm |
-| モノレポ | pnpm workspaces + Turborepo |
-| ツールのバージョン管理 | mise（Node / Bun） |
-| スキーマ・検証 | zod |
-| 環境変数の検証 | t3-env |
-| Linter | oxlint |
-| Formatter | oxfmt |
-| Git Hooks | lefthook |
-| CI | GitHub Actions |
+| 領域                   | 採用                                    |
+| ---------------------- | --------------------------------------- |
+| 言語                   | TypeScript                              |
+| パッケージマネージャ   | pnpm                                    |
+| モノレポ               | pnpm workspaces + Turborepo             |
+| ツールのバージョン管理 | mise（Node / Bun）                      |
+| スキーマ・検証         | zod                                     |
+| 環境変数の検証         | t3-env                                  |
+| Linter                 | oxlint + tsgolint（type-aware linting） |
+| Formatter              | oxfmt                                   |
+| Git Hooks              | lefthook                                |
+| CI                     | GitHub Actions                          |
 
 pnpm のバージョンは `package.json` の `packageManager` で指定します。
 
 ### apps/student・apps/teacher 共通
 
-| 領域 | 採用 |
-| --- | --- |
-| 開発ツールのランタイム | Node |
-| フレームワーク | React |
-| ルーティング | TanStack Router |
-| ビルドツール | Vite |
-| UI コンポーネント | Mantine |
-| スタイリング | インラインスタイル（基本） / vanilla-extract |
-| コンポーネントカタログ | Storybook |
-| テスト | Vitest |
-| デプロイ | Cloudflare Workers |
+| 領域                   | 採用                                         |
+| ---------------------- | -------------------------------------------- |
+| 開発ツールのランタイム | Node                                         |
+| フレームワーク         | React                                        |
+| ルーティング           | TanStack Router                              |
+| ビルドツール           | Vite                                         |
+| UI コンポーネント      | Mantine                                      |
+| スタイリング           | インラインスタイル（基本） / vanilla-extract |
+| コンポーネントカタログ | Storybook                                    |
+| テスト                 | Vitest                                       |
+| デプロイ               | Cloudflare Workers                           |
 
 ### apps/student
 
-| 領域 | 採用 |
-| --- | --- |
-| 3D 描画 | React Three Fiber |
+| 領域        | 採用                     |
+| ----------- | ------------------------ |
+| 3D 描画     | React Three Fiber        |
 | QR 読み取り | @yudiel/react-qr-scanner |
 
 ### apps/api
 
-| 領域 | 採用 |
-| --- | --- |
-| ランタイム | Bun |
-| フレームワーク | Elysia |
-| リアルタイム通信 | WebSocket（Bun 標準） |
-| データベース | PostgreSQL |
-| ORM | Drizzle ORM |
-| DB ドライバ | pg |
-| マイグレーション | drizzle-kit |
-| テスト | bun test |
-| デプロイ | Railway |
-| DB ホスティング | Neon（本番） / Docker Compose（ローカル） |
+| 領域             | 採用                                      |
+| ---------------- | ----------------------------------------- |
+| ランタイム       | Bun                                       |
+| フレームワーク   | Elysia                                    |
+| リアルタイム通信 | WebSocket（Bun 標準）                     |
+| データベース     | PostgreSQL                                |
+| ORM              | Drizzle ORM                               |
+| DB ドライバ      | pg                                        |
+| マイグレーション | drizzle-kit                               |
+| テスト           | bun test                                  |
+| デプロイ         | Railway                                   |
+| DB ホスティング  | Neon（本番） / Docker Compose（ローカル） |
 
 マイグレーションは、MVP 完成までは `push`、完成後は `generate` + `migrate` で運用します。
 
 ### packages/core
 
 | 領域 | 採用 |
-| --- | --- |
+| ---- | ---- |
 
 `apps` 間でやり取りするメッセージの型・スキーマを定義します。
 
 ### packages/ui
 
 | 領域 | 採用 |
-| --- | --- |
+| ---- | ---- |
 
 `apps/student` / `apps/teacher` 間で共有するためのUIコンポーネントを定義します。
 

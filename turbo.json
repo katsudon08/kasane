@@ -16,6 +16,22 @@
     },
     // 依存先パッケージの変更でキャッシュを無効化しつつ、依存先のタスク完了を待たずに並列実行する
     "typecheck": { "dependsOn": ["^transit"] },
-    "test": { "dependsOn": ["^transit"] }
+    "test": { "dependsOn": ["^transit"] },
+    "//#quality": {
+      "dependsOn": ["//#lint", "//#fmt"]
+    },
+    "//#quality:fix": {
+      "dependsOn": ["//#lint:fix", "//#fmt:fix"]
+    },
+    "//#lint": {},
+    // ファイルが fix 前の状態に戻ったら同じハッシュになり、キャッシュが効いてしまうため cache: false に設定する
+    "//#lint:fix": {
+      "cache": false
+    },
+    "//#fmt": {},
+    "//#fmt:fix": {
+      "dependsOn": ["//#lint:fix"],
+      "cache": false
+    }
   }
 }

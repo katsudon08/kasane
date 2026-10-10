@@ -1,6 +1,21 @@
 {
   "name": "kasane",
   "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint --no-error-on-unmatched-pattern",
+    "lint:fix": "oxlint --no-error-on-unmatched-pattern --fix",
+    "fmt": "oxfmt --no-error-on-unmatched-pattern --check",
+    "fmt:fix": "oxfmt --no-error-on-unmatched-pattern"
+  },
+  "devDependencies": {
+    "lefthook": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
@@ -8,16 +23,5 @@
       "onFail": "download"
     }
   },
-  "packageManager": "pnpm@12.9.1",
-  "type": "module",
-  "devDependencies": {
-    "turbo": "catalog:",
-    "typescript": "catalog:"
-  },
-  "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "typecheck": "turbo run typecheck",
-    "test": "turbo run test"
-  }
+  "packageManager": "pnpm@12.9.1"
 }

@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt --check",
-    "fmt:fix": "oxfmt"
+    "lint": "oxlint --no-error-on-unmatched-pattern",
+    "lint:fix": "oxlint --no-error-on-unmatched-pattern --fix",
+    "fmt": "oxfmt --no-error-on-unmatched-pattern --check",
+    "fmt:fix": "oxfmt --no-error-on-unmatched-pattern"
   },
   "devDependencies": {
     "lefthook": "catalog:",

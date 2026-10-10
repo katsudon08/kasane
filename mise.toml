@@ -22,3 +22,9 @@ run = "pnpm exec turbo run //#quality"
 
 [tasks."quality:fix"]
 run = "pnpm exec turbo run //#quality:fix"
+
+[tasks.lint]
+run = "pnpm exec turbo run //#lint --"
+
+[tasks.fmt]
+run = "pnpm exec turbo run //#fmt --"

@@ -1,15 +1,13 @@
 {
   "name": "kasane",
   "private": true,
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "12.9.1",
-      "onFail": "download"
-    }
-  },
-  "packageManager": "pnpm@12.9.1",
   "type": "module",
+  "scripts": {
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt --check",
+    "fmt:fix": "oxfmt"
+  },
   "devDependencies": {
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
@@ -17,10 +15,12 @@
     "turbo": "catalog:",
     "typescript": "catalog:"
   },
-  "scripts": {
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt --check",
-    "fmt:fix": "oxfmt"
-  }
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.9.1",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.9.1"
 }

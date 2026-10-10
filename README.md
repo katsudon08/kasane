@@ -13,19 +13,19 @@ Node と Bun のバージョンは `mise.toml` が、pnpm のバージョンは 
 ```sh
 mise install
 pnpm install
-pnpm dev
+mise run dev
 ```
 
 使えるコマンドは `package.json` の `scripts` を参照してください。
 
 ## ドキュメント
 
-| 知りたいこと | 読む場所 |
-| --- | --- |
-| なぜ作るのか | [docs/concept.md](docs/concept.md) |
-| 用語と英語名 | [GLOSSARY.md](GLOSSARY.md) |
-| 授業中の児童の進行 | [docs/spec/student-flow.md](docs/spec/student-flow.md) |
-| 授業中の教師の進行 | [docs/spec/teacher-flow.md](docs/spec/teacher-flow.md) |
+| 知りたいこと                     | 読む場所                                                                                                                         |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| なぜ作るのか                     | [docs/concept.md](docs/concept.md)                                                                                               |
+| 用語と英語名                     | [GLOSSARY.md](GLOSSARY.md)                                                                                                       |
+| 授業中の児童の進行               | [docs/spec/student-flow.md](docs/spec/student-flow.md)                                                                           |
+| 授業中の教師の進行               | [docs/spec/teacher-flow.md](docs/spec/teacher-flow.md)                                                                           |
 | 迷路・ロボット・プログラムの仕様 | [docs/spec/maze.md](docs/spec/maze.md) / [docs/spec/robot.md](docs/spec/robot.md) / [docs/spec/program.md](docs/spec/program.md) |
-| システム構成と技術選定 | [docs/architecture.md](docs/architecture.md) |
-| 開発の進め方 | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| システム構成と技術選定           | [docs/architecture.md](docs/architecture.md)                                                                                     |
+| 開発の進め方                     | [CONTRIBUTING.md](CONTRIBUTING.md)                                                                                               |

@@ -6,9 +6,9 @@ import { createRoot } from "react-dom/client";
 // 参照ドキュメント: https://ja.react.dev/reference/react-dom/client/createRoot
 const root = createRoot(document.getElementById("root")!);
 root.render(
-    <StrictMode>
-        <MantineProvider>
-            <Button variant="outline">KASANE Teacher</Button>
-        </MantineProvider>
-    </StrictMode>,
+  <StrictMode>
+    <MantineProvider>
+      <Button variant="outline">KASANE Teacher</Button>
+    </MantineProvider>
+  </StrictMode>,
 );

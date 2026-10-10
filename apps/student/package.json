@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc -b"
+  },
   "dependencies": {
     "@kasane/core": "workspace:*",
     "@kasane/ui": "workspace:*",
@@ -17,10 +22,5 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "vite": "catalog:"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "typecheck": "tsc -b"
   }
 }

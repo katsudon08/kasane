@@ -3,16 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "test": "bun test --pass-with-no-tests",
+    "typecheck": "tsc"
+  },
   "dependencies": {
     "@kasane/core": "workspace:*",
     "elysia": "catalog:"
   },
   "devDependencies": {
     "@types/bun": "catalog:"
-  },
-  "scripts": {
-    "dev": "bun run --watch src/index.ts",
-    "test": "bun test --pass-with-no-tests",
-    "typecheck": "tsc"
   }
 }

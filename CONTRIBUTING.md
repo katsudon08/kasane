@@ -14,11 +14,11 @@
 
 ## チェックが走るタイミング
 
-| タイミング | 走るもの | 定義場所 |
-| --- | --- | --- |
-| コミット前 | フォーマット（oxfmt）、Lint（oxlint） | `lefthook.yml` |
-| プッシュ前 | 型チェック、ユニットテスト | `lefthook.yml` |
-| PR の作成・更新 | 上記すべてとビルド | `.github/workflows/`（GitHub Actions） |
+| タイミング      | 走るもの                              | 定義場所                               |
+| --------------- | ------------------------------------- | -------------------------------------- |
+| コミット前      | フォーマット（oxfmt）、Lint（oxlint） | `lefthook.yml`                         |
+| プッシュ前      | 型チェック、ユニットテスト            | `lefthook.yml`                         |
+| PR の作成・更新 | 上記すべてとビルド                    | `.github/workflows/`（GitHub Actions） |
 
 実行されるコマンドは `package.json` の `scripts` が正です。
 

@@ -9,6 +9,7 @@
     "fmt:fix": "oxfmt"
   },
   "devDependencies": {
+    "lefthook": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",

@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: fmt
+      run: pnpm run fmt --no-error-on-unmatched-pattern {staged_files}
+    - name: lint
+      run: pnpm run lint --no-error-on-unmatched-pattern {staged_files}
+
+pre-push:
+  jobs:
+    - name: typecheck
+      run: pnpm exec turbo run typecheck

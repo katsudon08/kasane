@@ -5,6 +5,8 @@ packages:
 catalog:
   "@mantine/core": ^9.7.0
   "@mantine/hooks": ^9.7.0
+  "@tanstack/react-router": ^1.170.42
+  "@tanstack/router-plugin": ^1.168.43
   "@types/bun": ^1.4.2
   "@types/node": ^26.6.4
   "@types/react": ^19.3.0

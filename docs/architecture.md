@@ -86,17 +86,16 @@ pnpm のバージョンは `package.json` の `packageManager` で指定しま�
 
 ### apps/student・apps/teacher 共通
 
-| 領域                   | 採用                                         |
-| ---------------------- | -------------------------------------------- |
-| 開発ツールのランタイム | Node                                         |
-| フレームワーク         | React                                        |
-| ルーティング           | TanStack Router                              |
-| ビルドツール           | Vite                                         |
-| UI コンポーネント      | Mantine                                      |
-| スタイリング           | インラインスタイル（基本） / vanilla-extract |
-| コンポーネントカタログ | Storybook                                    |
-| テスト                 | Vitest                                       |
-| デプロイ               | Cloudflare Workers                           |
+| 領域                   | 採用               |
+| ---------------------- | ------------------ |
+| 開発ツールのランタイム | Node               |
+| フレームワーク         | React              |
+| ルーティング           | TanStack Router    |
+| ビルドツール           | Vite               |
+| UI コンポーネント      | Mantine            |
+| コンポーネントカタログ | Storybook          |
+| テスト                 | Vitest             |
+| デプロイ               | Cloudflare Workers |
 
 ### apps/student
 

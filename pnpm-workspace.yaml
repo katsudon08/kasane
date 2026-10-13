@@ -5,6 +5,7 @@ packages:
 catalog:
   "@mantine/core": ^9.7.0
   "@mantine/hooks": ^9.7.0
+  "@storybook/react-vite": ^10.6.1
   "@tanstack/react-router": ^1.170.42
   "@tanstack/router-plugin": ^1.168.43
   "@types/bun": ^1.4.2
@@ -19,6 +20,7 @@ catalog:
   oxlint-tsgolint: ^7.0.2003
   react: ^19.3.0
   react-dom: ^19.3.0
+  storybook: ^10.6.1
   turbo: ^2.11.7
   typescript: ^7.0.2
   vite: ^8.3.3
@@ -27,4 +29,5 @@ catalog:
 catalogMode: strict
 
 allowBuilds:
+  esbuild: true
   lefthook: true

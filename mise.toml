@@ -28,3 +28,7 @@ run = "pnpm exec turbo run //#lint --"
 
 [tasks.fmt]
 run = "pnpm exec turbo run //#fmt --"
+
+[tasks.storybook]
+description = "全てのパッケージのstorybookを立ち上げた後、ルートのstorybookも立ち上げる"
+run = "pnpm exec turbo run storybook"

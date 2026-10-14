@@ -235,6 +235,9 @@ importers:
 
   .:
     devDependencies:
+      '@storybook/react-vite':
+        specifier: 'catalog:'
+        version: 10.6.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(storybook@10.6.1(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(typescript@7.0.2)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0))
       lefthook:
         specifier: 'catalog:'
         version: 2.2.1
@@ -247,6 +250,9 @@ importers:
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 7.0.2003
+      storybook:
+        specifier: 'catalog:'
+        version: 10.6.1(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0)
       turbo:
         specifier: 'catalog:'
         version: 2.11.7

@@ -6,13 +6,16 @@
     "lint": "oxlint --no-error-on-unmatched-pattern",
     "lint:fix": "oxlint --no-error-on-unmatched-pattern --fix",
     "fmt": "oxfmt --no-error-on-unmatched-pattern --check",
-    "fmt:fix": "oxfmt --no-error-on-unmatched-pattern"
+    "fmt:fix": "oxfmt --no-error-on-unmatched-pattern",
+    "storybook": "storybook dev -p 6005"
   },
   "devDependencies": {
+    "@storybook/react-vite": "catalog:",
     "lefthook": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
+    "storybook": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:"
   },

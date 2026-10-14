@@ -130,10 +130,15 @@ pnpm のバージョンは `package.json` の `packageManager` で指定しま�
 
 ### packages/ui
 
-| 領域 | 採用 |
-| ---- | ---- |
+| 領域              | 採用      |
+| ----------------- | --------- |
+| フレームワーク    | React     |
+| UI コンポーネント | Mantine   |
+| UI カタログ       | Storybook |
 
 `apps/student` / `apps/teacher` 間で共有するためのUIコンポーネントを定義します。
+
+pnpm で管理するパッケージについて、どれを peer dependencies に追加していいか迷った時には、**一つのインスタンスで共有しないと壊れるのかどうか**を基準に判断してください。
 
 ### 導入しないもの
 

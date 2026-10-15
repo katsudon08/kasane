@@ -18,6 +18,7 @@
     "@mantine/hooks": "catalog:",
     "@react-three/fiber": "catalog:",
     "@tanstack/react-router": "catalog:",
+    "@yudiel/react-qr-scanner": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "three": "catalog:"

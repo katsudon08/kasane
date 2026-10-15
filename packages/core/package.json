@@ -1,19 +1,19 @@
 {
-  "name": "@kasane/core",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "scripts": {
-    "test": "bun test --pass-with-no-tests",
-    "typecheck": "tsc"
-  },
-  "dependencies": {
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@types/bun": "catalog:"
-  }
+	"name": "@kasane/core",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"test": "bun test --pass-with-no-tests",
+		"typecheck": "tsc"
+	},
+	"dependencies": {
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@types/bun": "catalog:"
+	}
 }

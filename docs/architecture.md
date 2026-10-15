@@ -86,17 +86,16 @@ pnpm のバージョンは `package.json` の `packageManager` で指定しま�
 
 ### apps/student・apps/teacher 共通
 
-| 領域                   | 採用                                         |
-| ---------------------- | -------------------------------------------- |
-| 開発ツールのランタイム | Node                                         |
-| フレームワーク         | React                                        |
-| ルーティング           | TanStack Router                              |
-| ビルドツール           | Vite                                         |
-| UI コンポーネント      | Mantine                                      |
-| スタイリング           | インラインスタイル（基本） / vanilla-extract |
-| コンポーネントカタログ | Storybook                                    |
-| テスト                 | Vitest                                       |
-| デプロイ               | Cloudflare Workers                           |
+| 領域                   | 採用               |
+| ---------------------- | ------------------ |
+| 開発ツールのランタイム | Node               |
+| フレームワーク         | React              |
+| ルーティング           | TanStack Router    |
+| ビルドツール           | Vite               |
+| UI コンポーネント      | Mantine            |
+| コンポーネントカタログ | Storybook          |
+| テスト                 | Vitest             |
+| デプロイ               | Cloudflare Workers |
 
 ### apps/student
 
@@ -131,10 +130,15 @@ pnpm のバージョンは `package.json` の `packageManager` で指定しま�
 
 ### packages/ui
 
-| 領域 | 採用 |
-| ---- | ---- |
+| 領域              | 採用      |
+| ----------------- | --------- |
+| フレームワーク    | React     |
+| UI コンポーネント | Mantine   |
+| UI カタログ       | Storybook |
 
 `apps/student` / `apps/teacher` 間で共有するためのUIコンポーネントを定義します。
+
+pnpm で管理するパッケージについて、どれを peer dependencies に追加していいか迷った時には、**一つのインスタンスで共有しないと壊れるのかどうか**を基準に判断してください。
 
 ### 導入しないもの
 

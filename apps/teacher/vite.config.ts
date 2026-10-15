@@ -15,9 +15,8 @@ export default defineConfig({
     port: 5174,
     strictPort: true,
   },
-  // provider: playwrite のような設定は現段階で純粋関数のみをテスト対象としているため、追加しない
+  // provider: playwright のような設定は現段階で純粋関数のみをテスト対象としているため、追加しない
   test: {
-    globals: true,
     typecheck: {
       enabled: true,
     },

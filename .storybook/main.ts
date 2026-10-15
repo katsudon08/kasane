@@ -1,4 +1,4 @@
-import { StorybookConfig } from "@storybook/react-vite";
+import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
   // 空配列だと storybook がエラーを吐くので、ダミーの空文字列を入れる

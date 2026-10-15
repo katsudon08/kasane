@@ -1,30 +1,30 @@
 {
-  "name": "@kasane/ui",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "scripts": {
-    "typecheck": "tsc -b",
-    "storybook": "storybook dev -p 6008 --no-open",
-    "build-storybook": "storybook build"
-  },
-  "devDependencies": {
-    "@mantine/core": "catalog:",
-    "@mantine/hooks": "catalog:",
-    "@storybook/react-vite": "catalog:",
-    "@types/node": "catalog:",
-    "@types/react": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "storybook": "catalog:",
-    "vite": "catalog:"
-  },
-  "peerDependencies": {
-    "@mantine/core": "catalog:",
-    "@mantine/hooks": "catalog:",
-    "react": "catalog:"
-  }
+	"name": "@kasane/ui",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc -b",
+		"storybook": "storybook dev -p 6008 --no-open",
+		"build-storybook": "storybook build"
+	},
+	"devDependencies": {
+		"@mantine/core": "catalog:",
+		"@mantine/hooks": "catalog:",
+		"@storybook/react-vite": "catalog:",
+		"@types/node": "catalog:",
+		"@types/react": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"storybook": "catalog:",
+		"vite": "catalog:"
+	},
+	"peerDependencies": {
+		"@mantine/core": "catalog:",
+		"@mantine/hooks": "catalog:",
+		"react": "catalog:"
+	}
 }

@@ -1,34 +1,34 @@
 {
-  "name": "@kasane/teacher",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "typecheck": "tsc -b",
-    "test": "vitest run --pass-with-no-tests",
-    "storybook": "storybook dev -p 6007 --no-open",
-    "build-storybook": "storybook build"
-  },
-  "dependencies": {
-    "@kasane/core": "workspace:*",
-    "@kasane/ui": "workspace:*",
-    "@mantine/core": "catalog:",
-    "@mantine/hooks": "catalog:",
-    "@tanstack/react-router": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:"
-  },
-  "devDependencies": {
-    "@storybook/react-vite": "catalog:",
-    "@tanstack/router-plugin": "catalog:",
-    "@types/node": "catalog:",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "catalog:",
-    "storybook": "catalog:",
-    "vite": "catalog:",
-    "vitest": "catalog:"
-  }
+	"name": "@kasane/teacher",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"typecheck": "tsc -b",
+		"test": "vitest run --pass-with-no-tests",
+		"storybook": "storybook dev -p 6007 --no-open",
+		"build-storybook": "storybook build"
+	},
+	"dependencies": {
+		"@kasane/core": "workspace:*",
+		"@kasane/ui": "workspace:*",
+		"@mantine/core": "catalog:",
+		"@mantine/hooks": "catalog:",
+		"@tanstack/react-router": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:"
+	},
+	"devDependencies": {
+		"@storybook/react-vite": "catalog:",
+		"@tanstack/router-plugin": "catalog:",
+		"@types/node": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"@vitejs/plugin-react": "catalog:",
+		"storybook": "catalog:",
+		"vite": "catalog:",
+		"vitest": "catalog:"
+	}
 }

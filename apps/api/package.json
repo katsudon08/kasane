@@ -6,13 +6,15 @@
 	"scripts": {
 		"dev": "bun run --watch src/index.ts",
 		"test": "bun test --pass-with-no-tests",
-		"typecheck": "tsc"
+		"typecheck": "tsc",
+		"wscheck": "wscat -c"
 	},
 	"dependencies": {
 		"@kasane/core": "workspace:*",
 		"elysia": "catalog:"
 	},
 	"devDependencies": {
-		"@types/bun": "catalog:"
+		"@types/bun": "catalog:",
+		"wscat": "catalog:"
 	}
 }

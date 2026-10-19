@@ -108,19 +108,20 @@ API クライアントは `packages/lib-client` から受け取ります。
 
 ### apps/api
 
-| 領域             | 採用                                      |
-| ---------------- | ----------------------------------------- |
-| ランタイム       | Bun                                       |
-| フレームワーク   | Elysia                                    |
-| スキーマ・検証   | Elysia 内蔵（TypeBox）                    |
-| リアルタイム通信 | WebSocket（Bun 標準）                     |
-| データベース     | PostgreSQL                                |
-| ORM              | Drizzle ORM                               |
-| DB ドライバ      | pg                                        |
-| マイグレーション | drizzle-kit                               |
-| テスト           | bun test                                  |
-| デプロイ         | Railway                                   |
-| DB ホスティング  | Neon（本番） / Docker Compose（ローカル） |
+| 領域             | 採用                                         |
+| ---------------- | -------------------------------------------- |
+| ランタイム       | Bun                                          |
+| フレームワーク   | Elysia                                       |
+| 通信方式         | RPC（Eden）                                  |
+| スキーマ         | TypeBox（Elysia.t 提供）                     |
+| リアルタイム通信 | WebSocket（uWebSocket を基盤に Elysia 提供） |
+| データベース     | PostgreSQL                                   |
+| ORM              | Drizzle ORM                                  |
+| DB ドライバ      | pg                                           |
+| マイグレーション | drizzle-kit                                  |
+| テスト           | bun test                                     |
+| デプロイ         | Railway                                      |
+| DB ホスティング  | Neon（本番） / Docker Compose（ローカル）    |
 
 マイグレーションは、MVP 完成までは `push`、完成後は `generate` + `migrate` で運用します。
 

@@ -1,0 +1,9 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		// ブラウザ（apps/student・apps/teacher）から使うので DOM の型を含める
+		"target": "ES2023",
+		"lib": ["ES2023", "DOM", "DOM.Iterable"]
+	},
+	"include": ["src"]
+}

@@ -9,7 +9,7 @@
 			"cache": false
 		},
 		"build": {
-			// 依存先である core / ui には build スクリプトがない
+			// 依存先である lib-client / ui には build スクリプトがない
 			// そのため、実際には何も実行されないが依存先のファイルの変更をトリガーに build タスクを再度実行する
 			"dependsOn": ["^build"],
 			// キャッシュがヒットした時に、 dist/ を復元する

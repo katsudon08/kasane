@@ -3,6 +3,9 @@
 	"version": "1.0.0",
 	"private": true,
 	"type": "module",
+	"exports": {
+		".": "./src/app.ts"
+	},
 	"scripts": {
 		"dev": "bun run --watch src/index.ts",
 		"test": "bun test --pass-with-no-tests",
@@ -10,7 +13,6 @@
 		"wscheck": "wscat -c"
 	},
 	"dependencies": {
-		"@kasane/core": "workspace:*",
 		"elysia": "catalog:"
 	},
 	"devDependencies": {

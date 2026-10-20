@@ -121,9 +121,10 @@ API クライアントは `packages/lib-client` から受け取ります。
 | マイグレーション | drizzle-kit                                  |
 | テスト           | bun test                                     |
 | デプロイ         | Railway                                      |
-| DB ホスティング  | Neon（本番） / Docker Compose（ローカル）    |
+| DB ホスティング  | Neon（本番・開発で別プロジェクト）           |
 
 マイグレーションは、MVP 完成までは `push`、完成後は `generate` + `migrate` で運用します。
+開発は開発用 Neon プロジェクトのブランチ上で行い、本番は別プロジェクトにします。ローカルに Postgres は立てません。
 
 ### packages/lib-client
 

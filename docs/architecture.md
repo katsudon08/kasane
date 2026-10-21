@@ -125,7 +125,8 @@ API クライアントは `packages/lib-client` から受け取ります。
 
 マイグレーションは、MVP 完成までは `push`、完成後は `generate` + `migrate` で運用します。
 開発は開発用 Neon プロジェクトのブランチ上で行い、本番は別プロジェクトにします。ローカルに Postgres は立てません。
-開発ブランチの作成と接続文字列の取得は Neon CLI（`neon link` / `neon checkout`）で行い、アプリは `.env` の `DATABASE_URL` だけを読みます。
+開発ブランチの作成と接続文字列の取得は Neon CLI（`neon link` / `neon checkout`）で行い、アプリは `.env.local` の `DATABASE_URL` だけを読みます。
+手元の `.neon` は開発用プロジェクトに固定し、本番の接続文字列は Railway の環境変数で渡します。
 
 ### packages/lib-client
 

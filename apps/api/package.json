@@ -13,10 +13,16 @@
 		"wscheck": "wscat -c"
 	},
 	"dependencies": {
-		"elysia": "catalog:"
+		"drizzle-orm": "catalog:",
+		"elysia": "catalog:",
+		"pg": "catalog:"
 	},
 	"devDependencies": {
+		"@neon/config": "catalog:",
 		"@types/bun": "catalog:",
+		"@types/pg": "catalog:",
+		"drizzle-kit": "catalog:",
+		"neon": "catalog:",
 		"wscat": "catalog:"
 	}
 }

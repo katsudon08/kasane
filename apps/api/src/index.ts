@@ -1,8 +1,5 @@
-import { Elysia } from "elysia";
+import { app } from "./app";
 
-const app = new Elysia()
-	.get("/", () => "Hello Elysia")
-	.get("/health", () => "OK")
-	.listen(3000);
+app.listen(3000);
 
 console.log(`@kasane/api : ${app.server?.url.href}`);

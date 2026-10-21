@@ -3,3 +3,6 @@ dist/
 .turbo/
 storybook-static/
 .vitest/
+.env
+*.local
+.neon

@@ -56,8 +56,8 @@ kasane/
 │  ├─ teacher/   教師用フロントエンド
 │  └─ api/       バックエンド
 └─ packages/
-   ├─ core/      apps 間で共有する型・スキーマ
-   └─ ui/        apps/student・apps/teacher で共有する UI コンポーネント
+   ├─ lib-client/  apps/student・apps/teacher で共有する Eden Treaty クライアント
+   └─ ui/          apps/student・apps/teacher で共有する UI コンポーネント
 ```
 
 児童用と教師用のフロントエンドは別アプリとして分け、互いのコードを含めずに配信します。
@@ -75,8 +75,6 @@ kasane/
 | パッケージマネージャ   | pnpm                                    |
 | モノレポ               | pnpm workspaces + Turborepo             |
 | ツールのバージョン管理 | mise（Node / Bun）                      |
-| スキーマ・検証         | zod                                     |
-| 環境変数の検証         | t3-env                                  |
 | Linter                 | oxlint + tsgolint（type-aware linting） |
 | Formatter              | oxfmt                                   |
 | Git Hooks              | lefthook                                |
@@ -95,7 +93,11 @@ pnpm のバージョンは `package.json` の `packageManager` で指定しま�
 | UI コンポーネント      | Mantine            |
 | コンポーネントカタログ | Storybook          |
 | テスト                 | Vitest             |
+| API クライアント       | @kasane/lib-client |
 | デプロイ               | Cloudflare Workers |
+
+API クライアントは `packages/lib-client` から受け取ります。
+`apps/student` / `apps/teacher` は `apps/api` に直接依存しません。
 
 ### apps/student
 
@@ -106,27 +108,35 @@ pnpm のバージョンは `package.json` の `packageManager` で指定しま�
 
 ### apps/api
 
-| 領域             | 採用                                      |
-| ---------------- | ----------------------------------------- |
-| ランタイム       | Bun                                       |
-| フレームワーク   | Elysia                                    |
-| リアルタイム通信 | WebSocket（Bun 標準）                     |
-| データベース     | PostgreSQL                                |
-| ORM              | Drizzle ORM                               |
-| DB ドライバ      | pg                                        |
-| マイグレーション | drizzle-kit                               |
-| テスト           | bun test                                  |
-| デプロイ         | Railway                                   |
-| DB ホスティング  | Neon（本番） / Docker Compose（ローカル） |
+| 領域             | 採用                                         |
+| ---------------- | -------------------------------------------- |
+| ランタイム       | Bun                                          |
+| フレームワーク   | Elysia                                       |
+| 通信方式         | RPC（Eden）                                  |
+| スキーマ         | TypeBox（Elysia.t 提供）                     |
+| リアルタイム通信 | WebSocket（uWebSocket を基盤に Elysia 提供） |
+| データベース     | PostgreSQL                                   |
+| ORM              | Drizzle ORM                                  |
+| DB ドライバ      | pg                                           |
+| マイグレーション | drizzle-kit                                  |
+| テスト           | bun test                                     |
+| デプロイ         | Railway                                      |
+| DB ホスティング  | Neon（本番・開発で別プロジェクト）           |
 
 マイグレーションは、MVP 完成までは `push`、完成後は `generate` + `migrate` で運用します。
+開発は開発用 Neon プロジェクトのブランチ上で行い、本番は別プロジェクトにします。ローカルに Postgres は立てません。
+開発ブランチの作成と接続文字列の取得は Neon CLI（`neon link` / `neon checkout`）で行い、アプリは `.env.local` の `DATABASE_URL` だけを読みます。
+手元の `.neon` は開発用プロジェクトに固定し、本番の接続文字列は Railway の環境変数で渡します。
 
-### packages/core
+### packages/lib-client
 
-| 領域 | 採用 |
-| ---- | ---- |
+| 領域             | 採用        |
+| ---------------- | ----------- |
+| API クライアント | Eden Treaty |
 
-`apps` 間でやり取りするメッセージの型・スキーマを定義します。
+`apps/student` / `apps/teacher` 間で共有する Eden Treaty クライアントを生成し、エクスポートします。
+`apps/api` への依存は `App` 型の `import type` に限り、それ以外の依存は持ちません。
+`@elysiajs/eden`・`elysia`（型のみ）・`apps/api` への依存を宣言するのはこのパッケージだけです。
 
 ### packages/ui
 

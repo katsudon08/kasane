@@ -3,16 +3,26 @@
 	"version": "1.0.0",
 	"private": true,
 	"type": "module",
+	"exports": {
+		".": "./src/app.ts"
+	},
 	"scripts": {
 		"dev": "bun run --watch src/index.ts",
 		"test": "bun test --pass-with-no-tests",
-		"typecheck": "tsc"
+		"typecheck": "tsc",
+		"wscheck": "wscat -c"
 	},
 	"dependencies": {
-		"@kasane/core": "workspace:*",
-		"elysia": "catalog:"
+		"drizzle-orm": "catalog:",
+		"elysia": "catalog:",
+		"pg": "catalog:"
 	},
 	"devDependencies": {
-		"@types/bun": "catalog:"
+		"@neon/config": "catalog:",
+		"@types/bun": "catalog:",
+		"@types/pg": "catalog:",
+		"drizzle-kit": "catalog:",
+		"neon": "catalog:",
+		"wscat": "catalog:"
 	}
 }

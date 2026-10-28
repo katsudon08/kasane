@@ -17,11 +17,11 @@ run = "pnpm exec turbo run typecheck"
 [tasks.test]
 run = "pnpm exec turbo run test"
 
-[tasks.quality]
-run = "pnpm exec turbo run //#quality lint:arch"
+[tasks.check]
+run = "pnpm exec turbo run //#check lint:arch"
 
-[tasks."quality:fix"]
-run = "pnpm exec turbo run //#quality:fix"
+[tasks."check:fix"]
+run = "pnpm exec turbo run //#check:fix"
 
 [tasks.lint]
 run = "pnpm exec turbo run //#lint --"

@@ -7,6 +7,7 @@
 		"dev": "vite",
 		"build": "vite build",
 		"typecheck": "tsc -b",
+		"lint:arch": "steiger ./src",
 		"test": "vitest run --pass-with-no-tests",
 		"storybook": "storybook dev -p 6007 --no-open",
 		"build-storybook": "storybook build"
@@ -21,12 +22,14 @@
 		"react-dom": "catalog:"
 	},
 	"devDependencies": {
+		"@feature-sliced/steiger-plugin": "catalog:",
 		"@storybook/react-vite": "catalog:",
 		"@tanstack/router-plugin": "catalog:",
 		"@types/node": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"@vitejs/plugin-react": "catalog:",
+		"steiger": "catalog:",
 		"storybook": "catalog:",
 		"vite": "catalog:",
 		"vitest": "catalog:"

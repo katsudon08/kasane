@@ -25,6 +25,9 @@
 			"dependsOn": ["//#lint:fix", "//#fmt:fix"]
 		},
 		"//#lint": {},
+		"lint:arch": {
+			"cache": false
+		},
 		// ファイルが fix 前の状態に戻ったら同じハッシュになり、キャッシュが効いてしまうため cache: false に設定する
 		"//#lint:fix": {
 			"cache": false

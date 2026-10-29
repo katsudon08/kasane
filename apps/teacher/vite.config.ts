@@ -6,6 +6,8 @@ export default defineConfig({
 	plugins: [
 		tanstackRouter({
 			target: "react",
+			routesDirectory: "./src/app/routes",
+			generatedRouteTree: "./src/routeTree.gen.ts",
 			// 現在のルートに必要なコードのみを分割してロードする設定
 			autoCodeSplitting: true,
 		}),

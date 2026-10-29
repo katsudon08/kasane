@@ -1,9 +1,8 @@
 name: タスク
 description: 実装・リファクタリング・ドキュメント作成などのタスクを起票するためのIssue
-labels: ["task"]
 body:
   - type: textarea
-    id: purpose
+    id: background-and-purpose
     attributes:
       label: 背景・目的
     validations:
@@ -17,20 +16,6 @@ body:
       required: true
 
   - type: textarea
-    id: scope
-    attributes:
-      label: スコープ
-    validations:
-      required: true
-
-  - type: textarea
-    id: out_of_scope
-    attributes:
-      label: 非スコープ
-    validations:
-      required: false
-
-  - type: textarea
     id: done
     attributes:
       label: 完了条件
@@ -38,17 +23,23 @@ body:
       required: true
 
   - type: textarea
-    id: sub_issues
+    id: scope
+    attributes:
+      label: スコープ
+    validations:
+      required: true
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: 非スコープ
+
+  - type: textarea
+    id: sub-issues
     attributes:
       label: サブIssue
-      description: タスクが多すぎる場合に分割し、サブIssueを紐付ける
-    validations:
-      required: false
 
   - type: textarea
     id: references
     attributes:
       label: リファレンス
-      description: 関連するIssue・PR・外部リンク
-    validations:
-      required: false

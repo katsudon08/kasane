@@ -6,6 +6,7 @@
 
 - [児童用フロントエンド](apps/student/README.md)
 - [教師用フロントエンド](apps/teacher/README.md)
+- [バックエンド](apps/api/README.md)
 
 ## ドキュメント
 

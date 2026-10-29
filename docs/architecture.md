@@ -82,30 +82,6 @@ kasane/
 
 pnpm のバージョンは `package.json` の `packageManager` で指定します。
 
-### apps/student・apps/teacher 共通
-
-| 領域                   | 採用               |
-| ---------------------- | ------------------ |
-| 開発ツールのランタイム | Node               |
-| フレームワーク         | React              |
-| ルーティング           | TanStack Router    |
-| ビルドツール           | Vite               |
-| UI コンポーネント      | Mantine            |
-| コンポーネントカタログ | Storybook          |
-| テスト                 | Vitest             |
-| API クライアント       | @kasane/lib-client |
-| デプロイ               | Cloudflare Workers |
-
-API クライアントは `packages/lib-client` から受け取ります。
-`apps/student` / `apps/teacher` は `apps/api` に直接依存しません。
-
-### apps/student
-
-| 領域        | 採用                     |
-| ----------- | ------------------------ |
-| 3D 描画     | React Three Fiber        |
-| QR 読み取り | @yudiel/react-qr-scanner |
-
 ### apps/api
 
 | 領域             | 採用                                         |
@@ -153,4 +129,3 @@ pnpm で管理するパッケージについて、どれを peer dependencies �
 ### 導入しないもの
 
 - 認証ライブラリ（識別は QR コードで行います）
-- 状態管理ライブラリ（必要になった時点で導入します）

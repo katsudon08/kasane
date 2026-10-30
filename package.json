@@ -22,8 +22,7 @@
 	"devEngines": {
 		"packageManager": {
 			"name": "pnpm",
-			"version": "12.9.1",
-			"onFail": "download"
+			"onFail": "error"
 		}
 	},
 	"packageManager": "pnpm@12.9.1"

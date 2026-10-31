@@ -8,5 +8,9 @@ pre-commit:
 
 pre-push:
   jobs:
+    - name: check
+      run: mise run check
     - name: typecheck
       run: mise run typecheck
+    - name: build
+      run: mise run build

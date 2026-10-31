@@ -3,35 +3,16 @@ bun = "1.4.2"
 node = "26.10.0"
 pnpm = "12.9.1"
 
-[tasks.dev]
-description = "apps/student・apps/teacher・apps/apiの開発サーバーを全て立ち上げる"
-run = "pnpm exec turbo run dev"
-
-[tasks.build]
-description = "apps/student・apps/teacher・apps/apiをビルドする"
-run = "pnpm exec turbo run build"
-
-[tasks.typecheck]
-run = "pnpm exec turbo run typecheck"
-
-[tasks.test]
-run = "pnpm exec turbo run test"
-
-[tasks.check]
-run = "pnpm exec turbo run //#check lint:arch"
-
-[tasks."check:fix"]
-run = "pnpm exec turbo run //#check:fix"
-
-[tasks.lint]
-run = "pnpm exec turbo run //#lint --"
-
-[tasks."lint:arch"]
-run = "pnpm exec turbo run lint:arch"
-
-[tasks.fmt]
-run = "pnpm exec turbo run //#fmt --"
-
-[tasks.storybook]
-description = "全てのパッケージのstorybookを立ち上げた後、ルートのstorybookも立ち上げる"
-run = "pnpm exec turbo run storybook"
+[tasks]
+dev = "pnpm exec turbo run dev"
+typecheck = "pnpm exec turbo run typecheck"
+build = "pnpm exec turbo run build"
+test = "pnpm exec turbo run test"
+lint = "pnpm exec turbo run //#lint --"
+"lint:fix" = "pnpm exec turbo run //#lint:fix --"
+"lint:fsd" = "pnpm exec turbo run lint:fsd"
+fmt = "pnpm exec turbo run //#fmt --"
+"fmt:fix" = "pnpm exec turbo run //#fmt:fix"
+check = "pnpm exec turbo run //#check lint:fsd"
+"check:fix" = "pnpm exec turbo run //#check:fix"
+storybook = "pnpm exec turbo run storybook"

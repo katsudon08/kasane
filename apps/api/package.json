@@ -7,17 +7,19 @@
 		".": "./src/index.ts"
 	},
 	"scripts": {
-		"dev": "bun run --watch src/index.ts",
-		"drizzle-kit:dev": "drizzle-kit --config=drizzle-dev.config.ts",
-		"drizzle-kit:test": "drizzle-kit --config=drizzle-test.config.ts",
-		"test": "bun test --pass-with-no-tests",
+		"dev": "NODE_ENV=development dotenv run --override --file .env.local -- bun run --watch src/index.ts",
+		"drizzle-kit:dev": "dotenv run --override --file .env.local -- drizzle-kit --config=drizzle-dev.config.ts",
+		"drizzle-kit:test": "dotenv run --override --file .env.test.local -- drizzle-kit --config=drizzle-test.config.ts",
+		"test": "NODE_ENV=test dotenv run --override --file .env.test.local -- bun test --pass-with-no-tests",
 		"typecheck": "tsc",
 		"wscheck": "wscat -c"
 	},
 	"dependencies": {
+		"@t3-oss/env-core": "catalog:",
 		"drizzle-orm": "catalog:",
 		"elysia": "catalog:",
-		"pg": "catalog:"
+		"pg": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@neon/config": "catalog:",

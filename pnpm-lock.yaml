@@ -185,6 +185,9 @@ catalogs:
     '@storybook/react-vite':
       specifier: ^10.6.1
       version: 10.6.1
+    '@t3-oss/env-core':
+      specifier: ^0.13.11
+      version: 0.13.11
     '@tanstack/react-router':
       specifier: ^1.170.42
       version: 1.170.42
@@ -275,6 +278,9 @@ catalogs:
     wscat:
       specifier: ^6.1.0
       version: 6.1.0
+    zod:
+      specifier: ^4.6.5
+      version: 4.6.5
 
 importers:
 
@@ -307,6 +313,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@t3-oss/env-core':
+        specifier: 'catalog:'
+        version: 0.13.11(typescript@7.0.2)(zod@4.6.5)
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.4(@types/pg@8.23.1)(bun-types@1.4.2)(pg@8.23.1)
@@ -316,6 +325,9 @@ importers:
       pg:
         specifier: 'catalog:'
         version: 8.23.1
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.5
     devDependencies:
       '@neon/config':
         specifier: 'catalog:'
@@ -2167,6 +2179,23 @@ packages:
       '@types/react-dom':
         optional: true
       typescript:
+        optional: true
+
+  '@t3-oss/env-core@0.13.11':
+    resolution: {integrity: sha512-sM7GYY+KL7H/Hl0BE0inWfk3nRHZOLhmVn7sHGxaZt9FAR6KqREXAE+6TqKfiavfXmpRxO/OZ2QgKRd+oiBYRQ==}
+    peerDependencies:
+      arktype: ^2.1.0
+      typescript: '>=5.0.0'
+      valibot: ^1.0.0-beta.7 || ^1.0.0
+      zod: ^3.24.0 || ^4.0.0
+    peerDependenciesMeta:
+      arktype:
+        optional: true
+      typescript:
+        optional: true
+      valibot:
+        optional: true
+      zod:
         optional: true
 
   '@tanstack/history@1.162.5':
@@ -5358,6 +5387,11 @@ snapshots:
       typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
+
+  '@t3-oss/env-core@0.13.11(typescript@7.0.2)(zod@4.6.5)':
+    optionalDependencies:
+      typescript: 7.0.2
+      zod: 4.6.5
 
   '@tanstack/history@1.162.5': {}
 

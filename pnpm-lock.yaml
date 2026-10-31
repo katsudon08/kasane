@@ -215,6 +215,9 @@ catalogs:
     '@yudiel/react-qr-scanner':
       specifier: ^2.6.0
       version: 2.6.0
+    dotenv:
+      specifier: ^18.0.9
+      version: 18.0.9
     drizzle-kit:
       specifier: ^0.31.11
       version: 0.31.11
@@ -323,6 +326,9 @@ importers:
       '@types/pg':
         specifier: 'catalog:'
         version: 8.23.1
+      dotenv:
+        specifier: 'catalog:'
+        version: 18.0.9
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.31.11
@@ -2767,6 +2773,11 @@ packages:
 
   dom-accessibility-api@0.6.3:
     resolution: {integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==}
+
+  dotenv@18.0.9:
+    resolution: {integrity: sha512-3fVOW4cB02R066PUSwn8O4TJyz9NckQl7F81blIbaq9jKBm2tSmOKky7ZHIXzGvkVPXCSn6jkpziBPZdGFs8Tw==}
+    engines: {node: '>=12'}
+    hasBin: true
 
   drizzle-kit@0.31.11:
     resolution: {integrity: sha512-YCYqxTLIB2OCqf6w9/Vef13baBVbwQIPcbT4Y56AfO6B9ajZhDhD8Jkveg/hJvT/iuMloKD/IYYkyMMNhr7Kqg==}
@@ -5894,6 +5905,8 @@ snapshots:
   dom-accessibility-api@0.5.16: {}
 
   dom-accessibility-api@0.6.3: {}
+
+  dotenv@18.0.9: {}
 
   drizzle-kit@0.31.11:
     dependencies:

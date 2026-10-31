@@ -8,6 +8,8 @@
 	},
 	"scripts": {
 		"dev": "bun run --watch src/index.ts",
+		"drizzle-kit:dev": "drizzle-kit --config=drizzle-dev.config.ts",
+		"drizzle-kit:test": "drizzle-kit --config=drizzle-test.config.ts",
 		"test": "bun test --pass-with-no-tests",
 		"typecheck": "tsc",
 		"wscheck": "wscat -c"
@@ -21,6 +23,7 @@
 		"@neon/config": "catalog:",
 		"@types/bun": "catalog:",
 		"@types/pg": "catalog:",
+		"dotenv": "catalog:",
 		"drizzle-kit": "catalog:",
 		"neon": "catalog:",
 		"wscat": "catalog:"

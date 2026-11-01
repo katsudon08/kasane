@@ -15,7 +15,7 @@ src/
 
 各層の役割は[The Clean Code Blog](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)に基づく。
 
-`presentation` は `application` の**ユースケース**を呼び出し、`infrastructure` は `application` が定義した**ポート**を実装する。
+実装の際には[クリーンアーキテクチャ入門の記事](https://zenn.dev/collabostyle/articles/1089b482fd59fe)を参考にする。
 
 メリット
 

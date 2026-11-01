@@ -9,14 +9,14 @@ src/
 ├── domain/
 │   ├── entities/        ビジネスオブジェクト
 │   ├── services/        ビジネスルール
-│   └── repositories/    リポジトリのインターフェース（infrastructure が実装する契約）
+│   └── repositories/    リポジトリのインターフェース（infrastructureが実装する契約）
 ├── application/
 │   └── usecases/        ドメインを組み合わせたユースケース
 ├── presentation/
 │   └── controllers/     エンドポイントの定義と、リクエスト・レスポンスの変換
 ├── infrastructure/
-│   ├── database/        DB 接続とテーブル定義
-│   └── repositories/    domain/repositories のインターフェースの実装
+│   ├── database/        DB接続とテーブル定義
+│   └── repositories/    domain/repositoriesのインターフェースの実装
 ├── config/              環境変数の読み込みなどの設定ファイル
 └── index.ts             依存の組み立てとサーバー起動
 ```
@@ -26,7 +26,7 @@ src/
 メリット
 
 - 業務ルールを特定の技術スタックやフレームワークから切り離して外部技術の変更による影響を抑えられる。
-- ユースケースを Web サーバーや DB を起動せずにユニットテストできる。
+- ユースケースをWebサーバーやDBを起動せずにユニットテストできる。
 - ポートを介して外部機能の実装を差し替えられる。
 
 デメリット

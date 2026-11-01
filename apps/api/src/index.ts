@@ -1,7 +1,12 @@
 import { Elysia } from "elysia";
 
+import { roomsController } from "./presentation/controllers/rooms";
+
+// TODO: ユースケース実装後に差し替える
+const createRoom = async () => ({ id: "dummy-room-id" });
+
 export const app = new Elysia()
-	.get("/", () => "Hello Elysia")
+	.use(roomsController({ createRoom }))
 	.get("/health", () => "OK")
 	.ws("/ws", {
 		message(ws, message) {

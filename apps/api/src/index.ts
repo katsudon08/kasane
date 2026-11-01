@@ -1,9 +1,15 @@
 import { Elysia } from "elysia";
 
+import { createRoomUseCase } from "./application/usecases/create-room";
+import type { RoomRepository } from "./domain/repositories/room-repository";
 import { roomsController } from "./presentation/controllers/rooms";
 
-// TODO: ユースケース実装後に差し替える
-const createRoom = async () => ({ id: "dummy-room-id" });
+// TODO: infrastructure の DrizzleRoomRepository 実装後に差し替える
+const roomRepository: RoomRepository = {
+	create: async () => ({ id: "dummy-room-id" }),
+};
+
+const createRoom = createRoomUseCase({ roomRepository });
 
 export const app = new Elysia()
 	.use(roomsController({ createRoom }))

@@ -1,7 +1,9 @@
 import { Elysia, t } from "elysia";
 
+import type { CreateRoom } from "../../application/usecases/create-room";
+
 type RoomsControllerDeps = {
-	createRoom: () => Promise<{ id: string }>;
+	createRoom: CreateRoom;
 };
 
 export const roomsController = ({ createRoom }: RoomsControllerDeps) =>

@@ -9,7 +9,9 @@ export const roomRepository = (db: NodePgDatabase): RoomRepository => ({
 		const [room] = await db.insert(rooms).values({}).returning({ id: rooms.id });
 
 		if (!room) {
-			throw new Error("roomsテーブルへのINSERTで行が返されませんでした");
+			throw new Error(
+				"roomsテーブルへのINSERT文は成功しましたが、RETURNINGで行が返されませんでした",
+			);
 		}
 
 		return { id: room.id };

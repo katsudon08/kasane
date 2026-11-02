@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		// ブラウザ（apps/student・apps/teacher）から使うのでDOMの型を含める
 		"target": "ES2023",
-		"lib": ["ES2023", "DOM", "DOM.Iterable"]
+		"lib": ["ES2023", "DOM"]
 	},
 	"include": ["src"]
 }

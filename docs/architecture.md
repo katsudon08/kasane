@@ -112,7 +112,7 @@ pnpmのバージョンは`package.json`の`packageManager`で指定します。
 
 `apps/student` / `apps/teacher`間で共有するEden Treatyクライアントを生成し、エクスポートします。
 `apps/api`への依存は`App`型の`import type`に限り、それ以外の依存は持ちません。
-`@elysiajs/eden`・`elysia`（型のみ）・`apps/api`への依存を宣言するのはこのパッケージだけです。
+`@elysia/eden`・`elysia`（型のみ）・`apps/api`への依存を宣言するのはこのパッケージだけです。
 
 ### packages/ui
 

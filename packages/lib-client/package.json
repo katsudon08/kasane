@@ -10,7 +10,7 @@
 		"typecheck": "tsc"
 	},
 	"dependencies": {
-		"@elysiajs/eden": "catalog:"
+		"@elysia/eden": "catalog:"
 	},
 	"devDependencies": {
 		"@kasane/api": "workspace:*",

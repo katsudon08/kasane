@@ -15,6 +15,7 @@
 		"wscheck": "wscat -c"
 	},
 	"dependencies": {
+		"@elysia/cors": "catalog:",
 		"@t3-oss/env-core": "catalog:",
 		"drizzle-orm": "catalog:",
 		"elysia": "catalog:",

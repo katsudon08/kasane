@@ -447,6 +447,9 @@ importers:
       '@mantine/hooks':
         specifier: 'catalog:'
         version: 9.7.4(react@19.3.1)
+      '@t3-oss/env-core':
+        specifier: 'catalog:'
+        version: 0.13.11(typescript@7.0.2)(zod@4.6.7)
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -456,6 +459,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.3.1(react@19.3.1)
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
     devDependencies:
       '@feature-sliced/steiger-plugin':
         specifier: 'catalog:'

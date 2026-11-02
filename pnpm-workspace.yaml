@@ -10,6 +10,7 @@ catalog:
   "@neon/config": ^1.9.2
   "@react-three/fiber": ^9.8.1
   "@storybook/react-vite": ^10.6.5
+  "@tanstack/react-query": ^5.105.2
   "@tanstack/react-router": ^1.170.42
   "@tanstack/router-plugin": ^1.168.43
   "@t3-oss/env-core": ^0.13.11
@@ -50,3 +51,7 @@ catalogMode: strict
 allowBuilds:
   esbuild: true
   lefthook: true
+
+minimumReleaseAgeExclude:
+  - "@tanstack/query-core@5.105.2"
+  - "@tanstack/react-query@5.105.2"

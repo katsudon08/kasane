@@ -18,6 +18,7 @@
 		"@mantine/core": "catalog:",
 		"@mantine/hooks": "catalog:",
 		"@t3-oss/env-core": "catalog:",
+		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-router": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",

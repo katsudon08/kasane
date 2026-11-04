@@ -28,17 +28,28 @@ export function HomePage() {
 
 	return (
 		<>
-			<Button onClick={handleOpen}>モーダルを開く</Button>
-			<Modal opened={opened} onClose={close} size="md">
+			<Button onClick={handleOpen}>
+				{createRoom.data ? "QRコードをもう一度表示する" : "授業を始める"}
+			</Button>
+			<Modal
+				opened={opened}
+				onClose={close}
+				size="md"
+				title="児童にQRコードを読み取ってもらいましょう"
+				styles={{ title: { fontWeight: 700 } }}
+			>
 				<Stack align="center" justify="center" style={{ height: 200 }}>
 					{(createRoom.isIdle || createRoom.isPending) && <Loader size="xl" />}
 					{createRoom.isError && (
 						<>
 							<Text fw={600} size="xl">
-								部屋の作成に失敗しました
+								授業を始められませんでした
+							</Text>
+							<Text ta="center">
+								インターネットにつながっているか確認して、もう一度お試しください。
 							</Text>
 							<Button variant="outline" color="red" size="md" onClick={() => createRoom.mutate()}>
-								再試行
+								もう一度試す
 							</Button>
 						</>
 					)}
@@ -47,9 +58,12 @@ export function HomePage() {
 							<QRCode
 								value={createRoom.data.id}
 								fallback={
-									<Text fw={600} size="xl">
-										QRコードを表示できません
-									</Text>
+									<Stack align="center" gap="xs">
+										<Text fw={600} size="xl">
+											QRコードを表示できませんでした
+										</Text>
+										<Text ta="center">画面を更新してから、もう一度お試しください。</Text>
+									</Stack>
 								}
 							/>
 						</Paper>

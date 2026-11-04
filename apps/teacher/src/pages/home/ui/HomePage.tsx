@@ -1,5 +1,5 @@
-import { Text } from "@mantine/core";
+import { RoomInvitation } from "../../../widgets/room-invitation";
 
 export function HomePage() {
-	return <Text>HomePage</Text>;
+	return <RoomInvitation />;
 }

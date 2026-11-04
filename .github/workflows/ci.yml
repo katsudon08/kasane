@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 concurrency:
-  # PR ごとのキーとして設定することで、実行同士をグループとして扱う
+  # PRごとのキーとして設定することで、実行同士をグループとして扱う
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 

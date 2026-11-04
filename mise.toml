@@ -1,7 +1,9 @@
 [tools]
 bun = "1.4.2"
 node = "26.10.0"
-pnpm = "12.9.1"
+
+[settings]
+idiomatic_version_file_enable_tools = ["pnpm"]
 
 [tasks]
 dev = "pnpm exec turbo run dev"

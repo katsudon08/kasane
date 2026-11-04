@@ -1,4 +1,4 @@
-## 関連 Issue
+## 関連Issue
 
 closes #
 

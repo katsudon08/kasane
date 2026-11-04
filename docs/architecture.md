@@ -18,7 +18,7 @@
 ```
 
 ペアとなる児童同士の間に直接の接続はなく、**すべての通信はサーバーを経由します**。教師も同じサーバーに接続します。
-児童と教師は、手入力ではなく **QR コード**を読み取って識別します。
+児童と教師は、手入力ではなく**QRコード**を読み取って識別します。
 
 ## 各領域の責務
 
@@ -47,7 +47,7 @@
 
 ## リポジトリ構成
 
-パッケージ名のスコープは `@kasane` とします。
+パッケージ名のスコープは`@kasane`とします。
 
 ```
 kasane/
@@ -56,16 +56,16 @@ kasane/
 │  ├─ teacher/   教師用フロントエンド
 │  └─ api/       バックエンド
 └─ packages/
-   ├─ lib-client/  apps/student・apps/teacher で共有する Eden Treaty クライアント
-   └─ ui/          apps/student・apps/teacher で共有する UI コンポーネント
+   ├─ lib-client/  apps/student・apps/teacherで共有するEden Treatyクライアント
+   └─ ui/          apps/student・apps/teacherで共有するUIコンポーネント
 ```
 
 児童用と教師用のフロントエンドは別アプリとして分け、互いのコードを含めずに配信します。
-`packages/` には、複数のワークスペースから利用されるものだけを置きます。
+`packages/`には、複数のワークスペースから利用されるものだけを置きます。
 
 ## 技術選定
 
-前提として、 `pnpm-workspace.yaml` において `catalogMode: strict` にすることで、パッケージ間で異なるライブラリのバージョンを追加してしまう問題を防ぎます。
+前提として、`pnpm-workspace.yaml`において`catalogMode: strict`にすることで、パッケージ間で異なるライブラリのバージョンを追加してしまう問題を防ぎます。
 
 ### 共通
 
@@ -80,52 +80,52 @@ kasane/
 | Git Hooks              | lefthook                                |
 | CI                     | GitHub Actions                          |
 
-pnpm のバージョンは `package.json` の `packageManager` で指定します。
+pnpmのバージョンは`package.json`の`packageManager`で指定します。
 
 ### apps/api
 
-| 領域             | 採用                                         |
-| ---------------- | -------------------------------------------- |
-| ランタイム       | Bun                                          |
-| フレームワーク   | Elysia                                       |
-| 通信方式         | RPC（Eden）                                  |
-| スキーマ         | TypeBox（Elysia.t 提供）                     |
-| リアルタイム通信 | WebSocket（uWebSocket を基盤に Elysia 提供） |
-| データベース     | PostgreSQL                                   |
-| ORM              | Drizzle ORM                                  |
-| DB ドライバ      | pg                                           |
-| マイグレーション | drizzle-kit                                  |
-| テスト           | bun test                                     |
-| デプロイ         | Railway                                      |
-| DB ホスティング  | Neon（本番・開発で別プロジェクト）           |
+| 領域             | 採用                                      |
+| ---------------- | ----------------------------------------- |
+| ランタイム       | Bun                                       |
+| フレームワーク   | Elysia                                    |
+| 通信方式         | RPC（Eden）                               |
+| スキーマ         | TypeBox（Elysia.t提供）                   |
+| リアルタイム通信 | WebSocket（uWebSocketを基盤にElysia提供） |
+| データベース     | PostgreSQL                                |
+| ORM              | Drizzle ORM                               |
+| DBドライバ       | pg                                        |
+| マイグレーション | drizzle-kit                               |
+| テスト           | bun test                                  |
+| デプロイ         | Railway                                   |
+| DBホスティング   | Neon（本番・開発で別プロジェクト）        |
 
-マイグレーションは、MVP 完成までは `push`、完成後は `generate` + `migrate` で運用します。
-開発は開発用 Neon プロジェクトのブランチ上で行い、本番は別プロジェクトにします。ローカルに Postgres は立てません。
-開発ブランチの作成と接続文字列の取得は Neon CLI（`neon link` / `neon checkout`）で行い、アプリは `.env.local` の `DATABASE_URL` だけを読みます。
-手元の `.neon` は開発用プロジェクトに固定し、本番の接続文字列は Railway の環境変数で渡します。
+マイグレーションは、MVP完成までは`push`、完成後は`generate` + `migrate`で運用します。
+開発は開発用Neonプロジェクトのブランチ上で行い、本番は別プロジェクトにします。ローカルにPostgresは立てません。
+開発ブランチの作成と接続文字列の取得はNeon CLI（`neon link` / `neon checkout`）で行い、アプリは`.env.local`の`DATABASE_URL`だけを読みます。
+手元の`.neon`は開発用プロジェクトに固定し、本番の接続文字列はRailwayの環境変数で渡します。
 
 ### packages/lib-client
 
-| 領域             | 採用        |
-| ---------------- | ----------- |
-| API クライアント | Eden Treaty |
+| 領域            | 採用        |
+| --------------- | ----------- |
+| APIクライアント | Eden Treaty |
 
-`apps/student` / `apps/teacher` 間で共有する Eden Treaty クライアントを生成し、エクスポートします。
-`apps/api` への依存は `App` 型の `import type` に限り、それ以外の依存は持ちません。
-`@elysiajs/eden`・`elysia`（型のみ）・`apps/api` への依存を宣言するのはこのパッケージだけです。
+`apps/student` / `apps/teacher`間で共有するEden Treatyクライアントを生成し、エクスポートします。
+`apps/api`への依存は`App`型の`import type`に限り、それ以外の依存は持ちません。
+`@elysia/eden`・`elysia`（型のみ）・`apps/api`への依存を宣言するのはこのパッケージだけです。
 
 ### packages/ui
 
-| 領域              | 採用      |
-| ----------------- | --------- |
-| フレームワーク    | React     |
-| UI コンポーネント | Mantine   |
-| UI カタログ       | Storybook |
+| 領域             | 採用      |
+| ---------------- | --------- |
+| フレームワーク   | React     |
+| UIコンポーネント | Mantine   |
+| UIカタログ       | Storybook |
 
-`apps/student` / `apps/teacher` 間で共有するためのUIコンポーネントを定義します。
+`apps/student` / `apps/teacher`間で共有するためのUIコンポーネントを定義します。
 
-pnpm で管理するパッケージについて、どれを peer dependencies に追加していいか迷った時には、**一つのインスタンスで共有しないと壊れるのかどうか**を基準に判断してください。
+pnpmで管理するパッケージについて、どれをpeer dependenciesに追加していいか迷った時には、**一つのインスタンスで共有しないと壊れるのかどうか**を基準に判断してください。
 
 ### 導入しないもの
 
-- 認証ライブラリ（識別は QR コードで行います）
+- 認証ライブラリ（識別はQRコードで行います）

@@ -17,9 +17,13 @@
 		"@kasane/ui": "workspace:*",
 		"@mantine/core": "catalog:",
 		"@mantine/hooks": "catalog:",
+		"@t3-oss/env-core": "catalog:",
+		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-router": "catalog:",
+		"qrcode.react": "catalog:",
 		"react": "catalog:",
-		"react-dom": "catalog:"
+		"react-dom": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@feature-sliced/steiger-plugin": "catalog:",

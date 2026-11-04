@@ -6,21 +6,27 @@
 
 ```text
 src/
-├── domain/          ドメインモデルと業務ルール
-├── application/     ユースケースとポート
-├── presentation/    HTTP・WebSocket の入出力
-├── infrastructure/  DB や外部 API などの実装
-└── index.ts         サーバー起動
+├── domain/
+│   ├── entities/        ビジネスオブジェクト
+│   ├── services/        ビジネスルール
+│   └── repositories/    リポジトリのインターフェース（infrastructureが実装する契約）
+├── application/
+│   └── usecases/        ドメインを組み合わせたユースケース
+├── presentation/
+│   └── controllers/     エンドポイントの定義と、リクエスト・レスポンスの変換
+├── infrastructure/
+│   ├── database/        DB接続とテーブル定義
+│   └── repositories/    domain/repositoriesのインターフェースの実装
+├── config/              環境変数の読み込みなどの設定ファイル
+└── index.ts             依存の組み立てとサーバー起動
 ```
 
-各層の役割は[The Clean Code Blog](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)に基づく。
-
-`presentation` は `application` の**ユースケース**を呼び出し、`infrastructure` は `application` が定義した**ポート**を実装する。
+実装の際には[クリーンアーキテクチャ入門の記事](https://zenn.dev/collabostyle/articles/1089b482fd59fe)を参考にする。
 
 メリット
 
 - 業務ルールを特定の技術スタックやフレームワークから切り離して外部技術の変更による影響を抑えられる。
-- ユースケースを Web サーバーや DB を起動せずにユニットテストできる。
+- ユースケースをWebサーバーやDBを起動せずにユニットテストできる。
 - ポートを介して外部機能の実装を差し替えられる。
 
 デメリット

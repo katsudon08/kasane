@@ -8,13 +8,14 @@
 	},
 	"scripts": {
 		"dev": "NODE_ENV=development dotenv run --override --file .env.local -- bun run --watch src/index.ts",
-		"drizzle-kit:dev": "dotenv run --override --file .env.local -- drizzle-kit --config=drizzle-dev.config.ts",
-		"drizzle-kit:test": "dotenv run --override --file .env.test.local -- drizzle-kit --config=drizzle-test.config.ts",
 		"test": "NODE_ENV=test dotenv run --override --file .env.test.local -- bun test --pass-with-no-tests",
 		"typecheck": "tsc",
+		"drizzle-kit:dev": "dotenv run --override --file .env.local -- drizzle-kit --config=drizzle-dev.config.ts",
+		"drizzle-kit:test": "dotenv run --override --file .env.test.local -- drizzle-kit --config=drizzle-test.config.ts",
 		"wscheck": "wscat -c"
 	},
 	"dependencies": {
+		"@elysia/cors": "catalog:",
 		"@t3-oss/env-core": "catalog:",
 		"drizzle-orm": "catalog:",
 		"elysia": "catalog:",

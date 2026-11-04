@@ -12,5 +12,7 @@ pre-push:
       run: mise run check
     - name: typecheck
       run: mise run typecheck
+    - name: test
+      run: mise run test
     - name: build
       run: mise run build

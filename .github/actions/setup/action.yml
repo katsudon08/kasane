@@ -1,5 +1,5 @@
 name: Setup
-description: mise で本リポジトリで扱うツールを入れて依存をインストールする
+description: miseで本リポジトリで扱うツールを入れて依存をインストールする
 runs:
   using: composite
   steps:

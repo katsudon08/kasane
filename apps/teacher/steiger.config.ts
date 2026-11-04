@@ -6,4 +6,9 @@ export default defineConfig([
 	{
 		ignores: ["**/routeTree.gen.ts"],
 	},
+	{
+		rules: {
+			"fsd/insignificant-slice": "off",
+		},
+	},
 ]);

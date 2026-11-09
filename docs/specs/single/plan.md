@@ -39,7 +39,7 @@
 
 - auto modeで回すのは開発用コンテナの中だけにし、本番の認証情報は渡さない（Neonは開発用プロジェクトの`develop`ブランチ、Railwayの本番の環境変数は渡さない）
 - タスクごとにコミットし、壊れたら戻せるようにする
-- `main`では作業しない。`main`から`develop`を切り、機能ごとに`develop`から`feature/<Issue番号>-<name>`を切って、`develop`へsquashマージする。`main`へは`develop`からリリース時にだけマージする。この仕様書のブランチ（`docs/20-specs-and-docs-design`）は`develop`を作った後、`develop`へsquashマージする
+- `main`では作業しない。`main`から`develop`を切り、機能ごとに`develop`から`<type種別>/<英語のケバブケース>`を切って、`develop`へsquashマージする。また、planのタスクについてはAI駆動開発と自前での開発を区別するためにIssueは発行せずに開発を進める。ここでの`type`というのはconventional commitsで使用されるものを指している。`main`へは`develop`からリリース時にだけマージする。この仕様書のブランチ（`docs/20-specs-and-docs-design`）は`develop`を作った後、`develop`へsquashマージする
 
 ## 日ごとの計画
 

@@ -1,11 +1,17 @@
 {
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
 	"plugins": ["typescript", "unicorn", "oxc"],
+	"jsPlugins": ["./.oxlint/no-skipped-tests.ts"],
 	"categories": {
 		"correctness": "error"
 	},
 	"rules": {
-		"typescript/consistent-type-imports": "error"
+		"typescript/consistent-type-imports": "error",
+		// ごまかし防止（docs/specs/single/plan.md）: any・空のcatch・TODO・skipしたテストを禁じる
+		"typescript/no-explicit-any": "error",
+		"no-empty": ["error", { "allowEmptyCatch": false }],
+		"no-warning-comments": ["error", { "terms": ["todo", "fixme", "xxx"], "location": "anywhere" }],
+		"kasane/no-skipped-tests": "error"
 	},
 	"env": {
 		"builtin": true

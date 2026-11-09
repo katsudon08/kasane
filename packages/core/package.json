@@ -1,0 +1,17 @@
+{
+	"name": "@kasane/core",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"test": "bun test",
+		"typecheck": "tsc"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@types/bun": "catalog:"
+	}
+}

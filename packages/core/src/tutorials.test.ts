@@ -139,6 +139,7 @@ describe("TUTORIALS", () => {
 
 		test.each(flat)("%iは%i枚になり、上限を超える", (no, _cards, program) => {
 			const { maze, maxCards } = tutorial(no);
+			if (maxCards === null) throw new Error(`チュートリアル${no}に枚数の上限がない`);
 			expect(validateProgram(program, maxCards)).toEqual({
 				ok: false,
 				reason: { kind: "tooManyCards", limit: maxCards },

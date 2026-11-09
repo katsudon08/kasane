@@ -46,6 +46,7 @@ catalog:
   wscat: ^6.1.0
   zod: ^4.6.5
   "@elysia/cors": ^1.4.2
+  "@playwright/test": ^1.65.0
 
 catalogMode: strict
 

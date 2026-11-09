@@ -1,0 +1,10 @@
+{
+	// ルート直下のファイル（Playwrightの設定・E2Eテスト・oxlintのローカルプラグイン）の型チェック用
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"target": "ES2024",
+		"lib": ["ES2024", "DOM", "DOM.Iterable"],
+		"types": ["node"]
+	},
+	"include": ["playwright.config.ts", "e2e/**/*.ts", ".oxlint/**/*.ts"]
+}

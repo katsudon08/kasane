@@ -7,10 +7,14 @@
 		"lint:fix": "oxlint --no-error-on-unmatched-pattern --fix",
 		"fmt": "oxfmt --no-error-on-unmatched-pattern --check",
 		"fmt:fix": "oxfmt --no-error-on-unmatched-pattern",
+		"e2e": "playwright test --pass-with-no-tests",
+		"typecheck": "tsc -p tsconfig.json",
 		"storybook": "wait-on --timeout 60s http://localhost:6006 http://localhost:6007 http://localhost:6008 && storybook dev -p 6005"
 	},
 	"devDependencies": {
+		"@playwright/test": "catalog:",
 		"@storybook/react-vite": "catalog:",
+		"@types/node": "catalog:",
 		"lefthook": "catalog:",
 		"oxfmt": "catalog:",
 		"oxlint": "catalog:",

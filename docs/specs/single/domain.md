@@ -109,7 +109,7 @@ declare function removeTopLayer(maze: Maze): EditResult;
 
 カメラは同じQRを1秒間に何度も読み取るので、次の規則で1回分だけ追加します。
 
-- `shouldAccept(text, now, lastSeenAt)`: 同じ中身のQRが最後に見えてから1500ms以上たっていれば受け付ける（ProgPathの学校での実証と同じ値）
+- `isNewScan(text, now, lastSeenAt)`: 同じ中身のQRが最後に見えてから1500ms以上たっていれば受け付ける（ProgPathの学校での実証と同じ値）
 - 読み取るたびに`lastSeenAt[text] = now`を更新する
 - つまり、カードをかざし続けても1枚分しか増えず、一度外して（1.5秒以上）またかざすと増える
 

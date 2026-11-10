@@ -55,16 +55,16 @@ type Maze = {
 type Position = { layer: number; y: number; x: number };
 
 type EditError =
-	| "START_CANNOT_BE_OVERWRITTEN" // スタートの上に別の道具を塗ろうとした
-	| "GOAL_CANNOT_BE_OVERWRITTEN" // ゴールの上に別の道具を塗ろうとした
-	| "NO_LAYER_ABOVE" // 最上階にうえへテレポート
-	| "NO_LAYER_BELOW" // 1階にしたへテレポート
-	| "TELEPORT_TARGET_BLOCKED" // テレポートの行き先のマスが壁・穴・テレポート
-	| "IS_TELEPORT_TARGET" // 隣の階のテレポートの行き先のマスに壁・穴・テレポートを塗ろうとした
-	| "MAX_LAYERS" // 3階より上に足そうとした
-	| "MIN_LAYERS" // 1階を減らそうとした
-	| "LAYER_HAS_START_OR_GOAL" // 減らす階にスタートかゴールがある
-	| "LAYER_IS_TELEPORT_TARGET"; // 減らす階が、下の階のうえへテレポートの行き先
+	| "startCannotBeOverwritten" // スタートの上に別の道具を塗ろうとした
+	| "goalCannotBeOverwritten" // ゴールの上に別の道具を塗ろうとした
+	| "noLayerAbove" // 最上階にうえへテレポート
+	| "noLayerBelow" // 1階にしたへテレポート
+	| "teleportTargetBlocked" // テレポートの行き先のマスが壁・穴・テレポート
+	| "isTeleportTarget" // 隣の階のテレポートの行き先のマスに壁・穴・テレポートを塗ろうとした
+	| "maxLayers" // 3階より上に足そうとした
+	| "minLayers" // 1階を減らそうとした
+	| "layerHasStartOrGoal" // 減らす階にスタートかゴールがある
+	| "layerIsTeleportTarget"; // 減らす階が、下の階のうえへテレポートの行き先
 
 type EditResult = { ok: true; maze: Maze } | { ok: false; reason: EditError };
 
@@ -109,7 +109,7 @@ declare function removeTopLayer(maze: Maze): EditResult;
 
 カメラは同じQRを1秒間に何度も読み取るので、次の規則で1回分だけ追加します。
 
-- `shouldAccept(text, now, lastSeenAt)`: 同じ中身のQRが最後に見えてから1500ms以上たっていれば受け付ける（ProgPathの学校での実証と同じ値）
+- `isNewScan(text, now, lastSeenAt)`: 同じ中身のQRが最後に見えてから1500ms以上たっていれば受け付ける（ProgPathの学校での実証と同じ値）
 - 読み取るたびに`lastSeenAt[text] = now`を更新する
 - つまり、カードをかざし続けても1枚分しか増えず、一度外して（1.5秒以上）またかざすと増える
 
@@ -143,14 +143,14 @@ type Program = Command[];
 
 差し込み位置（`Cursor`）は「どの`body`の何番目に入れるか」を表す`path`です。最初は一番外側の末尾にあります。
 
-| 操作                             | すること                                                                                                                     |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| 前・右・左・うめるを読み取った   | 差し込み位置にその命令を入れ、差し込み位置をその直後に進める                                                                 |
-| くりかえすを読み取った           | `{ type: "repeat", times: 2, body: [] }`を入れ、差し込み位置をその`body`の先頭に移す（回数の初期値は2）                      |
-| くりかえし終わりを読み取った     | 差し込み位置がくりかえしの`body`の中なら、そのくりかえしの直後に移す。中でなければ何もせず文言を出す（`END_OUTSIDE_REPEAT`） |
-| カードの下の出っ張りをタップした | 差し込み位置をそのカードの直後（同じ`body`の中）に移す。くりかえしの`body`の末尾にも出っ張りがあり、中の末尾を選べる         |
-| ゴミ箱をタップした               | その命令を消す。くりかえしなら`body`ごと消す。差し込み位置がその中にあれば、消した場所に移す                                 |
-| くりかえしの回数を変えた         | `times`を2〜10の中で変える（モーダルの「＜」「＞」。2で「＜」、10で「＞」を押せなくする）                                    |
+| 操作                             | すること                                                                                                                   |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 前・右・左・うめるを読み取った   | 差し込み位置にその命令を入れ、差し込み位置をその直後に進める                                                               |
+| くりかえすを読み取った           | `{ type: "repeat", times: 2, body: [] }`を入れ、差し込み位置をその`body`の先頭に移す（回数の初期値は2）                    |
+| くりかえし終わりを読み取った     | 差し込み位置がくりかえしの`body`の中なら、そのくりかえしの直後に移す。中でなければ何もせず文言を出す（`endOutsideRepeat`） |
+| カードの下の出っ張りをタップした | 差し込み位置をそのカードの直後（同じ`body`の中）に移す。くりかえしの`body`の末尾にも出っ張りがあり、中の末尾を選べる       |
+| ゴミ箱をタップした               | その命令を消す。くりかえしなら`body`ごと消す。差し込み位置がその中にあれば、消した場所に移す                               |
+| くりかえしの回数を変えた         | `times`を2〜10の中で変える（モーダルの「＜」「＞」。2で「＜」、10で「＞」を押せなくする）                                  |
 
 ```ts
 type Cursor = number[]; // 入れる場所。[1, 0]は「2つ目の命令のbodyの先頭」
@@ -239,26 +239,27 @@ declare function compile(maze: Maze, program: Program): CompileResult;
 | 最後の命令まで実行してもゴールにいない | `notReached`（失敗）                                                               |
 
 - `compile`は元の`maze`を書き換えない（埋めた穴と取った鍵はコンパイルの中だけの状態）
+- `compile`は最初に`validateMaze`を呼び、通らない迷路は呼び出し側の誤りとして例外にする（結果の値では返さない）
 - 鍵が0個の迷路では、ゴールに着けばそのまま`goal`
 - 鍵が残ったままゴールを通り抜けることはできない（ゴールを`floor`として扱わない）。鍵を先に取らせたい迷路は、ゴールの手前に鍵を置いて作る
-- 失敗した命令は、`steps`の最後の要素の`path`で分かる
+- `bump`と`fall`では、失敗した命令は`steps`の最後の要素の`path`で分かる。`tooLong`は200ターン目まで実行して止めるので、最後の要素は原因の命令ではない
 
 ### 児童画面の文言
 
 `{n}`は原因のカードの番号（1始まり。`path`から`commandIndex`で求める）。文言は児童画面に出すもので、漢字は小学6年生までのもの、ルビは`<ruby>`で書く（[README.md](README.md#文言のルール)）。「枚」「壁」「鍵」は小学校で習わないのでひらがな。
 
-| 結果                 | 児童画面の文言                                                                                                                                                            |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `goal`               | ゴールに<ruby>着<rt>つ</rt></ruby>いた！                                                                                                                                  |
-| `bump`               | {n}まい<ruby>目<rt>め</rt></ruby>のカードで、かべにぶつかったよ。<ruby>赤<rt>あか</rt></ruby>いカードのあたりを<ruby>見直<rt>みなお</rt></ruby>そう                       |
-| `fall`               | {n}まい<ruby>目<rt>め</rt></ruby>のカードで、<ruby>穴<rt>あな</rt></ruby>に<ruby>落<rt>お</rt></ruby>ちたよ。「<ruby>穴<rt>あな</rt></ruby>をうめる」カードでうめられるよ |
-| `notReached`         | カードが<ruby>全部<rt>ぜんぶ</rt></ruby><ruby>終<rt>お</rt></ruby>わったけど、ゴールに<ruby>着<rt>つ</rt></ruby>いていないよ。カードを<ruby>足<rt>た</rt></ruby>そう      |
-| `missingKeys`        | かぎを<ruby>全部<rt>ぜんぶ</rt></ruby><ruby>取<rt>と</rt></ruby>ってからゴールしよう                                                                                      |
-| `tooLong`            | <ruby>動<rt>うご</rt></ruby>きが<ruby>多<rt>おお</rt></ruby>すぎるよ。「くりかえす」の<ruby>回数<rt>かいすう</rt></ruby>を<ruby>見直<rt>みなお</rt></ruby>そう            |
-| `tooManyCards`       | この<ruby>問題<rt>もんだい</rt></ruby>では、カードは{limit}まいまでだよ                                                                                                   |
-| `tooManyCommands`    | カードが<ruby>多<rt>おお</rt></ruby>すぎるよ。{limit}<ruby>個<rt>こ</rt></ruby>までにしてね                                                                               |
-| `tooDeep`            | 「くりかえす」の<ruby>中<rt>なか</rt></ruby>の「くりかえす」は、{limit}つまでだよ                                                                                         |
-| `END_OUTSIDE_REPEAT` | 「くりかえし<ruby>終<rt>お</rt></ruby>わり」は、「くりかえす」の<ruby>中<rt>なか</rt></ruby>でだけ<ruby>使<rt>つか</rt></ruby>えるよ                                      |
+| 結果               | 児童画面の文言                                                                                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `goal`             | ゴールに<ruby>着<rt>つ</rt></ruby>いた！                                                                                                                                  |
+| `bump`             | {n}まい<ruby>目<rt>め</rt></ruby>のカードで、かべにぶつかったよ。<ruby>赤<rt>あか</rt></ruby>いカードのあたりを<ruby>見直<rt>みなお</rt></ruby>そう                       |
+| `fall`             | {n}まい<ruby>目<rt>め</rt></ruby>のカードで、<ruby>穴<rt>あな</rt></ruby>に<ruby>落<rt>お</rt></ruby>ちたよ。「<ruby>穴<rt>あな</rt></ruby>をうめる」カードでうめられるよ |
+| `notReached`       | カードが<ruby>全部<rt>ぜんぶ</rt></ruby><ruby>終<rt>お</rt></ruby>わったけど、ゴールに<ruby>着<rt>つ</rt></ruby>いていないよ。カードを<ruby>足<rt>た</rt></ruby>そう      |
+| `missingKeys`      | かぎを<ruby>全部<rt>ぜんぶ</rt></ruby><ruby>取<rt>と</rt></ruby>ってからゴールしよう                                                                                      |
+| `tooLong`          | <ruby>動<rt>うご</rt></ruby>きが<ruby>多<rt>おお</rt></ruby>すぎるよ。「くりかえす」の<ruby>回数<rt>かいすう</rt></ruby>を<ruby>見直<rt>みなお</rt></ruby>そう            |
+| `tooManyCards`     | この<ruby>問題<rt>もんだい</rt></ruby>では、カードは{limit}まいまでだよ                                                                                                   |
+| `tooManyCommands`  | カードが<ruby>多<rt>おお</rt></ruby>すぎるよ。{limit}<ruby>個<rt>こ</rt></ruby>までにしてね                                                                               |
+| `tooDeep`          | 「くりかえす」の<ruby>中<rt>なか</rt></ruby>の「くりかえす」は、{limit}つまでだよ                                                                                         |
+| `endOutsideRepeat` | 「くりかえし<ruby>終<rt>お</rt></ruby>わり」は、「くりかえす」の<ruby>中<rt>なか</rt></ruby>でだけ<ruby>使<rt>つか</rt></ruby>えるよ                                      |
 
 `tooManyCards`以下は大きさ（`validateProgram`）か編集の失敗なので、サーバーへ送らずに「つくる」のまま表示します。
 

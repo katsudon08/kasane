@@ -233,7 +233,7 @@
 
 - 結果
   - ゴール: 「ゴールに<ruby>着<rt>つ</rt></ruby>いた！」、主ボタン「<ruby>次<rt>つぎ</rt></ruby>の<ruby>問題<rt>もんだい</rt></ruby>に<ruby>進<rt>すす</rt></ruby>む」（最後の問題なら「ホームにもどる」）。じぶんのめいろでは主ボタンは「ホームにもどる」
-  - 失敗: 止まったカードを赤くし、理由と次の行動を表示（[domain.md](domain.md#児童画面の文言)）、主ボタン「プログラムを<ruby>直<rt>なお</rt></ruby>す」（カードの並びを残したまま「つくる」へ戻る）
+  - 失敗: 理由と次の行動を表示（[domain.md](domain.md#児童画面の文言)）。`bump`と`fall`のときだけ、止まったカードを赤くする（文言がカードの番号を使う失敗だけ。`tooLong`などは最後に実行したカードが原因ではないため）。主ボタン「プログラムを<ruby>直<rt>なお</rt></ruby>す」（カードの並びを残したまま「つくる」へ戻る）
 
 - 動かしている途中で「つくる」へ戻る方法は置かない。戻れるのは結果が出て「プログラムを<ruby>直<rt>なお</rt></ruby>す」を押したときだけ（止めたいときは一時停止で止め、「次に進む」で結果まで進める）
 
@@ -255,18 +255,18 @@
 
 置けない・減らせないときの文言（`EditError`ごと）:
 
-| `EditError`                   | 文言                                                                                                                                                                                                                                                                 |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `START_CANNOT_BE_OVERWRITTEN` | スタートはここにあるよ。<ruby>動<rt>うご</rt></ruby>かすときは、スタートの<ruby>道具<rt>どうぐ</rt></ruby>で<ruby>別<rt>べつ</rt></ruby>のマスをタップしてね                                                                                                         |
-| `GOAL_CANNOT_BE_OVERWRITTEN`  | ゴールはここにあるよ。<ruby>動<rt>うご</rt></ruby>かすときは、ゴールの<ruby>道具<rt>どうぐ</rt></ruby>で<ruby>別<rt>べつ</rt></ruby>のマスをタップしてね                                                                                                             |
-| `NO_LAYER_ABOVE`              | ここは<ruby>一番上<rt>いちばんうえ</rt></ruby>の<ruby>階<rt>かい</rt></ruby>だから、<ruby>上<rt>うえ</rt></ruby>へのテレポートは<ruby>置<rt>お</rt></ruby>けないよ。<ruby>階<rt>かい</rt></ruby>を<ruby>足<rt>た</rt></ruby>してから<ruby>置<rt>お</rt></ruby>いてね |
-| `NO_LAYER_BELOW`              | ここは1<ruby>階<rt>かい</rt></ruby>だから、<ruby>下<rt>した</rt></ruby>へのテレポートは<ruby>置<rt>お</rt></ruby>けないよ                                                                                                                                            |
-| `TELEPORT_TARGET_BLOCKED`     | テレポートの<ruby>先<rt>さき</rt></ruby>がかべか<ruby>穴<rt>あな</rt></ruby>かテレポートになっているよ。<ruby>先<rt>さき</rt></ruby>のマスをゆかにしてから<ruby>置<rt>お</rt></ruby>いてね                                                                           |
-| `IS_TELEPORT_TARGET`          | このマスはテレポートの<ruby>行<rt>い</rt></ruby>き<ruby>先<rt>さき</rt></ruby>だよ。ここにはかべ・<ruby>穴<rt>あな</rt></ruby>・テレポートを<ruby>置<rt>お</rt></ruby>けないよ                                                                                       |
-| `MAX_LAYERS`                  | <ruby>階<rt>かい</rt></ruby>は3<ruby>階<rt>かい</rt></ruby>までだよ                                                                                                                                                                                                  |
-| `MIN_LAYERS`                  | 1<ruby>階<rt>かい</rt></ruby>は<ruby>減<rt>へ</rt></ruby>らせないよ                                                                                                                                                                                                  |
-| `LAYER_HAS_START_OR_GOAL`     | この<ruby>階<rt>かい</rt></ruby>にはスタートかゴールがあるから<ruby>減<rt>へ</rt></ruby>らせないよ。<ruby>先<rt>さき</rt></ruby>に<ruby>別<rt>べつ</rt></ruby>の<ruby>階<rt>かい</rt></ruby>へ<ruby>動<rt>うご</rt></ruby>かしてね                                   |
-| `LAYER_IS_TELEPORT_TARGET`    | <ruby>下<rt>した</rt></ruby>の<ruby>階<rt>かい</rt></ruby>からこの<ruby>階<rt>かい</rt></ruby>へのテレポートがあるから<ruby>減<rt>へ</rt></ruby>らせないよ。<ruby>先<rt>さき</rt></ruby>にそのテレポートをゆかにしてね                                               |
+| `EditError`                | 文言                                                                                                                                                                                                                                                                 |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `startCannotBeOverwritten` | スタートはここにあるよ。<ruby>動<rt>うご</rt></ruby>かすときは、スタートの<ruby>道具<rt>どうぐ</rt></ruby>で<ruby>別<rt>べつ</rt></ruby>のマスをタップしてね                                                                                                         |
+| `goalCannotBeOverwritten`  | ゴールはここにあるよ。<ruby>動<rt>うご</rt></ruby>かすときは、ゴールの<ruby>道具<rt>どうぐ</rt></ruby>で<ruby>別<rt>べつ</rt></ruby>のマスをタップしてね                                                                                                             |
+| `noLayerAbove`             | ここは<ruby>一番上<rt>いちばんうえ</rt></ruby>の<ruby>階<rt>かい</rt></ruby>だから、<ruby>上<rt>うえ</rt></ruby>へのテレポートは<ruby>置<rt>お</rt></ruby>けないよ。<ruby>階<rt>かい</rt></ruby>を<ruby>足<rt>た</rt></ruby>してから<ruby>置<rt>お</rt></ruby>いてね |
+| `noLayerBelow`             | ここは1<ruby>階<rt>かい</rt></ruby>だから、<ruby>下<rt>した</rt></ruby>へのテレポートは<ruby>置<rt>お</rt></ruby>けないよ                                                                                                                                            |
+| `teleportTargetBlocked`    | テレポートの<ruby>先<rt>さき</rt></ruby>がかべか<ruby>穴<rt>あな</rt></ruby>かテレポートになっているよ。<ruby>先<rt>さき</rt></ruby>のマスをゆかにしてから<ruby>置<rt>お</rt></ruby>いてね                                                                           |
+| `isTeleportTarget`         | このマスはテレポートの<ruby>行<rt>い</rt></ruby>き<ruby>先<rt>さき</rt></ruby>だよ。ここにはかべ・<ruby>穴<rt>あな</rt></ruby>・テレポートを<ruby>置<rt>お</rt></ruby>けないよ                                                                                       |
+| `maxLayers`                | <ruby>階<rt>かい</rt></ruby>は3<ruby>階<rt>かい</rt></ruby>までだよ                                                                                                                                                                                                  |
+| `minLayers`                | 1<ruby>階<rt>かい</rt></ruby>は<ruby>減<rt>へ</rt></ruby>らせないよ                                                                                                                                                                                                  |
+| `layerHasStartOrGoal`      | この<ruby>階<rt>かい</rt></ruby>にはスタートかゴールがあるから<ruby>減<rt>へ</rt></ruby>らせないよ。<ruby>先<rt>さき</rt></ruby>に<ruby>別<rt>べつ</rt></ruby>の<ruby>階<rt>かい</rt></ruby>へ<ruby>動<rt>うご</rt></ruby>かしてね                                   |
+| `layerIsTeleportTarget`    | <ruby>下<rt>した</rt></ruby>の<ruby>階<rt>かい</rt></ruby>からこの<ruby>階<rt>かい</rt></ruby>へのテレポートがあるから<ruby>減<rt>へ</rt></ruby>らせないよ。<ruby>先<rt>さき</rt></ruby>にそのテレポートをゆかにしてね                                               |
 
 ### 迷路の2D（エディタとミニマップで共通）
 

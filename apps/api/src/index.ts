@@ -5,7 +5,8 @@ import { env } from "./config/env";
 import { errorHandler } from "./presentation/middlewares/error-handler";
 
 export const app = new Elysia()
-	.use(cors({ origin: env.TEACHER_ORIGIN }))
+	// 教師アプリと児童アプリの二つのオリジンだけを許可する
+	.use(cors({ origin: [env.TEACHER_ORIGIN, env.STUDENT_ORIGIN] }))
 	.use(errorHandler)
 	.get("/health", () => "OK")
 	.ws("/ws", {

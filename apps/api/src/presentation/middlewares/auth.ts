@@ -58,3 +58,5 @@ export const auth = ({ identifyTeacher, identifyStudent }: AuthDeps) =>
 			},
 		},
 	});
+
+export type Auth = ReturnType<typeof auth>;

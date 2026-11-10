@@ -32,6 +32,9 @@ import { teacherController } from "./presentation/controllers/teacher";
 import { auth as createAuth } from "./presentation/middlewares/auth";
 import { errorHandler } from "./presentation/middlewares/error-handler";
 
+// 本文の大きさの上限。正しい本文は最大でも約4KB（命令100個のプログラム）なので、その4倍の16KB
+const MAX_REQUEST_BODY_BYTES = 16 * 1024;
+
 type AppDeps = {
 	db: NodePgDatabase;
 };
@@ -51,7 +54,8 @@ export const createApp = ({ db }: AppDeps) => {
 
 	return (
 		// 知らない項目を黙って取り除く機能（normalize）は使わない。入力はスキーマで落とし、応答はハンドラが項目を選んで組む
-		new Elysia({ normalize: false })
+		// 上限を超える本文は、サーバーが読み込む前に413で返す（本人の特定や検証より先）
+		new Elysia({ normalize: false, serve: { maxRequestBodySize: MAX_REQUEST_BODY_BYTES } })
 			// 教師アプリと児童アプリの二つのオリジンだけを許可する
 			.use(cors({ origin: [env.TEACHER_ORIGIN, env.STUDENT_ORIGIN] }))
 			.use(errorHandler)

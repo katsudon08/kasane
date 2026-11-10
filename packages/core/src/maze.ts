@@ -42,15 +42,15 @@ export const DIRECTION_VECTORS: Readonly<Record<Direction, readonly [number, num
 
 export type MazeError =
 	// 正方形でない、または階ごとに大きさが違う
-	| "NOT_SQUARE"
+	| "notSquare"
 	// startが全階を合わせてちょうど一つでない
-	| "START_COUNT"
+	| "startCount"
 	// goalが全階を合わせてちょうど一つでない
-	| "GOAL_COUNT"
+	| "goalCount"
 	// teleportUpの上の階、teleportDownの下の階がない
-	| "TELEPORT_NO_LAYER"
+	| "teleportNoLayer"
 	// テレポートの行き先のマスが壁・穴・テレポート
-	| "TELEPORT_TARGET_BLOCKED";
+	| "teleportTargetBlocked";
 
 export type ValidateMazeResult = { ok: true } | { ok: false; reason: MazeError };
 
@@ -86,10 +86,10 @@ function findTeleportError(layers: Cell[][][]): MazeError | undefined {
 			for (const [x, cell] of row.entries()) {
 				if (cell !== TELEPORT_UP && cell !== TELEPORT_DOWN) continue;
 				const targetLayer = layers[cell === TELEPORT_UP ? layerIndex + 1 : layerIndex - 1];
-				if (targetLayer === undefined) return "TELEPORT_NO_LAYER";
+				if (targetLayer === undefined) return "teleportNoLayer";
 				const target = targetLayer[y]?.[x];
 				if (target === undefined || TELEPORT_BLOCKERS.has(target)) {
-					return "TELEPORT_TARGET_BLOCKED";
+					return "teleportTargetBlocked";
 				}
 			}
 		}
@@ -103,9 +103,9 @@ function findTeleportError(layers: Cell[][][]): MazeError | undefined {
  */
 export function validateMaze(maze: Maze): ValidateMazeResult {
 	const { layers } = maze;
-	if (!isSquare(layers)) return { ok: false, reason: "NOT_SQUARE" };
-	if (countCells(layers, START) !== 1) return { ok: false, reason: "START_COUNT" };
-	if (countCells(layers, GOAL) !== 1) return { ok: false, reason: "GOAL_COUNT" };
+	if (!isSquare(layers)) return { ok: false, reason: "notSquare" };
+	if (countCells(layers, START) !== 1) return { ok: false, reason: "startCount" };
+	if (countCells(layers, GOAL) !== 1) return { ok: false, reason: "goalCount" };
 	const teleportError = findTeleportError(layers);
 	if (teleportError !== undefined) return { ok: false, reason: teleportError };
 	return { ok: true };

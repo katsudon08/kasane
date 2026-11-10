@@ -37,25 +37,25 @@ describe("validateMaze", () => {
 	});
 
 	describe("正方形で、すべての階が同じ大きさ", () => {
-		test("行の数と列の数が違えばNOT_SQUARE", () => {
+		test("行の数と列の数が違えばnotSquare", () => {
 			const layer = layerOf(5, [
 				[0, 0, START],
 				[0, 1, GOAL],
 			]);
 			const maze = mazeOf([layer.slice(0, 4)]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "NOT_SQUARE" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "notSquare" });
 		});
 
-		test("行ごとにマスの数が違えばNOT_SQUARE", () => {
+		test("行ごとにマスの数が違えばnotSquare", () => {
 			const layer = layerOf(5, [
 				[0, 0, START],
 				[0, 1, GOAL],
 			]);
 			layer[2] = [WALL, WALL, WALL, WALL];
-			expect(validateMaze(mazeOf([layer]))).toEqual({ ok: false, reason: "NOT_SQUARE" });
+			expect(validateMaze(mazeOf([layer]))).toEqual({ ok: false, reason: "notSquare" });
 		});
 
-		test("階ごとに大きさが違えばNOT_SQUARE", () => {
+		test("階ごとに大きさが違えばnotSquare", () => {
 			const maze = mazeOf([
 				layerOf(5, [
 					[0, 0, START],
@@ -63,17 +63,17 @@ describe("validateMaze", () => {
 				]),
 				layerOf(6, []),
 			]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "NOT_SQUARE" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "notSquare" });
 		});
 	});
 
 	describe("startとgoalが、全階を合わせてそれぞれちょうど一つ", () => {
-		test("startがなければSTART_COUNT", () => {
+		test("startがなければstartCount", () => {
 			const maze = mazeOf([layerOf(5, [[0, 1, GOAL]])]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "START_COUNT" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "startCount" });
 		});
 
-		test("startが別の階にもあればSTART_COUNT", () => {
+		test("startが別の階にもあればstartCount", () => {
 			const maze = mazeOf([
 				layerOf(5, [
 					[0, 0, START],
@@ -81,15 +81,15 @@ describe("validateMaze", () => {
 				]),
 				layerOf(5, [[4, 4, START]]),
 			]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "START_COUNT" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "startCount" });
 		});
 
-		test("goalがなければGOAL_COUNT", () => {
+		test("goalがなければgoalCount", () => {
 			const maze = mazeOf([layerOf(5, [[0, 0, START]])]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "GOAL_COUNT" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "goalCount" });
 		});
 
-		test("goalが二つあればGOAL_COUNT", () => {
+		test("goalが二つあればgoalCount", () => {
 			const maze = mazeOf([
 				layerOf(5, [
 					[0, 0, START],
@@ -97,7 +97,7 @@ describe("validateMaze", () => {
 					[4, 4, GOAL],
 				]),
 			]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "GOAL_COUNT" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "goalCount" });
 		});
 	});
 
@@ -107,14 +107,14 @@ describe("validateMaze", () => {
 			[0, 1, GOAL],
 		];
 
-		test("teleportUpがいちばん上の階にあればTELEPORT_NO_LAYER", () => {
+		test("teleportUpがいちばん上の階にあればteleportNoLayer", () => {
 			const maze = mazeOf([layerOf(5, [...base, [2, 2, TELEPORT_UP]])]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "TELEPORT_NO_LAYER" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "teleportNoLayer" });
 		});
 
-		test("teleportDownが1階にあればTELEPORT_NO_LAYER", () => {
+		test("teleportDownが1階にあればteleportNoLayer", () => {
 			const maze = mazeOf([layerOf(5, [...base, [2, 2, TELEPORT_DOWN]]), layerOf(5, [])]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "TELEPORT_NO_LAYER" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "teleportNoLayer" });
 		});
 
 		test.each<[string, Cell]>([
@@ -122,18 +122,18 @@ describe("validateMaze", () => {
 			["hole", HOLE],
 			["teleportUp", TELEPORT_UP],
 			["teleportDown", TELEPORT_DOWN],
-		])("teleportUpの同じ行・列の上の階が%sならTELEPORT_TARGET_BLOCKED", (_name, target) => {
+		])("teleportUpの同じ行・列の上の階が%sならteleportTargetBlocked", (_name, target) => {
 			const maze = mazeOf([
 				layerOf(5, [...base, [2, 2, TELEPORT_UP]]),
 				layerOf(5, [[2, 2, target]]),
 				layerOf(5, []),
 			]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "TELEPORT_TARGET_BLOCKED" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "teleportTargetBlocked" });
 		});
 
-		test("teleportDownの同じ行・列の下の階がwallならTELEPORT_TARGET_BLOCKED", () => {
+		test("teleportDownの同じ行・列の下の階がwallならteleportTargetBlocked", () => {
 			const maze = mazeOf([layerOf(5, base), layerOf(5, [[2, 2, TELEPORT_DOWN]])]);
-			expect(validateMaze(maze)).toEqual({ ok: false, reason: "TELEPORT_TARGET_BLOCKED" });
+			expect(validateMaze(maze)).toEqual({ ok: false, reason: "teleportTargetBlocked" });
 		});
 
 		test.each<[string, Cell]>([

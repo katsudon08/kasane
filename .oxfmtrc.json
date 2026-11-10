@@ -1,6 +1,6 @@
 {
 	"$schema": "./node_modules/oxfmt/configuration_schema.json",
-	"ignorePatterns": ["**/routeTree.gen.ts", "**/database/migrations/**"],
+	"ignorePatterns": ["**/routeTree.gen.ts", "**/database/migrations/**", ".katsudon08/**"],
 	"sortImports": true,
 	"useTabs": true
 }

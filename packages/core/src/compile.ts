@@ -1,6 +1,7 @@
 /*
  * コンパイル（仕様書domain.mdの「コンパイル（compile）」）
- * 木構造と迷路から、ロボットが各ターンにどこにいるかを計算する。validateMazeを通った迷路を前提にする
+ * 木構造と迷路から、ロボットが各ターンにどこにいるかを計算する
+ * 最初にvalidateMazeを呼び、通らない迷路は呼び出し側の誤りとして例外にする
  */
 
 import type { Cell, Direction, Maze } from "./maze";
@@ -14,6 +15,7 @@ import {
 	TELEPORT_DOWN,
 	TELEPORT_UP,
 	WALL,
+	validateMaze,
 } from "./maze";
 import type { Command, Program } from "./program";
 
@@ -83,7 +85,8 @@ function findStart(layers: Cell[][][]): { layer: number; y: number; x: number } 
 			if (x !== -1) return { layer, y, x };
 		}
 	}
-	throw new Error("迷路にstartのマスがない（validateMazeを通していない）");
+	// validateMazeを通った後なので、ここには来ない
+	throw new Error("迷路にstartのマスがない");
 }
 
 function countKeys(layers: Cell[][][]): number {
@@ -212,6 +215,9 @@ function run(state: State, commands: readonly Command[], basePath: number[]): Ou
 }
 
 export function compile(maze: Maze, program: Program): CompileResult {
+	// 確認を忘れた呼び出しで、間違った結果が正常な結果のように返るのを防ぐ
+	const validation = validateMaze(maze);
+	if (!validation.ok) throw new Error(`迷路が正しくない（${validation.reason}）`);
 	const layers = maze.layers.map((rows) => rows.map((row) => [...row]));
 	const start = findStart(layers);
 	const state: State = {

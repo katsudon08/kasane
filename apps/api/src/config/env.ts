@@ -5,6 +5,7 @@ export const env = createEnv({
 	server: {
 		DATABASE_URL: z.url(),
 		TEACHER_ORIGIN: z.url(),
+		STUDENT_ORIGIN: z.url(),
 	},
 	runtimeEnv: process.env,
 });

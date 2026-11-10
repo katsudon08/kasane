@@ -1,2 +1,6 @@
 # Bunは自動で環境変数を読み込んでしまうので、dotenv経由での読み込みにするために設定する
 env = false
+
+[test]
+# テストの前に一度だけ、テスト用DBにマイグレーションを当てる
+preload = ["./src/infrastructure/database/migrate-test-database.ts"]

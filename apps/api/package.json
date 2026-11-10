@@ -16,6 +16,7 @@
 	},
 	"dependencies": {
 		"@elysia/cors": "catalog:",
+		"@kasane/core": "workspace:*",
 		"@t3-oss/env-core": "catalog:",
 		"drizzle-orm": "catalog:",
 		"elysia": "catalog:",

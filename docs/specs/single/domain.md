@@ -239,6 +239,7 @@ declare function compile(maze: Maze, program: Program): CompileResult;
 | 最後の命令まで実行してもゴールにいない | `notReached`（失敗）                                                               |
 
 - `compile`は元の`maze`を書き換えない（埋めた穴と取った鍵はコンパイルの中だけの状態）
+- `compile`は最初に`validateMaze`を呼び、通らない迷路は呼び出し側の誤りとして例外にする（結果の値では返さない）
 - 鍵が0個の迷路では、ゴールに着けばそのまま`goal`
 - 鍵が残ったままゴールを通り抜けることはできない（ゴールを`floor`として扱わない）。鍵を先に取らせたい迷路は、ゴールの手前に鍵を置いて作る
 - `bump`と`fall`では、失敗した命令は`steps`の最後の要素の`path`で分かる。`tooLong`は200ターン目まで実行して止めるので、最後の要素は原因の命令ではない

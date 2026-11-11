@@ -48,6 +48,8 @@ catalog:
   wait-on: ^9.5.1
   wscat: ^6.1.0
   zod: ^4.6.5
+  # QR読み取りのWASMを自前で配信する（児童用）。@yudiel/react-qr-scannerが使うbarcode-detectorが固定している版と同じにする
+  zxing-wasm: 3.1.6
   "@elysia/cors": ^1.4.2
   "@playwright/test": ^1.65.0
 

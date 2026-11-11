@@ -9,6 +9,10 @@ import { theme } from "./app/theme";
 import { ErrorPage } from "./pages/error";
 import { routeTree } from "./routeTree.gen";
 import { StudentAccessLost } from "./shared/api";
+import { serveQrWasmFromSelf } from "./shared/lib/qr-wasm";
+
+// どの画面でQRを読み取るときも、WASMを外部から読み込まない
+serveQrWasmFromSelf();
 
 /*
  * 描画中の例外は、パスなしレイアウト（/joinと/ended以外）で受け止める（仕様書README.mdの「うまく動かなかったときの受け止め」）

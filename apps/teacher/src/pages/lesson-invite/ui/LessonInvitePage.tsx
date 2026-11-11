@@ -3,13 +3,12 @@
  * プロジェクターや大型テレビに映す前提で、授業QRを画面いっぱいに出す
  * サーバーと通信するのは教師用のSSEだけで、参加した児童の数を数える。QRの中身は画面側だけで作る
  */
-import { Alert, Center, Group, Stack, Title } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 
-import { useLessonEvents } from "../../../entities/lesson";
+import { DisconnectedBanner, LessonEndedNotice, useLessonEvents } from "../../../entities/lesson";
 import { env } from "../../../shared/config";
 import { Button } from "../../../shared/ui/button";
-import { Loader } from "../../../shared/ui/loader";
 import { QRCode } from "../../../shared/ui/qrcode";
 import { Text } from "../../../shared/ui/text";
 
@@ -21,29 +20,14 @@ export function LessonInvitePage({ lessonId }: Props) {
 	const navigate = useNavigate();
 	const { students, ended, disconnectedLong } = useLessonEvents(lessonId);
 
-	if (ended) {
-		return (
-			<Center h="100dvh">
-				<Stack align="center" gap="lg">
-					<Title order={1}>この授業は終わっています</Title>
-					<Button size="xl" onClick={() => void navigate({ to: "/" })}>
-						ホームへ戻る
-					</Button>
-				</Stack>
-			</Center>
-		);
-	}
+	if (ended) return <LessonEndedNotice />;
 
 	const joinUrl = new URL("/join", env.VITE_STUDENT_ORIGIN);
 	joinUrl.searchParams.set("lesson", lessonId);
 
 	return (
 		<Stack h="100dvh" gap={0}>
-			{disconnectedLong && (
-				<Alert color="yellow" radius={0} icon={<Loader size="sm" type="oval" color="yellow" />}>
-					<Text>つながっていません。つなぎ直しています</Text>
-				</Alert>
-			)}
+			{disconnectedLong && <DisconnectedBanner />}
 			<Stack flex={1} align="center" justify="center" gap="lg" p="lg">
 				<QRCode
 					value={joinUrl.href}

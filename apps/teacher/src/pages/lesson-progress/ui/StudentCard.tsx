@@ -5,11 +5,11 @@
  */
 import { TUTORIALS } from "@kasane/core";
 import { Card, Group, Progress, Stack } from "@mantine/core";
+import { CircleCheck, CircleMinus, CircleX, Star } from "lucide-react";
 import { memo } from "react";
 
 import { tutorialProgress, type StudentStatus } from "../../../entities/lesson";
 import { Text } from "../../../shared/ui/text";
-import { FailedIcon, NotSentIcon, StarIcon, SucceededIcon } from "./icons";
 
 type Props = {
 	name: string;
@@ -17,10 +17,11 @@ type Props = {
 	lastResult: StudentStatus["lastResult"];
 };
 
+// 状態は色だけで伝えず、アイコンの形も変える（仕様書README.mdの「見た目と操作のルール」）
 const RESULTS = {
-	notSent: { label: "まだ送っていない", color: "gray.7", Icon: NotSentIcon },
-	succeeded: { label: "成功", color: "green.8", Icon: SucceededIcon },
-	failed: { label: "失敗", color: "red.8", Icon: FailedIcon },
+	notSent: { label: "まだ送っていない", color: "gray.7", Icon: CircleMinus },
+	succeeded: { label: "成功", color: "green.8", Icon: CircleCheck },
+	failed: { label: "失敗", color: "red.8", Icon: CircleX },
 } as const;
 
 export const StudentCard = memo(function StudentCard({ name, clearedCount, lastResult }: Props) {
@@ -36,7 +37,7 @@ export const StudentCard = memo(function StudentCard({ name, clearedCount, lastR
 				</Text>
 				{progress.allCleared ? (
 					<Group gap="xs" c="yellow.7" wrap="nowrap">
-						<StarIcon />
+						<Star fill="currentColor" aria-hidden />
 						<Text c="dark" fw={700}>
 							チュートリアルをすべてクリア
 						</Text>
@@ -48,7 +49,7 @@ export const StudentCard = memo(function StudentCard({ name, clearedCount, lastR
 					</Stack>
 				)}
 				<Group gap="xs" c={result.color} wrap="nowrap">
-					<result.Icon />
+					<result.Icon aria-hidden />
 					<Text fw={700}>{result.label}</Text>
 				</Group>
 			</Stack>

@@ -32,9 +32,35 @@ jobs:
       - run: mise run build
   e2e:
     runs-on: ubuntu-latest
+    services:
+      # E2EのAPIがつなぐDB。手元でつなぐNeonと同じメジャーバージョンにする
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: kasane
+          POSTGRES_PASSWORD: kasane
+          POSTGRES_DB: kasane
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U kasane"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
+      # 開発サーバーが読む環境変数のファイルを書き出す。DBはこのジョブの中だけのコンテナなので、秘密の値はない
+      - name: Write env files
+        run: |
+          cat > apps/api/.env.local <<'EOF'
+          DATABASE_URL=postgres://kasane:kasane@localhost:5432/kasane
+          TEACHER_ORIGIN=http://localhost:5174
+          STUDENT_ORIGIN=http://localhost:5173
+          EOF
+          echo "VITE_API_ORIGIN=http://localhost:3000" > apps/teacher/.env.local
+          echo "VITE_API_ORIGIN=http://localhost:3000" > apps/student/.env.local
+      - run: pnpm --filter @kasane/api drizzle-kit:dev migrate
       - run: pnpm exec playwright install --with-deps chromium
       - run: mise run e2e
       # 失敗した画面を確かめられるように、レポートとスクリーンショットを残す

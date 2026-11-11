@@ -3,10 +3,10 @@
  * カメラ映像を大きく出し、授業QRを読み取ったら、ニックネームを入れる画面（/join?lesson=）へ移る
  * 画面を離れるとScannerが外れて、カメラが止まる
  */
-import { Container, Stack, Title } from "@mantine/core";
+import { Box, Container, Stack, Title } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 import { Scanner } from "@yudiel/react-qr-scanner";
-import type { IDetectedBarcode } from "@yudiel/react-qr-scanner";
+import type { IDetectedBarcode, IScannerStyles } from "@yudiel/react-qr-scanner";
 import { useState } from "react";
 
 import { FailureMessage } from "../../../shared/ui/failure-message";
@@ -23,6 +23,17 @@ const CONSTRAINTS: MediaTrackConstraints = {
 };
 
 const SCAN_INTERVAL_MS = 300;
+
+/*
+ * 部品の既定は横幅いっぱいの正方形で、横長の画面では縦にはみ出す
+ * 見出しと文言の残りの高さいっぱいに映す（枠に合わせて映像の端を切る）
+ */
+const SCANNER_STYLES: IScannerStyles = {
+	container: { position: "absolute", inset: 0, width: "auto", height: "auto", aspectRatio: "auto" },
+};
+
+// とても低い画面でも、QRコードが写る大きさは残す（そのときだけ縦に送る）
+const MIN_CAMERA_HEIGHT = 240;
 
 type Props = {
 	// URLの授業のIDが正しくなかった、または参加しようとして授業が見つからなかった
@@ -46,8 +57,9 @@ export function LessonScanner({ invalidLesson }: Props) {
 	};
 
 	return (
-		<Container size="md" py="xl">
-			<Stack gap="lg">
+		// 画面の縦幅に収める。カメラは見出しと文言の残りの高さを使う
+		<Container size="md" py="xl" h="100dvh">
+			<Stack gap="lg" h="100%">
 				<Title order={1}>
 					<ruby>
 						先生<rt>せんせい</rt>
@@ -103,17 +115,23 @@ export function LessonScanner({ invalidLesson }: Props) {
 						いてね
 					</FailureMessage>
 				)}
-				<Scanner
-					onScan={handleScan}
-					onError={() => setCameraUnavailable(true)}
-					formats={["qr_code"]}
-					constraints={CONSTRAINTS}
-					// QRの読み取り間隔（仕様書backend.mdの「性能」のカメラ）
-					retryDelay={SCAN_INTERVAL_MS}
-					// 部品の既定のライトのボタンは小さく、名前が英語なので出さない
-					components={{ torch: false }}
-					sound={false}
-				/>
+				<Box pos="relative" flex={1} mih={MIN_CAMERA_HEIGHT}>
+					<Scanner
+						onScan={handleScan}
+						onError={() => setCameraUnavailable(true)}
+						formats={["qr_code"]}
+						constraints={CONSTRAINTS}
+						// QRの読み取り間隔（仕様書backend.mdの「性能」のカメラ）
+						retryDelay={SCAN_INTERVAL_MS}
+						/*
+						 * 部品の既定のライトのボタンは小さく、名前が英語なので出さない
+						 * 狙いの枠は横幅から決まる正方形で、横長の画面では上下が切れるので出さない（映像全体で読み取る）
+						 */
+						components={{ torch: false, finder: false }}
+						sound={false}
+						styles={SCANNER_STYLES}
+					/>
+				</Box>
 			</Stack>
 		</Container>
 	);

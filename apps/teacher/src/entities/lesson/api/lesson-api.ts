@@ -50,7 +50,7 @@ export async function createLesson(): Promise<string> {
 
 /*
  * 授業を終える。もう終わっていた（410）・見つからない（404）ときも、終えたときと同じくホームへ戻ればよいので失敗にしない
- * 終わった授業は開いている授業の一覧から消える
+ * 終えた授業は、次に取り直した開いている授業の一覧に入らない
  */
 export async function closeLesson(lessonId: string): Promise<void> {
 	const { error } = await withTeacherToken((headers) =>

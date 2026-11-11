@@ -33,6 +33,10 @@ export function LessonProgressPage({ lessonId }: Props) {
 		mutationFn: () => closeLesson(lessonId),
 		onSuccess: async () => {
 			queryClient.setQueryData(lessonQueries.detail(lessonId).queryKey, { ended: true });
+			// ホームに戻った直後に、取り直しを待たずに終えた授業を一覧から消しておく
+			queryClient.setQueryData(lessonQueries.open().queryKey, (lessons) =>
+				lessons?.filter((lesson) => lesson.lessonId !== lessonId),
+			);
 			void queryClient.invalidateQueries({ queryKey: lessonQueries.open().queryKey });
 			await navigate({ to: "/" });
 		},
@@ -51,7 +55,14 @@ export function LessonProgressPage({ lessonId }: Props) {
 			<Container size="xl" w="100%" py="xl">
 				<Stack gap="xl">
 					<Group justify="space-between" align="center">
-						<Box>{title !== null && <Title order={1}>{title}</Title>}</Box>
+						<Box>
+							{title !== null && <Title order={1}>{title}</Title>}
+							{lesson.isError && (
+								<Text c="red">
+									授業を始めた時刻を読み込めませんでした。インターネットにつながっているか確かめて、ページを読み込み直してください
+								</Text>
+							)}
+						</Box>
 						<Group gap="md">
 							<Button
 								variant="default"
@@ -62,7 +73,15 @@ export function LessonProgressPage({ lessonId }: Props) {
 							>
 								QRコードをもう一度表示する
 							</Button>
-							<Button variant="default" size="lg" onClick={() => setConfirmingClose(true)}>
+							<Button
+								variant="default"
+								size="lg"
+								onClick={() => {
+									// 前に失敗したときの文言を、開き直したダイアログに残さない
+									close.reset();
+									setConfirmingClose(true);
+								}}
+							>
 								授業を終える
 							</Button>
 						</Group>
@@ -94,10 +113,11 @@ export function LessonProgressPage({ lessonId }: Props) {
 				onClose={() => setConfirmingClose(false)}
 				title="授業を終えますか"
 				size="lg"
+				closeButtonProps={{ "aria-label": "閉じる" }}
 			>
 				<Stack gap="lg">
 					<Text>
-						授業を終えると、児童のタブレットの画面は「授業がおわりました」に変わり、この授業の続きはできなくなります
+						授業を終えると、児童のタブレットに「この授業は終わりました」と表示され、この授業の続きはできなくなります
 					</Text>
 					{close.isError && (
 						<Text c="red">

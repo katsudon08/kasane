@@ -459,6 +459,9 @@ importers:
 
   apps/teacher:
     dependencies:
+      '@kasane/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@kasane/lib-client':
         specifier: workspace:*
         version: link:../../packages/lib-client

@@ -7,3 +7,5 @@ import type { App } from "@kasane/api";
  * 名前（児童の名前・迷路の名前）も日時の形なら変わってしまい、画面に文字として描けなくなる
  */
 export const createClient = (url: string) => treaty<App>(url, { parseDate: false });
+
+export { canReconnectNow, reconnectDelayMs, sleep, waitUntilReconnectable } from "./reconnect";

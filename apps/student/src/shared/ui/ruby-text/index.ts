@@ -1,0 +1,1 @@
+export { RubyText } from "./RubyText";

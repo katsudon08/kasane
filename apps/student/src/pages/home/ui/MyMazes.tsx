@@ -1,0 +1,81 @@
+/*
+ * ホームの「自分の迷路」（仕様書README.mdの「ホーム」）
+ * チュートリアルを全部クリアするまでは灰色＋鍵で、一覧を取りに行かない（canCreateMazeが真になってからGET /me/mazes）
+ * 全部クリアした後は、更新が新しい順に左上から右下へ並べる
+ */
+import { Card, SimpleGrid, Text } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
+import { Lock } from "lucide-react";
+
+import { StudentAccessLost } from "../../../shared/api";
+import { OfflineNotice } from "../../../shared/ui/failure-message";
+import { mazeQueries } from "../api/maze-api";
+
+import classes from "./HomePage.module.css";
+
+type Props = {
+	// canCreateMaze(clearedCount)
+	unlocked: boolean;
+};
+
+export function MyMazes({ unlocked }: Props) {
+	if (!unlocked) {
+		return (
+			<div className={classes.mazesLocked}>
+				<Lock aria-hidden size={40} />
+				<Text>
+					<ruby>
+						問題<rt>もんだい</rt>
+					</ruby>
+					を
+					<ruby>
+						全部<rt>ぜんぶ</rt>
+					</ruby>
+					クリアすると
+					<ruby>
+						作<rt>つく</rt>
+					</ruby>
+					れるよ
+				</Text>
+			</div>
+		);
+	}
+	return <MazeList />;
+}
+
+function MazeList() {
+	const mazes = useQuery(mazeQueries.list());
+
+	// 授業を続けられないとき（401・410）は、/joinか/endedへ移るので何も出さない
+	if (mazes.isPending || mazes.error instanceof StudentAccessLost) return null;
+	if (mazes.isError) return <OfflineNotice onRetry={() => void mazes.refetch()} />;
+
+	// まだ一つも作っていない間を、全部クリアした直後として目立たせる
+	if (mazes.data.length === 0) {
+		return (
+			<div className={`${classes.mazes} ${classes.mazesHighlighted}`}>
+				<Text>
+					まだ
+					<ruby>
+						迷路<rt>めいろ</rt>
+					</ruby>
+					がないよ。
+					<ruby>
+						作<rt>つく</rt>
+					</ruby>
+					ってみよう
+				</Text>
+			</div>
+		);
+	}
+	return (
+		<SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} className={classes.mazes}>
+			{mazes.data.map(({ mazeId, name }) => (
+				<Card key={mazeId} withBorder padding="md" radius="lg">
+					{/* 児童が入れた名前は、テキストとして描く */}
+					<Text fw={700}>{name}</Text>
+				</Card>
+			))}
+		</SimpleGrid>
+	);
+}

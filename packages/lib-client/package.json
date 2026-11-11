@@ -7,13 +7,15 @@
 		".": "./src/index.ts"
 	},
 	"scripts": {
-		"typecheck": "tsc"
+		"typecheck": "tsc",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@elysia/eden": "catalog:"
 	},
 	"devDependencies": {
 		"@kasane/api": "workspace:*",
-		"elysia": "catalog:"
+		"elysia": "catalog:",
+		"vitest": "catalog:"
 	}
 }

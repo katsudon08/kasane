@@ -1,0 +1,22 @@
+/*
+ * 児童画面のフォント（Klee One、SIL OFL。ライセンスはfonts/OFL.txt）
+ * 教科書体に近い形で、児童が習う字の形に合わせる（仕様書README.mdの「見た目と操作のルール」）
+ * 学校のネットワークは外部に出られない前提なので、ファイルをビルドに含めて配る
+ * 元のTTF（github.com/google/fontsのofl/kleeone）をwoff2に変えただけで、字の範囲は削っていない（児童の名前に何の字が来るか分からないため）
+ */
+@font-face {
+	font-family: "Klee One";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("./fonts/KleeOne-Regular.woff2") format("woff2");
+}
+
+/* 太字（部品の既定は700）にも、Klee Oneでいちばん太いSemiBoldを使う（ブラウザーに字を太らせない） */
+@font-face {
+	font-family: "Klee One";
+	font-style: normal;
+	font-weight: 600 700;
+	font-display: swap;
+	src: url("./fonts/KleeOne-SemiBold.woff2") format("woff2");
+}

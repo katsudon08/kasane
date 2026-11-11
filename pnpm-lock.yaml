@@ -302,6 +302,9 @@ catalogs:
     zod:
       specifier: ^4.6.5
       version: 4.6.7
+    zxing-wasm:
+      specifier: 3.1.6
+      version: 3.1.6
 
 importers:
 
@@ -392,6 +395,9 @@ importers:
 
   apps/student:
     dependencies:
+      '@kasane/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@kasane/lib-client':
         specifier: workspace:*
         version: link:../../packages/lib-client
@@ -407,12 +413,21 @@ importers:
       '@react-three/fiber':
         specifier: 'catalog:'
         version: 9.8.2(@types/react@19.3.0)(immer@10.2.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(three@0.186.1)
+      '@t3-oss/env-core':
+        specifier: 'catalog:'
+        version: 0.13.11(typescript@7.0.2)(zod@4.6.7)
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.105.2(@types/react@19.3.0)(react@19.3.1)
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@yudiel/react-qr-scanner':
         specifier: 'catalog:'
         version: 2.6.0(@types/emscripten@1.41.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.71.0(@types/react@19.3.0)(react@19.3.1)
       react:
         specifier: 'catalog:'
         version: 19.3.1
@@ -422,6 +437,12 @@ importers:
       three:
         specifier: 'catalog:'
         version: 0.186.1
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+      zxing-wasm:
+        specifier: 'catalog:'
+        version: 3.1.6(@types/emscripten@1.41.6)
     devDependencies:
       '@feature-sliced/steiger-plugin':
         specifier: 'catalog:'
@@ -554,6 +575,9 @@ importers:
       elysia:
         specifier: 'catalog:'
         version: 1.4.30(@sinclair/typebox@0.34.52)(@types/bun@1.4.4)(exact-mirror@1.2.6)(file-type@22.3.0)(openapi-types@12.1.3)(typescript@7.0.2)
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.5(@types/node@26.6.6)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/ui:
     devDependencies:

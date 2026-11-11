@@ -13,7 +13,8 @@
 
 .card {
 	display: flex;
-	flex: 0 0 136px;
+	/* 広い画面では7枚で横幅を分け合い、名前の折り返しを減らす。狭い画面では横に送る */
+	flex: 1 0 144px;
 	flex-direction: column;
 	align-items: center;
 	gap: 4px;

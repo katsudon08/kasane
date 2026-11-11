@@ -58,7 +58,7 @@ jobs:
           TEACHER_ORIGIN=http://localhost:5174
           STUDENT_ORIGIN=http://localhost:5173
           EOF
-          echo "VITE_API_ORIGIN=http://localhost:3000" > apps/teacher/.env.local
+          printf 'VITE_API_ORIGIN=http://localhost:3000\nVITE_STUDENT_ORIGIN=http://localhost:5173\n' > apps/teacher/.env.local
           echo "VITE_API_ORIGIN=http://localhost:3000" > apps/student/.env.local
       - run: pnpm --filter @kasane/api drizzle-kit:dev migrate
       - run: pnpm exec playwright install --with-deps chromium

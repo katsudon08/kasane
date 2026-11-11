@@ -12,7 +12,9 @@ export type FailureReason =
 	// チュートリアルが終わっていないのに迷路を作る
 	| "mazeLocked"
 	// 解放前のチュートリアルに挑戦する
-	| "tutorialLocked";
+	| "tutorialLocked"
+	// 授業の児童の数が上限に達している
+	| "lessonFull";
 
 export type Failure<Reason extends FailureReason> = {
 	readonly ok: false;

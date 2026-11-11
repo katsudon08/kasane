@@ -174,3 +174,4 @@ export const lessonEndedBody = errorBody("lessonEnded");
 export const invalidInputBody = errorBody("invalidInput");
 export const mazeLockedBody = errorBody("mazeLocked");
 export const tutorialLockedBody = errorBody("tutorialLocked");
+export const lessonFullBody = errorBody("lessonFull");

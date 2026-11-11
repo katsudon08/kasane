@@ -118,6 +118,7 @@ export const createApp = ({
 					replaceMaze: replaceMazeUseCase({ mazeRepository, attemptRepository }),
 					deleteMaze: deleteMazeUseCase({ mazeRepository }),
 					watchLessonAsStudent: watchLessonAsStudentUseCase({
+						lessonRepository,
 						lessonHub,
 						pingIntervalMs,
 						now,

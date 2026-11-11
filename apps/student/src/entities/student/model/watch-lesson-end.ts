@@ -3,14 +3,15 @@
  * （仕様書backend.mdの「サーバーからの知らせ（SSE）」「再接続」、README.mdの「画面遷移」の児童）
  * 児童の画面には、切れていることを何も出さない（受け取るのはendedだけで、プログラムの送信は切れていても使える）
  */
-import { StudentAccessLost, api, withStudentToken } from "../../../shared/api";
-import type { StudentAccessLostReason } from "../../../shared/api";
 import {
 	canReconnectNow,
 	reconnectDelayMs,
 	sleep,
 	waitUntilReconnectable,
-} from "../../../shared/lib/reconnect";
+} from "@kasane/lib-client";
+
+import { StudentAccessLost, api, withStudentToken } from "../../../shared/api";
+import type { StudentAccessLostReason } from "../../../shared/api";
 
 // 空の知らせは10秒未満ごとに届くはずなので、その2倍なにも届かなければ切れたとみなす
 const SILENCE_TIMEOUT_MS = 20_000;

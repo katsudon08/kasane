@@ -2,13 +2,14 @@
  * 教師用のSSE（GET /lessons/:lessonId/events）につなぎ、切れたらつなぎ直す
  * （仕様書backend.mdの「サーバーからの知らせ（SSE）」「再接続」）
  */
-import { api, withTeacherToken } from "../../../shared/api";
 import {
 	canReconnectNow,
 	reconnectDelayMs,
 	sleep,
 	waitUntilReconnectable,
-} from "../../../shared/lib/reconnect";
+} from "@kasane/lib-client";
+
+import { api, withTeacherToken } from "../../../shared/api";
 import type { LessonEvent } from "./types";
 
 // 空の知らせは10秒未満ごとに届くはずなので、その2倍なにも届かなければ切れたとみなす

@@ -67,7 +67,7 @@
 mise run check      # lint・format・FSDの依存チェック
 mise run typecheck
 mise run test
-mise run e2e        # Playwright。教師・児童の開発サーバーを自動で起動する
+mise run e2e        # Playwright。API・教師・児童の開発サーバーを自動で起動する（APIは`apps/api/.env.local`のDBにつなぐ）
 ```
 
 すべて通ってから完了を報告してください。報告には、仕様書のどの節を実装したかと、確かめられなかったこと（実機でしか分からないことなど）を書いてください。

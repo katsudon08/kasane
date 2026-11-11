@@ -32,6 +32,8 @@ catalog:
   oxlint: ^1.90.0
   oxlint-tsgolint: ^7.0.2005
   pg: ^8.23.1
+  # E2Eの偽カメラに映すQRの白黒の並びを作る（e2e/support/fake-camera.ts）
+  qrcode-generator: ^2.0.4
   qrcode.react: ^4.2.0
   react: ^19.3.0
   react-dom: ^19.3.0

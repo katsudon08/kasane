@@ -19,6 +19,7 @@
 		"oxfmt": "catalog:",
 		"oxlint": "catalog:",
 		"oxlint-tsgolint": "catalog:",
+		"qrcode-generator": "catalog:",
 		"storybook": "catalog:",
 		"turbo": "catalog:",
 		"typescript": "catalog:",

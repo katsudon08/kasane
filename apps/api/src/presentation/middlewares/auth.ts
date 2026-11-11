@@ -2,7 +2,9 @@
  * トークンから本人を特定するmacro（仕様書backend.mdの「アクセス制御」「エラーの応答」）
  * ルートに`teacher: true`を付けると`teacherId`が、`student: true`を付けると`studentId`・`lessonId`・`lessonEndsAt`がハンドラに渡る
  * 本人の特定はここだけで行い、各ルートはトークンを読まない
+ * 児童のトークンで呼ぶ口は授業が終わっていれば410なので、本人を特定した後に、ここ一か所で確かめる
  */
+import { isLessonEnded } from "@kasane/core";
 import { Elysia } from "elysia";
 
 import type { IdentifyStudent } from "../../application/usecases/identify-student";
@@ -21,6 +23,7 @@ export const parseBearerToken = (authorization: string | undefined): string | nu
 	authorization?.match(BEARER_PATTERN)?.[1] ?? null;
 
 const UNAUTHORIZED = { code: "unauthorized" } as const;
+const LESSON_ENDED = { code: "lessonEnded" } as const;
 
 export const auth = ({ identifyTeacher, identifyStudent }: AuthDeps) =>
 	new Elysia({ name: "auth" }).macro({
@@ -48,6 +51,9 @@ export const auth = ({ identifyTeacher, identifyStudent }: AuthDeps) =>
 				if (student === null) {
 					set.headers["www-authenticate"] = "Bearer";
 					return status(401, UNAUTHORIZED);
+				}
+				if (isLessonEnded({ endsAt: student.lessonEndsAt }, new Date())) {
+					return status(410, LESSON_ENDED);
 				}
 
 				return {

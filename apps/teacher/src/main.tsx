@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
-import { MantineProvider } from "@mantine/core";
+import "./app/styles/fonts.css";
+import { MantineProvider, createTheme } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
@@ -13,6 +14,10 @@ const router = createRouter({ routeTree, defaultErrorComponent: ErrorPage });
 
 const queryClient = new QueryClient();
 
+// 教師画面のフォントはBIZ UDPGothic（仕様書README.mdの「見た目と操作のルール」）
+const FONT_FAMILY = '"BIZ UDPGothic", sans-serif';
+const theme = createTheme({ fontFamily: FONT_FAMILY, headings: { fontFamily: FONT_FAMILY } });
+
 declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;
@@ -23,7 +28,7 @@ declare module "@tanstack/react-router" {
 const root = createRoot(document.getElementById("root")!);
 root.render(
 	<StrictMode>
-		<MantineProvider>
+		<MantineProvider theme={theme}>
 			<QueryClientProvider client={queryClient}>
 				<RouterProvider router={router} />
 			</QueryClientProvider>

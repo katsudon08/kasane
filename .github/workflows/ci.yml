@@ -58,10 +58,18 @@ jobs:
           TEACHER_ORIGIN=http://localhost:5174
           STUDENT_ORIGIN=http://localhost:5173
           EOF
-          echo "VITE_API_ORIGIN=http://localhost:3000" > apps/teacher/.env.local
+          printf 'VITE_API_ORIGIN=http://localhost:3000\nVITE_STUDENT_ORIGIN=http://localhost:5173\n' > apps/teacher/.env.local
           echo "VITE_API_ORIGIN=http://localhost:3000" > apps/student/.env.local
       - run: pnpm --filter @kasane/api drizzle-kit:dev migrate
-      - run: pnpm exec playwright install --with-deps chromium
+      # Chromium本体はPlaywrightの配信元から取るので、Ubuntuのミラーが落ちていても入る
+      - run: pnpm exec playwright install chromium
+      # Chromiumが使うパッケージ（ランナーのイメージで足りないのは、日本語などのフォントだけ）をaptで入れる
+      # Ubuntuのミラーにつながらないと1パッケージ20秒ずつ待って10分以上かかるので、3分で打ち切る
+      # 入らなくてもテストの判定は画面の文字（DOM）で行うので、E2Eは続ける。スクリーンショットの日本語が豆腐になるだけ
+      - name: Install system dependencies for Chromium
+        run: pnpm exec playwright install-deps chromium
+        timeout-minutes: 3
+        continue-on-error: true
       - run: mise run e2e
       # 失敗した画面を確かめられるように、レポートとスクリーンショットを残す
       - uses: actions/upload-artifact@v7

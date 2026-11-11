@@ -22,6 +22,7 @@ import {
 	invalidInputBody,
 	joinLessonInput,
 	lessonEndedBody,
+	lessonFullBody,
 	mazeIdBody,
 	mazeInput,
 	mazeLockedBody,
@@ -82,7 +83,12 @@ export const studentController = ({
 			{
 				transform: trimName,
 				body: joinLessonInput,
-				response: { 201: tokenBody, 404: notFoundBody, 410: lessonEndedBody },
+				response: {
+					201: tokenBody,
+					403: lessonFullBody,
+					404: notFoundBody,
+					410: lessonEndedBody,
+				},
 			},
 		)
 		.get("/me", async ({ studentId }) => getMe({ studentId }), {
@@ -216,7 +222,12 @@ export const studentController = ({
 		// サーバーからの知らせ（SSE）の、児童用の受け取り口。児童はトークンから授業が引けるので、パスにIDを持たない
 		.get(
 			"/me/events",
-			({ lessonId, lessonEndsAt }) => toSse(watchLessonAsStudent({ lessonId, lessonEndsAt })),
+			async ({ lessonId }) => {
+				const result = await watchLessonAsStudent({ lessonId });
+				if (!result.ok) return failure(result.reason);
+
+				return toSse(result.events);
+			},
 			// 200には応答スキーマを付けない（付けると、クライアントが知らせを1件ずつ受け取る型にならない）
-			{ student: true },
+			{ student: true, response: { 410: lessonEndedBody } },
 		);

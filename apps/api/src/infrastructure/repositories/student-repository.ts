@@ -1,10 +1,11 @@
 import { TUTORIALS } from "@kasane/core";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, count, eq, sql } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 import type { LastResult, StudentStatus } from "../../domain/entities/student-status";
 import type { StudentRepository } from "../../domain/repositories/student-repository";
+import { isLessonFull } from "../../domain/services/lesson-capacity";
 import { attempts, lessons, students } from "../database/schema";
 
 const toLastResult = (succeeded: boolean | null): LastResult => {
@@ -76,6 +77,17 @@ const findStatuses = async (
 
 export const studentRepository = (db: NodePgDatabase): StudentRepository => ({
 	async create(student) {
+		/*
+		 * 数えてから行を入れるまでに参加が重なると、上限を数人超えることがある
+		 * 際限なく増やさないことが目的なので、厳密には数えない（仕様書backend.mdの「入力の上限」）
+		 */
+		const [existing] = await db
+			.select({ studentCount: count() })
+			.from(students)
+			.where(eq(students.lessonId, student.lessonId));
+		if (!existing) throw new Error("児童の数が返されませんでした");
+		if (isLessonFull(existing.studentCount)) return null;
+
 		const [created] = await db
 			.insert(students)
 			.values(student)

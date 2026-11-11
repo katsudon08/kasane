@@ -93,6 +93,7 @@ describe("studentRepository", () => {
 				name: "はなこ",
 				tokenHash: "created-student-hash",
 			});
+			if (studentId === null) throw new Error("児童の行を作れませんでした");
 
 			const [row] = await db.select().from(students).where(eq(students.id, studentId));
 			expect(row).toMatchObject({ lessonId, name: "はなこ", tokenHash: "created-student-hash" });

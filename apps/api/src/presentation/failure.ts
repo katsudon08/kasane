@@ -13,6 +13,7 @@ const STATUS_OF = {
 	invalidInput: 422,
 	mazeLocked: 403,
 	tutorialLocked: 403,
+	lessonFull: 403,
 } as const satisfies Record<FailureReason, number>;
 
 // 失敗の理由ごとに、状態と本文の組を一つに決める（理由がユニオンのときも、組をまたがない）

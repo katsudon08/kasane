@@ -13,6 +13,7 @@ import type { GetMe } from "../../application/usecases/get-me";
 import type { JoinLesson } from "../../application/usecases/join-lesson";
 import type { ListMazes } from "../../application/usecases/list-mazes";
 import type { ReplaceMaze } from "../../application/usecases/replace-maze";
+import type { WatchLessonAsStudent } from "../../application/usecases/watch-lesson-as-student";
 import { failure } from "../failure";
 import type { Auth } from "../middlewares/auth";
 import {
@@ -32,6 +33,7 @@ import {
 	tutorialLockedBody,
 	tutorialParams,
 } from "../schemas";
+import { toSse } from "../sse";
 
 type StudentControllerDeps = {
 	auth: Auth;
@@ -43,6 +45,7 @@ type StudentControllerDeps = {
 	createMaze: CreateMaze;
 	replaceMaze: ReplaceMaze;
 	deleteMaze: DeleteMaze;
+	watchLessonAsStudent: WatchLessonAsStudent;
 };
 
 // 名前と迷路の名前は、前後の空白を削ってから検証する（Elysiaのtransformは検証の前に走る）
@@ -63,6 +66,7 @@ export const studentController = ({
 	createMaze,
 	replaceMaze,
 	deleteMaze,
+	watchLessonAsStudent,
 }: StudentControllerDeps) =>
 	new Elysia()
 		.use(auth)
@@ -92,9 +96,10 @@ export const studentController = ({
 				})
 				.post(
 					"/me/tutorials/:no/attempts",
-					async ({ studentId, params, body }) => {
+					async ({ studentId, lessonId, params, body }) => {
 						const result = await attemptTutorial({
 							studentId,
+							lessonId,
 							no: params.no,
 							program: body.program,
 						});
@@ -115,9 +120,10 @@ export const studentController = ({
 				)
 				.post(
 					"/me/mazes/:mazeId/attempts",
-					async ({ studentId, params, body }) => {
+					async ({ studentId, lessonId, params, body }) => {
 						const result = await attemptMaze({
 							studentId,
+							lessonId,
 							mazeId: params.mazeId,
 							program: body.program,
 						});
@@ -210,5 +216,12 @@ export const studentController = ({
 						params: mazeParams,
 						response: { 204: t.Void(), 404: notFoundBody, 410: lessonEndedBody },
 					},
+				)
+				// サーバーからの知らせ（SSE）の、児童用の受け取り口。児童はトークンから授業が引けるので、パスにIDを持たない
+				.get(
+					"/me/events",
+					({ lessonId, lessonEndsAt }) => toSse(watchLessonAsStudent({ lessonId, lessonEndsAt })),
+					// 200には応答スキーマを付けない（付けると、クライアントが知らせを1件ずつ受け取る型にならない）
+					{ response: { 410: lessonEndedBody } },
 				),
 		);

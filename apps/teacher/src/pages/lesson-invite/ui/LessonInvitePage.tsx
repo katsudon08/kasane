@@ -59,7 +59,8 @@ export function LessonInvitePage({ lessonId }: Props) {
 				<Group gap="xl">
 					<Text size="xl">
 						参加した児童:{" "}
-						<span key={students.size} className={classes.count}>
+						{/* 児童は減らないので、数が変わるのは増えたとき。0のまま開いたときは弾ませない */}
+						<span key={students.size} className={students.size > 0 ? classes.count : undefined}>
 							{students.size}
 						</span>
 					</Text>

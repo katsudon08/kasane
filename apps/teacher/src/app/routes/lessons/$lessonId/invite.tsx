@@ -8,5 +8,6 @@ export const Route = createFileRoute("/lessons/$lessonId/invite")({
 
 function RouteComponent() {
 	const { lessonId } = Route.useParams();
-	return <LessonInvitePage lessonId={lessonId} />;
+	// 別の授業へ移ったときに、前の授業の人数や終わった状態を持ち越さないよう作り直す
+	return <LessonInvitePage key={lessonId} lessonId={lessonId} />;
 }

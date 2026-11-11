@@ -18,7 +18,8 @@ export function HomePage() {
 	const start = useMutation({
 		mutationFn: createLesson,
 		onSuccess: async (lessonId) => {
-			await queryClient.invalidateQueries({ queryKey: lessonQueries.open().queryKey });
+			// 一覧の取り直しは待たずに、QRコードを見せる画面へ移る
+			void queryClient.invalidateQueries({ queryKey: lessonQueries.open().queryKey });
 			await navigate({ to: "/lessons/$lessonId/invite", params: { lessonId } });
 		},
 	});

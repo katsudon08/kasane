@@ -47,8 +47,11 @@ async function connectOnce(
 		const { data, status } = await withTeacherToken((headers) =>
 			api.lessons({ lessonId }).events.get({ headers, fetch: { signal: attempt.signal } }),
 		);
-		// 他人の授業・存在しない授業（404）、終わった授業（410）、授業のIDの形が正しくない（422）は、つないでも始まらない
-		if (status === 404 || status === 410 || status === 422) return "ended";
+		/*
+		 * 他人の授業・存在しない授業（404）、終わった授業（410）、授業のIDの形が正しくない（422）は、つないでも始まらない
+		 * 発行し直したトークンでも断られた（401）ときも止める。つなぎ直すたびに教師を作り直さないため
+		 */
+		if (status === 401 || status === 404 || status === 410 || status === 422) return "ended";
 		if (data === null) return "disconnected";
 
 		onOpen();

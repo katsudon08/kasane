@@ -8,6 +8,7 @@ import { Container, Stack, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 
 import { meQueries } from "../../../entities/student";
+import { StudentAccessLost } from "../../../shared/api";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { tutorialCardState } from "../lib/tutorial-card-state";
 import { MyMazes } from "./MyMazes";
@@ -19,7 +20,8 @@ export function HomePage() {
 	const me = useQuery(meQueries.me());
 
 	// 読み込み中は何も出さない（児童画面の動きを3か所に絞るため、回る印も出さない）
-	if (me.isPending) return null;
+	// 授業を続けられないとき（401・410）は、/joinか/endedへ移るので何も出さない
+	if (me.isPending || me.error instanceof StudentAccessLost) return null;
 	if (me.isError) {
 		return (
 			<Container size="lg" py="xl">

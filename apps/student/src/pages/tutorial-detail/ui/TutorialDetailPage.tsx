@@ -11,6 +11,7 @@ import { Link, Navigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
 import { meQueries } from "../../../entities/student";
+import { StudentAccessLost } from "../../../shared/api";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { RubyText } from "../../../shared/ui/ruby-text";
 import { tutorialOf } from "../lib/tutorial-of";
@@ -26,7 +27,8 @@ export function TutorialDetailPage({ noParam }: Props) {
 	const me = useQuery(meQueries.me());
 
 	if (tutorial === null) return <Navigate to="/" replace />;
-	if (me.isPending) return null;
+	// 授業を続けられないとき（401・410）は、/joinか/endedへ移るので何も出さない
+	if (me.isPending || me.error instanceof StudentAccessLost) return null;
 	if (me.isError) {
 		return (
 			<Container size="lg" py="xl">

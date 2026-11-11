@@ -22,6 +22,8 @@ const CONSTRAINTS: MediaTrackConstraints = {
 	height: { ideal: 720 },
 };
 
+const SCAN_INTERVAL_MS = 300;
+
 type Props = {
 	// URLの授業のIDが正しくなかった、または参加しようとして授業が見つからなかった
 	invalidLesson: boolean;
@@ -106,6 +108,10 @@ export function LessonScanner({ invalidLesson }: Props) {
 					onError={() => setCameraUnavailable(true)}
 					formats={["qr_code"]}
 					constraints={CONSTRAINTS}
+					// QRの読み取り間隔（仕様書backend.mdの「性能」のカメラ）
+					retryDelay={SCAN_INTERVAL_MS}
+					// 部品の既定のライトのボタンは小さく、名前が英語なので出さない
+					components={{ torch: false }}
 					sound={false}
 				/>
 			</Stack>

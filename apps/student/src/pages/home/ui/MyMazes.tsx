@@ -7,6 +7,7 @@ import { Card, SimpleGrid, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { Lock } from "lucide-react";
 
+import { StudentAccessLost } from "../../../shared/api";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { mazeQueries } from "../api/maze-api";
 
@@ -45,7 +46,8 @@ export function MyMazes({ unlocked }: Props) {
 function MazeList() {
 	const mazes = useQuery(mazeQueries.list());
 
-	if (mazes.isPending) return null;
+	// 授業を続けられないとき（401・410）は、/joinか/endedへ移るので何も出さない
+	if (mazes.isPending || mazes.error instanceof StudentAccessLost) return null;
 	if (mazes.isError) return <OfflineNotice onRetry={() => void mazes.refetch()} />;
 
 	// まだ一つも作っていない間を、全部クリアした直後として目立たせる

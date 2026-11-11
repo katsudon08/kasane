@@ -6,10 +6,15 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { theme } from "./app/theme";
+import { ErrorPage } from "./pages/error";
 import { routeTree } from "./routeTree.gen";
 import { StudentAccessLost } from "./shared/api";
 
-const router = createRouter({ routeTree });
+/*
+ * 描画中の例外は、パスなしレイアウト（/joinと/ended以外）で受け止める（仕様書README.mdの「うまく動かなかったときの受け止め」）
+ * /joinと/endedで起きたときも、ライブラリの既定の英語の画面ではなく、同じ受け止めの画面を出す
+ */
+const router = createRouter({ routeTree, defaultErrorComponent: ErrorPage });
 
 /*
  * どの操作でも、本人を特定できない（401）なら/joinへ、授業が終わっている（410）なら/endedへ移る

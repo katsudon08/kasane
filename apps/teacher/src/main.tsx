@@ -5,9 +5,11 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
+import { ErrorPage } from "./pages/error";
 import { routeTree } from "./routeTree.gen";
 
-const router = createRouter({ routeTree });
+// どのルートで例外が起きても、同じ受け止めの画面を出す
+const router = createRouter({ routeTree, defaultErrorComponent: ErrorPage });
 
 const queryClient = new QueryClient();
 

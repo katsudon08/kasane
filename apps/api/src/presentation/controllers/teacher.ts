@@ -9,6 +9,7 @@ import type { CreateLesson } from "../../application/usecases/create-lesson";
 import type { GetLesson } from "../../application/usecases/get-lesson";
 import type { ListOpenLessons } from "../../application/usecases/list-open-lessons";
 import type { RegisterTeacher } from "../../application/usecases/register-teacher";
+import type { WatchLessonAsTeacher } from "../../application/usecases/watch-lesson-as-teacher";
 import { failure } from "../failure";
 import type { Auth } from "../middlewares/auth";
 import {
@@ -20,6 +21,7 @@ import {
 	openLessonsBody,
 	tokenBody,
 } from "../schemas";
+import { toSse } from "../sse";
 
 type TeacherControllerDeps = {
 	auth: Auth;
@@ -28,6 +30,7 @@ type TeacherControllerDeps = {
 	listOpenLessons: ListOpenLessons;
 	getLesson: GetLesson;
 	closeLesson: CloseLesson;
+	watchLessonAsTeacher: WatchLessonAsTeacher;
 };
 
 export const teacherController = ({
@@ -37,6 +40,7 @@ export const teacherController = ({
 	listOpenLessons,
 	getLesson,
 	closeLesson,
+	watchLessonAsTeacher,
 }: TeacherControllerDeps) =>
 	new Elysia()
 		.use(auth)
@@ -95,5 +99,21 @@ export const teacherController = ({
 				teacher: true,
 				params: lessonParams,
 				response: { 204: t.Void(), 404: notFoundBody, 410: lessonEndedBody },
+			},
+		)
+		// サーバーからの知らせ（SSE）の、教師用の受け取り口。他人の授業・終わっている授業では、接続を始めない
+		.get(
+			"/lessons/:lessonId/events",
+			async ({ teacherId, params }) => {
+				const result = await watchLessonAsTeacher({ teacherId, lessonId: params.lessonId });
+				if (!result.ok) return failure(result.reason);
+
+				return toSse(result.events);
+			},
+			{
+				teacher: true,
+				params: lessonParams,
+				// 200には応答スキーマを付けない（付けると、クライアントが知らせを1件ずつ受け取る型にならない）
+				response: { 404: notFoundBody, 410: lessonEndedBody },
 			},
 		);

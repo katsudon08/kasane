@@ -1,8 +1,8 @@
 /*
  * 児童用のHTTPのAPI（仕様書backend.mdの「HTTPのAPI」の児童用）
  * トークンが要らないのは、本人の行を作るPOST /studentsだけ
+ * 他の口は`student: true`で本人を特定する。トークンが当たらなければ401、授業が終わっていれば410を、macroが返す
  */
-import { isLessonEnded } from "@kasane/core";
 import { Elysia, status, t } from "elysia";
 
 import type { AttemptMaze } from "../../application/usecases/attempt-maze";
@@ -13,6 +13,7 @@ import type { GetMe } from "../../application/usecases/get-me";
 import type { JoinLesson } from "../../application/usecases/join-lesson";
 import type { ListMazes } from "../../application/usecases/list-mazes";
 import type { ReplaceMaze } from "../../application/usecases/replace-maze";
+import type { WatchLessonAsStudent } from "../../application/usecases/watch-lesson-as-student";
 import { failure } from "../failure";
 import type { Auth } from "../middlewares/auth";
 import {
@@ -32,6 +33,7 @@ import {
 	tutorialLockedBody,
 	tutorialParams,
 } from "../schemas";
+import { toSse } from "../sse";
 
 type StudentControllerDeps = {
 	auth: Auth;
@@ -43,6 +45,7 @@ type StudentControllerDeps = {
 	createMaze: CreateMaze;
 	replaceMaze: ReplaceMaze;
 	deleteMaze: DeleteMaze;
+	watchLessonAsStudent: WatchLessonAsStudent;
 };
 
 // 名前と迷路の名前は、前後の空白を削ってから検証する（Elysiaのtransformは検証の前に走る）
@@ -63,6 +66,7 @@ export const studentController = ({
 	createMaze,
 	replaceMaze,
 	deleteMaze,
+	watchLessonAsStudent,
 }: StudentControllerDeps) =>
 	new Elysia()
 		.use(auth)
@@ -81,134 +85,138 @@ export const studentController = ({
 				response: { 201: tokenBody, 404: notFoundBody, 410: lessonEndedBody },
 			},
 		)
-		.guard({ student: true }, (app) =>
-			app
-				// 児童のトークンで呼ぶ口は、授業が終わっていれば410。本人の特定（macro）の後に、ここ一か所で確かめる
-				.onBeforeHandle(({ lessonEndsAt }) => {
-					if (isLessonEnded({ endsAt: lessonEndsAt }, new Date())) return failure("lessonEnded");
-				})
-				.get("/me", async ({ studentId }) => getMe({ studentId }), {
-					response: { 200: meBody, 410: lessonEndedBody },
-				})
-				.post(
-					"/me/tutorials/:no/attempts",
-					async ({ studentId, params, body }) => {
-						const result = await attemptTutorial({
-							studentId,
-							no: params.no,
-							program: body.program,
-						});
-						if (!result.ok) return failure(result.reason);
+		.get("/me", async ({ studentId }) => getMe({ studentId }), {
+			student: true,
+			response: { 200: meBody },
+		})
+		.post(
+			"/me/tutorials/:no/attempts",
+			async ({ studentId, lessonId, params, body }) => {
+				const result = await attemptTutorial({
+					studentId,
+					lessonId,
+					no: params.no,
+					program: body.program,
+				});
+				if (!result.ok) return failure(result.reason);
 
-						return status(201, result.result);
-					},
-					{
-						params: tutorialParams,
-						body: attemptInput,
-						response: {
-							201: compileResultBody,
-							403: tutorialLockedBody,
-							410: lessonEndedBody,
-							422: invalidInputBody,
-						},
-					},
-				)
-				.post(
-					"/me/mazes/:mazeId/attempts",
-					async ({ studentId, params, body }) => {
-						const result = await attemptMaze({
-							studentId,
-							mazeId: params.mazeId,
-							program: body.program,
-						});
-						if (!result.ok) return failure(result.reason);
+				return status(201, result.result);
+			},
+			{
+				student: true,
+				params: tutorialParams,
+				body: attemptInput,
+				response: {
+					201: compileResultBody,
+					403: tutorialLockedBody,
+					422: invalidInputBody,
+				},
+			},
+		)
+		.post(
+			"/me/mazes/:mazeId/attempts",
+			async ({ studentId, lessonId, params, body }) => {
+				const result = await attemptMaze({
+					studentId,
+					lessonId,
+					mazeId: params.mazeId,
+					program: body.program,
+				});
+				if (!result.ok) return failure(result.reason);
 
-						return status(201, result.result);
-					},
-					{
-						params: mazeParams,
-						body: attemptInput,
-						response: {
-							201: compileResultBody,
-							404: notFoundBody,
-							410: lessonEndedBody,
-							422: invalidInputBody,
-						},
-					},
-				)
-				.get(
-					"/me/mazes",
-					async ({ studentId }) => {
-						const mazes = await listMazes({ studentId });
+				return status(201, result.result);
+			},
+			{
+				student: true,
+				params: mazeParams,
+				body: attemptInput,
+				response: {
+					201: compileResultBody,
+					404: notFoundBody,
+					422: invalidInputBody,
+				},
+			},
+		)
+		.get(
+			"/me/mazes",
+			async ({ studentId }) => {
+				const mazes = await listMazes({ studentId });
 
-						return mazes.map(({ mazeId, name, data, updatedAt }) => ({
-							mazeId,
-							name,
-							data,
-							updatedAt: updatedAt.toISOString(),
-						}));
-					},
-					{ response: { 200: mazesBody, 410: lessonEndedBody } },
-				)
-				.post(
-					"/me/mazes",
-					async ({ studentId, body }) => {
-						// 保存する項目を選んで渡す（本文をそのまま渡さない）
-						const result = await createMaze({
-							studentId,
-							content: { name: body.name, data: body.data },
-						});
-						if (!result.ok) return failure(result.reason);
+				return mazes.map(({ mazeId, name, data, updatedAt }) => ({
+					mazeId,
+					name,
+					data,
+					updatedAt: updatedAt.toISOString(),
+				}));
+			},
+			{ student: true, response: { 200: mazesBody } },
+		)
+		.post(
+			"/me/mazes",
+			async ({ studentId, body }) => {
+				// 保存する項目を選んで渡す（本文をそのまま渡さない）
+				const result = await createMaze({
+					studentId,
+					content: { name: body.name, data: body.data },
+				});
+				if (!result.ok) return failure(result.reason);
 
-						return status(201, { mazeId: result.mazeId });
-					},
-					{
-						transform: trimName,
-						body: mazeInput,
-						response: {
-							201: mazeIdBody,
-							403: mazeLockedBody,
-							410: lessonEndedBody,
-							422: invalidInputBody,
-						},
-					},
-				)
-				.put(
-					"/me/mazes/:mazeId",
-					async ({ studentId, params, body }) => {
-						const result = await replaceMaze({
-							studentId,
-							mazeId: params.mazeId,
-							content: { name: body.name, data: body.data },
-						});
-						if (!result.ok) return failure(result.reason);
+				return status(201, { mazeId: result.mazeId });
+			},
+			{
+				student: true,
+				transform: trimName,
+				body: mazeInput,
+				response: {
+					201: mazeIdBody,
+					403: mazeLockedBody,
+					422: invalidInputBody,
+				},
+			},
+		)
+		.put(
+			"/me/mazes/:mazeId",
+			async ({ studentId, params, body }) => {
+				const result = await replaceMaze({
+					studentId,
+					mazeId: params.mazeId,
+					content: { name: body.name, data: body.data },
+				});
+				if (!result.ok) return failure(result.reason);
 
-						return status(204);
-					},
-					{
-						transform: trimName,
-						params: mazeParams,
-						body: mazeInput,
-						response: {
-							204: t.Void(),
-							403: mazeLockedBody,
-							404: notFoundBody,
-							410: lessonEndedBody,
-							422: invalidInputBody,
-						},
-					},
-				)
-				.delete(
-					"/me/mazes/:mazeId",
-					async ({ studentId, params }) => {
-						const result = await deleteMaze({ studentId, mazeId: params.mazeId });
-						if (!result.ok) return failure(result.reason);
+				return status(204);
+			},
+			{
+				student: true,
+				transform: trimName,
+				params: mazeParams,
+				body: mazeInput,
+				response: {
+					204: t.Void(),
+					403: mazeLockedBody,
+					404: notFoundBody,
+					422: invalidInputBody,
+				},
+			},
+		)
+		.delete(
+			"/me/mazes/:mazeId",
+			async ({ studentId, params }) => {
+				const result = await deleteMaze({ studentId, mazeId: params.mazeId });
+				if (!result.ok) return failure(result.reason);
 
-						return status(204);
-					},
-					{
-						params: mazeParams,
-						response: { 204: t.Void(), 404: notFoundBody, 410: lessonEndedBody },
-					},
-				),
+				return status(204);
+			},
+			{
+				student: true,
+				params: mazeParams,
+				response: { 204: t.Void(), 404: notFoundBody },
+			},
+		)
+		// サーバーからの知らせ（SSE）の、児童用の受け取り口。児童はトークンから授業が引けるので、パスにIDを持たない
+		.get(
+			"/me/events",
+			({ lessonId, lessonEndsAt }) => toSse(watchLessonAsStudent({ lessonId, lessonEndsAt })),
+			// 200には応答スキーマを付けない（付けると、クライアントが知らせを1件ずつ受け取る型にならない）
+			{ student: true },
 		);

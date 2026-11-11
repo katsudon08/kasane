@@ -3,24 +3,28 @@ import { TUTORIALS, compile, isTutorialUnlocked, validateProgram } from "@kasane
 
 import type { Failure } from "../../domain/entities/failure";
 import type { AttemptRepository } from "../../domain/repositories/attempt-repository";
+import type { NotifyStudentStatus } from "./notify-student-status";
 
 type AttemptTutorialDeps = {
 	attemptRepository: AttemptRepository;
+	notifyStudentStatus: NotifyStudentStatus;
 };
 
 type AttemptTutorialResult =
 	| { ok: true; result: CompileResult }
 	| Failure<"invalidInput" | "tutorialLocked">;
 
-// チュートリアルno（1から始まる番号）に挑戦する。compileして、記録を保存する
+// チュートリアルno（1から始まる番号）に挑戦する。compileして記録を保存し、その授業の教師へ児童の状態を送る
 export const attemptTutorialUseCase =
-	({ attemptRepository }: AttemptTutorialDeps) =>
+	({ attemptRepository, notifyStudentStatus }: AttemptTutorialDeps) =>
 	async ({
 		studentId,
+		lessonId,
 		no,
 		program,
 	}: {
 		studentId: string;
+		lessonId: string;
 		no: number;
 		program: Program;
 	}): Promise<AttemptTutorialResult> => {
@@ -42,6 +46,8 @@ export const attemptTutorialUseCase =
 			program,
 			succeeded: result.outcome === "goal",
 		});
+		// 記録が入ったことを確かめてから送る
+		await notifyStudentStatus({ lessonId, studentId });
 
 		return { ok: true, result };
 	};

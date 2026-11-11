@@ -144,6 +144,28 @@ export const compileResultBody = t.Object({
 	]),
 });
 
+// backend.mdのStudentStatus（教師に見せる児童の状態）
+export const studentStatusBody = t.Object({
+	studentId: t.String({ format: "uuid" }),
+	name: t.String(),
+	clearedCount: t.Integer({ minimum: 0, maximum: TUTORIALS.length }),
+	lastResult: t.Union([t.Literal("notSent"), t.Literal("succeeded"), t.Literal("failed")]),
+});
+
+// サーバーからの知らせ（SSE）。受け取り口が1件ずつ流す値で、テストが届いた知らせの形を確かめるのに使う
+const endedEvent = t.Object({ event: t.Literal("ended"), data: t.Null() });
+// 接続を切られないための空の知らせ
+const pingEvent = t.Object({ event: t.Literal("ping"), data: t.Null() });
+
+export const teacherEventBody = t.Union([
+	t.Object({ event: t.Literal("snapshot"), data: t.Array(studentStatusBody) }),
+	t.Object({ event: t.Literal("student"), data: studentStatusBody }),
+	endedEvent,
+	pingEvent,
+]);
+// 児童用には、他の児童の状態を流さない
+export const studentEventBody = t.Union([endedEvent, pingEvent]);
+
 // エラーは状態とコードだけを返し、画面に出す文言は返さない
 const errorBody = <Code extends string>(code: Code) => t.Object({ code: t.Literal(code) });
 

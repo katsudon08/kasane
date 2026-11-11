@@ -56,13 +56,24 @@ export const watchLessonAsTeacherUseCase = ({
 		teacherId: string;
 		lessonId: string;
 	}): Promise<WatchLessonAsTeacherResult> => {
-		const lesson = await lessonRepository.findByIdAndTeacher(lessonId, teacherId);
-		if (lesson === null) return { ok: false, reason: "notFound" };
-		if (isLessonEnded(lesson, now())) return { ok: false, reason: "lessonEnded" };
+		// 他の教師の授業・存在しない授業は、送り先に登録する前に返す（他人の授業の送り先に登録しない）
+		const owned = await lessonRepository.findByIdAndTeacher(lessonId, teacherId);
+		if (owned === null) return { ok: false, reason: "notFound" };
 
-		// 先に送り先に登録してから、全児童の状態を読む（逆の順番だと、その間の変化を取りこぼす）
-		const subscription = lessonHub.subscribeTeacher(lesson.lessonId);
+		// 先に送り先に登録してから、授業と全児童の状態を読む（逆の順番だと、その間の変化を取りこぼす）
+		const subscription = lessonHub.subscribeTeacher(owned.lessonId);
 		try {
+			/*
+			 * 授業が終わっていないことは、登録した後に読み直して確かめる
+			 * 登録の前に確かめるだけだと、確かめてから登録するまでの間に授業が終わったとき、endedを取りこぼす
+			 * 本人の授業であることは上で確かめたので、DBから読んだ授業のIDだけで引く
+			 */
+			const lesson = await lessonRepository.findById(owned.lessonId);
+			if (lesson === null || isLessonEnded(lesson, now())) {
+				subscription.close();
+				return { ok: false, reason: lesson === null ? "notFound" : "lessonEnded" };
+			}
+
 			/*
 			 * 全児童の状態は、知らせを流し始める前に読んでおく
 			 * 流し始めた後の失敗はエラーの応答にできないので、読めなければここで例外にする

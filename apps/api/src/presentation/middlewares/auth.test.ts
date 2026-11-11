@@ -21,7 +21,7 @@ const TEACHER_TOKEN = "T".repeat(43);
 const STUDENT_TOKEN = "S".repeat(43);
 const UNKNOWN_TOKEN = "U".repeat(43);
 
-const LESSON_ENDS_AT = new Date("2026-11-10T05:00:00.000Z");
+const LESSON_ENDS_AT = new Date("2999-12-31T00:00:00.000Z");
 
 const UNAUTHORIZED_BODY = { code: "unauthorized" };
 

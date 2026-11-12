@@ -1,0 +1,218 @@
+/*
+ * カードの並び（仕様書README.mdの「プログラムをつくる」「見た目と操作のルール」）
+ * - カードはジグソーパズルのピース。上のへこみに、上のカードの下の出っ張りがはまる形にする
+ * - タップできる部分は64px四方以上、文字は20px以上。ルビのぶん行が高くなるので、高さはルビ込みで決める
+ * - 状態は色だけで伝えず、枠の形とアイコンも添える
+ */
+.list {
+	--piece-bg: var(--mantine-color-blue-0);
+	--piece-border: var(--mantine-color-blue-4);
+	--repeat-bg: var(--mantine-color-yellow-0);
+	--repeat-border: var(--mantine-color-yellow-6);
+	--list-bg: var(--mantine-color-white);
+	/* 出っ張りは番号の下に置く。押せる範囲が、下のカードの番号（押せない）にだけ重なり、名前のボタンに重ならない */
+	--bump-left: 16px;
+	--bump-width: 64px;
+	--bump-height: 22px;
+	--indent: 36px;
+
+	display: flex;
+	flex-direction: column;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-xs) var(--mantine-spacing-xl);
+	background: var(--list-bg);
+}
+
+.row {
+	display: flex;
+	align-items: stretch;
+}
+
+/* 字下げの縦線（エディタのインデントの線） */
+.guide {
+	flex: 0 0 var(--indent);
+	margin-left: calc(var(--indent) / 2 - 2px);
+	margin-right: calc(-1 * (var(--indent) / 2 - 2px));
+	border-left: 4px solid var(--repeat-border);
+}
+
+.piece {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+}
+
+.card {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 72px;
+	/* 上の出っ張りがはまるへこみの分、上を空ける */
+	padding: 14px 4px 6px 12px;
+	border: 3px solid var(--piece-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--piece-bg);
+	font-size: var(--mantine-font-size-md);
+	line-height: 1.4;
+}
+
+/* 上のへこみ。並びの背景の色で欠けを描く */
+.card::before {
+	content: "";
+	position: absolute;
+	top: -3px;
+	left: var(--bump-left);
+	width: var(--bump-width);
+	height: calc(var(--bump-height) - 6px);
+	border: 3px solid var(--piece-border);
+	border-top: none;
+	border-radius: 0 0 var(--bump-width) var(--bump-width);
+	background: var(--list-bg);
+}
+
+.card[data-type="repeat"] {
+	--piece-bg: var(--repeat-bg);
+	--piece-border: var(--repeat-border);
+}
+
+/* 動かしている間の今のカード: 太い枠と光る縁 */
+.card[data-highlight="current"] {
+	--piece-border: var(--mantine-color-orange-6);
+
+	background: var(--mantine-color-orange-0);
+	box-shadow: 0 0 0 4px var(--mantine-color-orange-3);
+}
+
+/* 止まったカード（ぶつかった・落ちた）: 赤 */
+.card[data-highlight="failed"] {
+	--piece-border: var(--mantine-color-red-7);
+
+	background: var(--mantine-color-red-0);
+	box-shadow: 0 0 0 4px var(--mantine-color-red-3);
+}
+
+/* 読み取ったカードが、差し込み位置に飛び込む */
+.card[data-arrived="true"] {
+	animation: fly-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+@keyframes fly-in {
+	from {
+		opacity: 0;
+		transform: translateX(-48px) scale(0.6);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card[data-arrived="true"] {
+		animation: none;
+	}
+}
+
+.number {
+	flex: 0 0 auto;
+	min-width: 60px;
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 700;
+	text-align: center;
+}
+
+.mark {
+	flex: 0 0 auto;
+}
+
+.name {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	min-height: 64px;
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+.times {
+	flex: 0 0 auto;
+	min-width: 72px;
+	min-height: 64px;
+	padding: 0 12px;
+	border: 3px solid var(--repeat-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 700;
+	line-height: 1.2;
+	text-align: center;
+}
+
+.name:disabled,
+.times:disabled {
+	cursor: default;
+	opacity: 1;
+}
+
+/*
+ * 下の出っ張り（「ここに入れる」ボタン）
+ * 見た目は半円の出っ張りで、下のカードのへこみに重なる。押せる範囲は見た目より広げて64px以上にする
+ */
+.bump {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--bump-width);
+	height: var(--bump-height);
+	margin: -3px 0 calc(-1 * var(--bump-height) + 3px) var(--bump-left);
+	padding: 0;
+	border: 3px solid var(--piece-border);
+	border-top: none;
+	border-radius: 0 0 var(--bump-width) var(--bump-width);
+	background: var(--piece-bg);
+	color: var(--piece-border);
+	cursor: pointer;
+}
+
+.bump::after {
+	content: "";
+	position: absolute;
+	inset: -22px 0 -22px;
+}
+
+.bump:disabled {
+	cursor: default;
+}
+
+/* 差し込み位置: 青の塗りつぶしと太い枠 */
+.bump[data-active="true"] {
+	z-index: 2;
+	border: 4px solid var(--mantine-color-blue-9);
+	background: var(--mantine-color-blue-6);
+	color: var(--mantine-color-white);
+}
+
+/* カードに付かない出っ張りの土台。開いたくりかえしの終わりの縁 */
+.blockEnd {
+	height: 14px;
+	border: 3px solid var(--repeat-border);
+	border-radius: 0 0 var(--mantine-radius-md) var(--mantine-radius-md);
+	background: var(--repeat-bg);
+	--piece-bg: var(--repeat-bg);
+}
+
+/* 空のbody・空の並びの、入れる場所 */
+.space {
+	height: 8px;
+}
+
+.piece:has(> .blockEnd) {
+	--piece-bg: var(--repeat-bg);
+	--piece-border: var(--repeat-border);
+}
+
+/* 前のピースの出っ張りがはまる分、次のピースを下げる */
+.row + .row {
+	margin-top: 6px;
+}

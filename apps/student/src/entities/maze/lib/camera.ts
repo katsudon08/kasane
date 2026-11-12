@@ -7,6 +7,9 @@ import type { Vec3 } from "./scene-layout";
 
 export type Bounds = { center: Vec3; radius: number };
 
+// カメラの縦の視野角（度）
+export const CAMERA_FOV = 40;
+
 // 「1F」の文字の板の中心から端までの長さ。文字の中心のまわりにこのぶん球を大きくする
 const LABEL_RADIUS = 0.9;
 

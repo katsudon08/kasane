@@ -2,20 +2,16 @@
  * もんだいのしょうさい（仕様書README.mdの「もんだいのしょうさい / じぶんのめいろのしょうさい」）
  * 見出しは「{番号}. {名前}」、左に「もどる」の矢印（ホームへ）
  * 番号が正しくない・まだ解けない問題（isTutorialUnlockedが偽）なら、ホームへ移る。チュートリアルは定数なので通信しない
- * 画面の大部分に迷路の3D。「この迷路で遊ぶ」はタスク12で足す
+ * 画面の大部分に迷路の3D。その下に主ボタン「この迷路で遊ぶ」
  */
-import { isTutorialUnlocked } from "@kasane/core";
-import { ActionIcon, Container, Group, Stack, Title } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
+import { ActionIcon, Button, Container, Group, Stack, Title } from "@mantine/core";
 import { Link, Navigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
 import { MazeScene } from "../../../entities/maze";
-import { meQueries } from "../../../entities/student";
-import { StudentAccessLost } from "../../../shared/api";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { RubyText } from "../../../shared/ui/ruby-text";
-import { tutorialOf } from "../lib/tutorial-of";
+import { useTutorial } from "../model/use-tutorial";
 
 type Props = {
 	// URLの$noの値
@@ -23,22 +19,19 @@ type Props = {
 };
 
 export function TutorialDetailPage({ noParam }: Props) {
-	const tutorial = tutorialOf(noParam);
-	// クリア数はホームで読み込んだGET /meのキャッシュから読む
-	const me = useQuery(meQueries.me());
+	const access = useTutorial(noParam);
 
-	if (tutorial === null) return <Navigate to="/" replace />;
-	// 授業を続けられないとき（401・410）は、/joinか/endedへ移るので何も出さない
-	if (me.isPending || me.error instanceof StudentAccessLost) return null;
-	if (me.isError) {
+	if (access.kind === "home") return <Navigate to="/" replace />;
+	if (access.kind === "hidden") return null;
+	if (access.kind === "offline") {
 		return (
 			<Container size="lg" py="xl">
-				<OfflineNotice onRetry={() => void me.refetch()} />
+				<OfflineNotice onRetry={access.retry} />
 			</Container>
 		);
 	}
-	if (!isTutorialUnlocked(tutorial.no, me.data.clearedCount)) return <Navigate to="/" replace />;
 
+	const { tutorial } = access;
 	return (
 		<Container size="lg" py="xl">
 			<Stack gap="lg">
@@ -55,6 +48,23 @@ export function TutorialDetailPage({ noParam }: Props) {
 					</Title>
 				</Group>
 				<MazeScene maze={tutorial.maze} />
+				<Group>
+					<Button
+						renderRoot={(props) => (
+							<Link to="/tutorials/$no/play" params={{ no: String(tutorial.no) }} {...props} />
+						)}
+					>
+						この
+						<ruby>
+							迷路<rt>めいろ</rt>
+						</ruby>
+						で
+						<ruby>
+							遊<rt>あそ</rt>
+						</ruby>
+						ぶ
+					</Button>
+				</Group>
 			</Stack>
 		</Container>
 	);

@@ -15,6 +15,7 @@ import {
 	SRGBColorSpace,
 	Shape,
 	ShapeGeometry,
+	SphereGeometry,
 	TorusGeometry,
 } from "three";
 
@@ -107,6 +108,11 @@ export const KEY_SHAFT_GEOMETRY = new CylinderGeometry(0.03, 0.03, 0.36, 12).tra
 export const KEY_TEETH_GEOMETRY = new BoxGeometry(0.1, 0.1, 0.04).translate(0.06, -0.24, 0);
 // 鍵の真ん中を置く高さ。傾けても歯の先が床に付かない
 export const KEY_HEIGHT = 0.45;
+
+// 穴をうめるときに、ロボットの前に現れて大きくなる球（大きさ1のときの半径）
+export const ORB_GEOMETRY = new SphereGeometry(0.4, 24, 16);
+// 球の真ん中を置く高さ
+export const ORB_HEIGHT = 0.3;
 
 // 「1F」「2F」の文字を貼る板（横:縦 = 2:1。文字を描いた絵と同じ比）
 export const LABEL_GEOMETRY = new PlaneGeometry(1.6, 0.8);
@@ -339,3 +345,15 @@ function createMaterials(opacity: number): PartMaterials {
 // いちばん下の階と、その上に重ねて少し透かす階（下の階が透けて見える程度）
 export const SOLID_MATERIALS = createMaterials(1);
 export const SEE_THROUGH_MATERIALS = createMaterials(0.6);
+// プレイ画面で、ロボットがいない階（透明に近づける）
+export const FADED_MATERIALS = createMaterials(0.15);
+
+// 青白く光る球。発光だけで光らせ、明るさを抑える変換をかけない
+export const ORB_MATERIAL = new MeshStandardMaterial({
+	color: "#d0ebff",
+	emissive: "#a5d8ff",
+	emissiveIntensity: 1.6,
+	toneMapped: false,
+	transparent: true,
+	opacity: 0.9,
+});

@@ -13,6 +13,7 @@ import { Route as StudentRouteImport } from './app/routes/_student'
 import { Route as EndedRouteImport } from './app/routes/ended'
 import { Route as JoinRouteImport } from './app/routes/join'
 import { Route as StudentIndexRouteImport } from './app/routes/_student/index'
+import { Route as StudentMazesImportRouteImport } from './app/routes/_student/mazes/import'
 import { Route as StudentMazesNewRouteImport } from './app/routes/_student/mazes/new'
 import { Route as StudentMazesMazeIdIndexRouteImport } from './app/routes/_student/mazes/$mazeId/index'
 import { Route as StudentMazesMazeIdEditRouteImport } from './app/routes/_student/mazes/$mazeId/edit'
@@ -37,6 +38,11 @@ const JoinRoute = JoinRouteImport.update({
 const StudentIndexRoute = StudentIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentMazesImportRoute = StudentMazesImportRouteImport.update({
+  id: '/mazes/import',
+  path: '/mazes/import',
   getParentRoute: () => StudentRoute,
 } as any)
 const StudentMazesNewRoute = StudentMazesNewRouteImport.update({
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/': typeof StudentIndexRoute
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
+  '/mazes/import': typeof StudentMazesImportRoute
   '/mazes/new': typeof StudentMazesNewRoute
   '/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
   '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
   '/': typeof StudentIndexRoute
+  '/mazes/import': typeof StudentMazesImportRoute
   '/mazes/new': typeof StudentMazesNewRoute
   '/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
   '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
   '/_student/': typeof StudentIndexRoute
+  '/_student/mazes/import': typeof StudentMazesImportRoute
   '/_student/mazes/new': typeof StudentMazesNewRoute
   '/_student/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
   '/_student/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ended'
     | '/join'
+    | '/mazes/import'
     | '/mazes/new'
     | '/mazes/$mazeId/edit'
     | '/mazes/$mazeId/play'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/ended'
     | '/join'
     | '/'
+    | '/mazes/import'
     | '/mazes/new'
     | '/mazes/$mazeId/edit'
     | '/mazes/$mazeId/play'
@@ -134,6 +145,7 @@ export interface FileRouteTypes {
     | '/ended'
     | '/join'
     | '/_student/'
+    | '/_student/mazes/import'
     | '/_student/mazes/new'
     | '/_student/mazes/$mazeId/edit'
     | '/_student/mazes/$mazeId/play'
@@ -176,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof StudentIndexRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/_student/mazes/import': {
+      id: '/_student/mazes/import'
+      path: '/mazes/import'
+      fullPath: '/mazes/import'
+      preLoaderRoute: typeof StudentMazesImportRouteImport
       parentRoute: typeof StudentRoute
     }
     '/_student/mazes/new': {
@@ -225,6 +244,7 @@ declare module '@tanstack/react-router' {
 
 interface StudentRouteChildren {
   StudentIndexRoute: typeof StudentIndexRoute
+  StudentMazesImportRoute: typeof StudentMazesImportRoute
   StudentMazesNewRoute: typeof StudentMazesNewRoute
   StudentMazesMazeIdEditRoute: typeof StudentMazesMazeIdEditRoute
   StudentMazesMazeIdPlayRoute: typeof StudentMazesMazeIdPlayRoute
@@ -235,6 +255,7 @@ interface StudentRouteChildren {
 
 const StudentRouteChildren: StudentRouteChildren = {
   StudentIndexRoute: StudentIndexRoute,
+  StudentMazesImportRoute: StudentMazesImportRoute,
   StudentMazesNewRoute: StudentMazesNewRoute,
   StudentMazesMazeIdEditRoute: StudentMazesMazeIdEditRoute,
   StudentMazesMazeIdPlayRoute: StudentMazesMazeIdPlayRoute,

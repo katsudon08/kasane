@@ -1,0 +1,35 @@
+/*
+ * 道具のパレット（仕様書README.mdの「めいろをつくる / 変える」）
+ * 選んでいる道具は枠と色で示す。タップできる部分は64px四方以上
+ */
+.palette {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm);
+}
+
+.tool {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	min-height: 72px;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 3px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-white);
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+.tool[data-selected] {
+	border-color: var(--mantine-color-blue-6);
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-9);
+}
+
+.icon {
+	flex-shrink: 0;
+	width: 48px;
+	height: 48px;
+}

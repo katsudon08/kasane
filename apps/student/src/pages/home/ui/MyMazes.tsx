@@ -1,14 +1,15 @@
 /*
  * ホームの「自分の迷路」（仕様書README.mdの「ホーム」）
- * チュートリアルを全部クリアするまでは灰色＋鍵で、一覧を取りに行かない（canCreateMazeが真になってからGET /me/mazes）
+ * 自分が作った迷路の一覧と「新しい迷路を作る」ボタン
+ * チュートリアルを全部クリアするまでは、ボタンを灰色＋鍵にして押せなくし、一覧を取りに行かない（canCreateMazeが真になってからGET /me/mazes）
  * 全部クリアした後は、更新が新しい順に左上から右下へ並べる
  * 一覧は2Dのミニマップで描き（3Dはしょうさいとプレイだけ）、押すとじぶんのめいろのしょうさいへ移る
  * ミニマップには、プレイを始めたときにロボットがいる階（スタートの階）を描く
  */
-import { Card, SimpleGrid, Text } from "@mantine/core";
+import { Button, Card, Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Lock } from "lucide-react";
+import { Lock, Plus } from "lucide-react";
 
 import { MazeMap, mazeQueries, startLayer } from "../../../entities/maze";
 import { StudentAccessLost } from "../../../shared/api";
@@ -25,7 +26,9 @@ export function MyMazes({ unlocked }: Props) {
 	if (!unlocked) {
 		return (
 			<div className={classes.mazesLocked}>
-				<Lock aria-hidden size={40} />
+				<Button disabled leftSection={<Lock aria-hidden size={28} />}>
+					<NewMazeLabel />
+				</Button>
 				<Text>
 					<ruby>
 						問題<rt>もんだい</rt>
@@ -43,7 +46,38 @@ export function MyMazes({ unlocked }: Props) {
 			</div>
 		);
 	}
-	return <MazeList />;
+	return (
+		<Stack gap="md">
+			<Group>
+				<Button
+					renderRoot={(props) => <Link to="/mazes/new" {...props} />}
+					leftSection={<Plus aria-hidden size={28} />}
+				>
+					<NewMazeLabel />
+				</Button>
+			</Group>
+			<MazeList />
+		</Stack>
+	);
+}
+
+function NewMazeLabel() {
+	return (
+		<>
+			<ruby>
+				新<rt>あたら</rt>
+			</ruby>
+			しい
+			<ruby>
+				迷路<rt>めいろ</rt>
+			</ruby>
+			を
+			<ruby>
+				作<rt>つく</rt>
+			</ruby>
+			る
+		</>
+	);
 }
 
 function MazeList() {

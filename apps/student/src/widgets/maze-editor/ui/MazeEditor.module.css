@@ -1,0 +1,110 @@
+/*
+ * めいろをつくる / 変える（仕様書README.mdの「めいろをつくる / 変える」）
+ * 横長のタブレットで、左半分に迷路、右半分に道具のパレットと「できあがり」を、画面の高さに収めて並べる
+ * 縦長の狭い画面では、上下に並べる
+ */
+.screen {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	height: 100dvh;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md) var(--mantine-spacing-md);
+}
+
+.name {
+	flex: 1;
+	max-width: 480px;
+}
+
+.main {
+	display: grid;
+	flex: 1;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: var(--mantine-spacing-md);
+	min-height: 0;
+}
+
+.board {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	min-height: 0;
+}
+
+/* マス目は、残りの幅と高さの小さいほうに合わせた正方形にする */
+.gridArea {
+	display: flex;
+	flex: 1;
+	justify-content: center;
+	min-height: 0;
+	container-type: size;
+}
+
+.grid {
+	position: relative;
+	width: min(100cqw, 100cqh);
+	aspect-ratio: 1;
+}
+
+.gridMap {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.gridCells {
+	position: absolute;
+	inset: 0;
+	display: grid;
+}
+
+.gridCell {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+}
+
+.gridCell:focus-visible {
+	outline: 4px solid var(--mantine-color-blue-6);
+	outline-offset: -4px;
+}
+
+/* 理由の文言（2行ほど）の場所を、出していないときも空けておく */
+.notice {
+	min-height: 72px;
+}
+
+.side {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	min-height: 0;
+	overflow-y: auto;
+}
+
+.save {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	margin-top: auto;
+}
+
+@media (max-width: 767px) {
+	.screen {
+		height: auto;
+		min-height: 100dvh;
+	}
+
+	.main {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.gridArea {
+		container-type: normal;
+	}
+
+	.grid {
+		width: 100%;
+	}
+}

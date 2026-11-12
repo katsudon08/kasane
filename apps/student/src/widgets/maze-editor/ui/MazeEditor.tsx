@@ -1,0 +1,215 @@
+/*
+ * めいろをつくる / 変える（仕様書README.mdの「めいろをつくる / 変える」）
+ * - 上部に「もどる」の矢印と「迷路の名前」の入力欄
+ * - 左半分に、大きさ（新しく作るときだけ）・階の切り替えと足す・減らす・今見ている階のマス目・置けないときの理由
+ * - 右半分に道具のパレット、その下に主ボタン「できあがり」
+ * 編集中の迷路は端末のメモリだけに持ち、「できあがり」を押すまでサーバーへ送らない
+ * 途中で画面を離れようとしたら、確認のモーダルを出す
+ */
+import { WALL } from "@kasane/core";
+import type { Cell, Maze } from "@kasane/core";
+import { ActionIcon, Button, Group, TextInput } from "@mantine/core";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useBlocker, useNavigate } from "@tanstack/react-router";
+import { ChevronLeft } from "lucide-react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+
+import { mazeQueries } from "../../../entities/maze";
+import { EditErrorText, ToolPalette } from "../../../features/edit-maze";
+import type { MazeSize } from "../../../features/edit-maze";
+import { StudentAccessLost } from "../../../shared/api";
+import { NAME_MAX_LENGTH, nameOf } from "../../../shared/lib/name";
+import { FailureMessage } from "../../../shared/ui/failure-message";
+import { saveMaze } from "../api/save-maze";
+import type { SaveTarget } from "../api/save-maze";
+import { editorReducer, initialEditorState } from "../model/editor-reducer";
+import { EditableGrid } from "./EditableGrid";
+import { LayerControls } from "./LayerControls";
+import { LeaveConfirm } from "./LeaveConfirm";
+import { SizePicker } from "./SizePicker";
+
+import classes from "./MazeEditor.module.css";
+
+// 置けない理由を出しておく時間（モーダルにせず、しばらくしたら消す）
+const ERROR_DURATION_MS = 3000;
+
+// 授業を続けられないとき（参加し直し・授業の終わり）の移動は、確認せずに通す
+const ALWAYS_LEAVE_TO: ReadonlySet<string> = new Set(["/join", "/ended"]);
+
+// 新しく作るときに選んでおく道具。すべてゆかの迷路から始まるので、かべを塗るところから始められるようにする
+const INITIAL_TOOL: Cell = WALL;
+
+type Props = {
+	target: SaveTarget;
+	initialName: string;
+	initialMaze: Maze;
+};
+
+export function MazeEditor({ target, initialName, initialMaze }: Props) {
+	const [state, dispatch] = useReducer(editorReducer, initialMaze, initialEditorState);
+	const { maze, layer, edited, error } = state;
+	const [tool, setTool] = useState<Cell>(INITIAL_TOOL);
+	const [input, setInput] = useState(initialName);
+	const name = nameOf(input);
+
+	// 置けない理由は、しばらくしたら消す。出し直したら時間を数え直す
+	useEffect(() => {
+		if (error === null) return;
+		const timer = setTimeout(() => dispatch({ type: "errorExpired", error }), ERROR_DURATION_MS);
+		return () => clearTimeout(timer);
+	}, [error]);
+
+	// 保存した後の移動は、確認せずに通す
+	const saved = useRef(false);
+	const blocker = useBlocker({
+		shouldBlockFn: ({ next }) => !saved.current && !ALWAYS_LEAVE_TO.has(next.pathname),
+		// 再読み込みやタブを閉じるときは、ブラウザーの確認を出す（文言はブラウザーが決める）
+		enableBeforeUnload: () => !saved.current,
+		withResolver: true,
+	});
+
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const save = useMutation({
+		mutationFn: (content: { name: string; data: Maze }) => saveMaze(target, content),
+		onSuccess: async (result) => {
+			if (!result.ok) return;
+			saved.current = true;
+			// しょうさい画面は一覧のキャッシュから迷路を探すので、取り直してから移る
+			await queryClient.invalidateQueries({ queryKey: mazeQueries.list().queryKey });
+			// 戻ったときに、作り終えたエディタではなくホームへ戻るよう、履歴を置き換える
+			await navigate({
+				to: "/mazes/$mazeId",
+				params: { mazeId: result.mazeId },
+				replace: true,
+			});
+		},
+		// 授業を続けられないとき（401・410）は/joinか/endedへ移る。それ以外の想定外はエラーバウンダリーで受け止める
+		throwOnError: (failure) => !(failure instanceof StudentAccessLost),
+	});
+	const offline = save.data?.ok === false;
+
+	const handleSave = () => {
+		if (name === null || save.isPending) return;
+		save.mutate({ name, data: maze });
+	};
+
+	// 部品を描き直さないよう、関数を作り直さない（道具が変わったときだけ、マス目の関数を作り直す）
+	const onTap = useCallback(
+		(y: number, x: number) => dispatch({ type: "cellTapped", y, x, tool }),
+		[tool],
+	);
+	const onChooseLayer = useCallback(
+		(next: number) => dispatch({ type: "layerChosen", layer: next }),
+		[],
+	);
+	const onAddLayer = useCallback(() => dispatch({ type: "layerAdded" }), []);
+	const onRemoveLayer = useCallback(() => dispatch({ type: "layerRemoved" }), []);
+	const onChooseSize = useCallback((size: MazeSize) => dispatch({ type: "sizeChosen", size }), []);
+
+	return (
+		<div className={classes.screen}>
+			<Group gap="sm" wrap="nowrap" align="flex-end">
+				<BackLink target={target} />
+				<TextInput
+					className={classes.name}
+					label={
+						<>
+							<ruby>
+								迷路<rt>めいろ</rt>
+							</ruby>
+							の
+							<ruby>
+								名前<rt>なまえ</rt>
+							</ruby>
+						</>
+					}
+					value={input}
+					onChange={(event) => setInput(event.currentTarget.value)}
+					maxLength={NAME_MAX_LENGTH}
+					autoComplete="off"
+				/>
+			</Group>
+			<div className={classes.main}>
+				<section className={classes.board} aria-label="マス目">
+					{target.kind === "new" && (
+						<SizePicker
+							size={maze.layers[0]?.length ?? 0}
+							disabled={edited}
+							onChoose={onChooseSize}
+						/>
+					)}
+					<LayerControls
+						layerCount={maze.layers.length}
+						layer={layer}
+						onChoose={onChooseLayer}
+						onAdd={onAddLayer}
+						onRemove={onRemoveLayer}
+					/>
+					<div className={classes.gridArea}>
+						<EditableGrid maze={maze} layer={layer} onTap={onTap} />
+					</div>
+					{/* 理由が出ても消えても、マス目の位置が動かないよう、場所を空けておく */}
+					<div className={classes.notice}>
+						{error !== null && (
+							<FailureMessage>
+								<EditErrorText reason={error.reason} />
+							</FailureMessage>
+						)}
+					</div>
+				</section>
+				<div className={classes.side}>
+					<ToolPalette tool={tool} startDirection={maze.startDirection} onChoose={setTool} />
+					<div className={classes.save}>
+						{offline && (
+							<FailureMessage>
+								インターネットにつながっていません。「できあがり」をもう
+								<ruby>
+									一度<rt>いちど</rt>
+								</ruby>
+								おしてね
+							</FailureMessage>
+						)}
+						<Button
+							fullWidth
+							onClick={handleSave}
+							disabled={name === null}
+							loading={save.isPending}
+						>
+							できあがり
+						</Button>
+					</div>
+				</div>
+			</div>
+			{blocker.status === "blocked" && (
+				<LeaveConfirm onLeave={blocker.proceed} onStay={blocker.reset} />
+			)}
+		</div>
+	);
+}
+
+// 新しく作るときはホームへ、変えるときはじぶんのめいろのしょうさいへ戻る
+function BackLink({ target }: { target: SaveTarget }) {
+	if (target.kind === "new") {
+		return (
+			<ActionIcon
+				renderRoot={(props) => <Link to="/" {...props} />}
+				variant="subtle"
+				aria-label="ホームにもどる"
+			>
+				<ChevronLeft aria-hidden size={40} />
+			</ActionIcon>
+		);
+	}
+	return (
+		<ActionIcon
+			renderRoot={(props) => (
+				<Link to="/mazes/$mazeId" params={{ mazeId: target.mazeId }} {...props} />
+			)}
+			variant="subtle"
+			aria-label="迷路のしょうさいにもどる"
+		>
+			<ChevronLeft aria-hidden size={40} />
+		</ActionIcon>
+	);
+}

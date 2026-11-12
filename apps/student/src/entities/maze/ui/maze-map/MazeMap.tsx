@@ -1,6 +1,6 @@
 /*
  * 迷路の2D（仕様書README.mdの「迷路の2D（エディタとミニマップで共通）」）
- * エディタのマス目、ホームの「自分の迷路」のミニマップ、プレイ画面の右上のミニマップで使う
+ * エディタのマス目と道具のアイコン、ホームの「自分の迷路」のミニマップ、プレイ画面の右上のミニマップで使う
  * SVGで描き、拡大しても崩れないようにする。1マスを1の大きさにして、迷路の一辺をviewBoxにする
  * 旗・鍵・スタートの矢印はLucide Reactのアイコン、穴とテレポートの矢印は自前のSVG
  */
@@ -43,22 +43,13 @@ type Props = {
 
 // ホームでは迷路の数だけ並ぶので、迷路が変わらなければ描き直さない
 export const MazeMap = memo(function MazeMap({ maze, layer, robot, className }: Props) {
-	// 一つの画面に複数のミニマップが並ぶので、光らせる効果の名前を部品ごとに分ける
-	const glowId = `glow-${useId().replace(/[^a-zA-Z0-9-]/g, "")}`;
+	const glowId = useGlowId();
 	const rows = maze.layers[layer] ?? [];
 	const size = rows.length;
 
 	return (
 		<svg viewBox={`0 0 ${size} ${size}`} className={className} aria-hidden>
-			<defs>
-				<filter id={glowId} x="-50%" y="-50%" width="200%" height="200%">
-					<feGaussianBlur stdDeviation="0.05" result="blur" />
-					<feMerge>
-						<feMergeNode in="blur" />
-						<feMergeNode in="SourceGraphic" />
-					</feMerge>
-				</filter>
-			</defs>
+			<GlowFilter id={glowId} />
 			{rows.map((cells, y) =>
 				cells.map((cell, x) => (
 					// マスは並びが変わらないので、位置をkeyにする
@@ -71,6 +62,47 @@ export const MazeMap = memo(function MazeMap({ maze, layer, robot, className }: 
 		</svg>
 	);
 });
+
+type CellIconProps = {
+	cell: Cell;
+	// スタートの矢印の向き
+	startDirection?: Direction;
+	className?: string;
+};
+
+// 1マスだけを、迷路の2Dと同じ見た目で描く（エディタの道具のアイコン）
+export const CellIcon = memo(function CellIcon({
+	cell,
+	startDirection = "east",
+	className,
+}: CellIconProps) {
+	const glowId = useGlowId();
+	return (
+		<svg viewBox="0 0 1 1" className={className} aria-hidden>
+			<GlowFilter id={glowId} />
+			<MapCell cell={cell} startDirection={startDirection} glow={`url(#${glowId})`} />
+		</svg>
+	);
+});
+
+// 一つの画面に複数のミニマップやアイコンが並ぶので、光らせる効果の名前を部品ごとに分ける
+function useGlowId(): string {
+	return `glow-${useId().replace(/[^a-zA-Z0-9-]/g, "")}`;
+}
+
+function GlowFilter({ id }: { id: string }) {
+	return (
+		<defs>
+			<filter id={id} x="-50%" y="-50%" width="200%" height="200%">
+				<feGaussianBlur stdDeviation="0.05" result="blur" />
+				<feMerge>
+					<feMergeNode in="blur" />
+					<feMergeNode in="SourceGraphic" />
+				</feMerge>
+			</filter>
+		</defs>
+	);
+}
 
 // 向きを、右（east）を0度とした時計回りの角度に直す表（SVGはyが下向き）
 const ROBOT_ANGLES: Readonly<Record<Direction, number>> = {

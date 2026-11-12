@@ -24,6 +24,7 @@ import { playScanSound } from "../lib/scan-sound";
 import { currentCard, initialPlayState, isAnimating, playReducer } from "../model/play-reducer";
 import type { Run } from "../model/play-reducer";
 import { CardCamera } from "./CardCamera";
+import { CardLimit } from "./CardLimit";
 import { ClearConfirm } from "./ClearConfirm";
 import { NoticeText } from "./Messages";
 import { PlayControls } from "./PlayControls";
@@ -128,7 +129,11 @@ export function PlayScreen({ target, maze, maxCards, header }: Props) {
 
 	return (
 		<div className={classes.screen}>
-			{header}
+			{/* 見出しの右端に、上限のある問題だけカードの枚数の上限を出す */}
+			<div className={classes.header}>
+				{header}
+				{maxCards !== null && <CardLimit limit={maxCards} />}
+			</div>
 			<div className={classes.main}>
 				<section className={classes.stage} aria-label="カメラと迷路">
 					<CardCamera onCards={onCards} />

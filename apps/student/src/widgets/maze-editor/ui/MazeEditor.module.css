@@ -11,9 +11,17 @@
 	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md) var(--mantine-spacing-md);
 }
 
+/* 名前の見出しを入力欄の横に置く */
 .name {
+	display: flex;
 	flex: 1;
-	max-width: 480px;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	max-width: 640px;
+}
+
+.nameInput {
+	flex: 1;
 }
 
 .main {
@@ -24,25 +32,24 @@
 	min-height: 0;
 }
 
+/* マス目が画面の高さに収まらないときは、左半分だけを縦に送る */
 .board {
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-sm);
 	min-height: 0;
+	overflow-y: auto;
 }
 
-/* マス目は、残りの幅と高さの小さいほうに合わせた正方形にする */
-.gridArea {
-	display: flex;
-	flex: 1;
-	justify-content: center;
-	min-height: 0;
-	container-type: size;
-}
-
+/*
+ * マス目は正方形。ふつうは残りの高さに収め、低い画面でも1マスが64px四方より小さくならないようにする
+ * 280pxは、見出し・階のボタン（1段）・余白の高さの見積もり
+ */
 .grid {
 	position: relative;
-	width: min(100cqw, 100cqh);
+	flex-shrink: 0;
+	align-self: center;
+	width: min(100%, max(calc(var(--cells) * 66px), calc(100dvh - 280px)));
 	aspect-ratio: 1;
 }
 
@@ -70,9 +77,12 @@
 	outline-offset: -4px;
 }
 
-/* 理由の文言（2行ほど）の場所を、出していないときも空けておく */
+/* 置けない理由。左半分を縦に送っているときも、見えている範囲の下に出す。下のマスのタップは邪魔しない */
 .notice {
-	min-height: 72px;
+	position: sticky;
+	bottom: 0;
+	background: var(--mantine-color-white);
+	pointer-events: none;
 }
 
 .side {
@@ -100,8 +110,8 @@
 		grid-template-columns: minmax(0, 1fr);
 	}
 
-	.gridArea {
-		container-type: normal;
+	.board {
+		overflow-y: visible;
 	}
 
 	.grid {

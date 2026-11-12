@@ -1,8 +1,8 @@
 /*
  * めいろをつくる / 変える（仕様書README.mdの「めいろをつくる / 変える」）
  * - 上部に「もどる」の矢印と「迷路の名前」の入力欄
- * - 左半分に、大きさ（新しく作るときだけ）・階の切り替えと足す・減らす・今見ている階のマス目・置けないときの理由
- * - 右半分に道具のパレット、その下に主ボタン「できあがり」
+ * - 左半分に、階の切り替えと足す・減らす・今見ている階のマス目・置けないときの理由
+ * - 右半分に大きさ（新しく作るときだけ）と道具のパレット、その下に主ボタン「できあがり」
  * 編集中の迷路は端末のメモリだけに持ち、「できあがり」を押すまでサーバーへ送らない
  * 途中で画面を離れようとしたら、確認のモーダルを出す
  */
@@ -33,9 +33,6 @@ import classes from "./MazeEditor.module.css";
 // 置けない理由を出しておく時間（モーダルにせず、しばらくしたら消す）
 const ERROR_DURATION_MS = 3000;
 
-// 授業を続けられないとき（参加し直し・授業の終わり）の移動は、確認せずに通す
-const ALWAYS_LEAVE_TO: ReadonlySet<string> = new Set(["/join", "/ended"]);
-
 // 新しく作るときに選んでおく道具。すべてゆかの迷路から始まるので、かべを塗るところから始められるようにする
 const INITIAL_TOOL: Cell = WALL;
 
@@ -59,10 +56,13 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 		return () => clearTimeout(timer);
 	}, [error]);
 
-	// 保存した後の移動は、確認せずに通す
+	/*
+	 * 保存した後の移動は、確認せずに通す
+	 * 授業を続けられないとき（/joinと/endedへの移動）は、移る側がignoreBlockerで確認を飛ばす
+	 */
 	const saved = useRef(false);
 	const blocker = useBlocker({
-		shouldBlockFn: ({ next }) => !saved.current && !ALWAYS_LEAVE_TO.has(next.pathname),
+		shouldBlockFn: () => !saved.current,
 		// 再読み込みやタブを閉じるときは、ブラウザーの確認を出す（文言はブラウザーが決める）
 		enableBeforeUnload: () => !saved.current,
 		withResolver: true,
@@ -109,10 +109,11 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 
 	return (
 		<div className={classes.screen}>
-			<Group gap="sm" wrap="nowrap" align="flex-end">
+			<Group gap="sm" wrap="nowrap">
 				<BackLink target={target} />
+				{/* マス目を広く取るため、名前の見出しは入力欄の横に置く */}
 				<TextInput
-					className={classes.name}
+					classNames={{ root: classes.name, wrapper: classes.nameInput }}
 					label={
 						<>
 							<ruby>
@@ -132,13 +133,6 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 			</Group>
 			<div className={classes.main}>
 				<section className={classes.board} aria-label="マス目">
-					{target.kind === "new" && (
-						<SizePicker
-							size={maze.layers[0]?.length ?? 0}
-							disabled={edited}
-							onChoose={onChooseSize}
-						/>
-					)}
 					<LayerControls
 						layerCount={maze.layers.length}
 						layer={layer}
@@ -146,10 +140,8 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 						onAdd={onAddLayer}
 						onRemove={onRemoveLayer}
 					/>
-					<div className={classes.gridArea}>
-						<EditableGrid maze={maze} layer={layer} onTap={onTap} />
-					</div>
-					{/* 理由が出ても消えても、マス目の位置が動かないよう、場所を空けておく */}
+					<EditableGrid maze={maze} layer={layer} onTap={onTap} />
+					{/* 画面が低くてマス目が収まらないときも、見えている範囲の下に出す */}
 					<div className={classes.notice}>
 						{error !== null && (
 							<FailureMessage>
@@ -159,6 +151,14 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 					</div>
 				</section>
 				<div className={classes.side}>
+					{/* 大きさは左半分に置くとマス目が狭くなるので、道具の上に置く */}
+					{target.kind === "new" && (
+						<SizePicker
+							size={maze.layers[0]?.length ?? 0}
+							disabled={edited}
+							onChoose={onChooseSize}
+						/>
+					)}
 					<ToolPalette tool={tool} startDirection={maze.startDirection} onChoose={setTool} />
 					<div className={classes.save}>
 						{offline && (

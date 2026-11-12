@@ -4,6 +4,7 @@
  */
 import type { Maze } from "@kasane/core";
 import { memo } from "react";
+import type { CSSProperties } from "react";
 
 import { MazeMap } from "../../../entities/maze";
 
@@ -20,7 +21,7 @@ export const EditableGrid = memo(function EditableGrid({ maze, layer, onTap }: P
 	const size = rows.length;
 
 	return (
-		<div className={classes.grid}>
+		<div className={classes.grid} style={{ "--cells": size } as CSSProperties}>
 			<MazeMap maze={maze} layer={layer} className={classes.gridMap} />
 			<div
 				className={classes.gridCells}

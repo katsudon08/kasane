@@ -25,7 +25,12 @@ function StudentLayout() {
 	const navigate = useNavigate();
 	const leave = useCallback(
 		(reason: StudentAccessLostReason) => {
-			void navigate({ to: reason === "lessonEnded" ? "/ended" : "/join", replace: true });
+			// 作っている途中の迷路があっても、確認を出さずに移る（授業を続けられないので）
+			void navigate({
+				to: reason === "lessonEnded" ? "/ended" : "/join",
+				replace: true,
+				ignoreBlocker: true,
+			});
 		},
 		[navigate],
 	);

@@ -29,7 +29,8 @@ export const SizePicker = memo(function SizePicker({ size, disabled, onChoose }:
 					key={candidate}
 					variant={candidate === size ? "light" : "outline"}
 					aria-pressed={candidate === size}
-					disabled={disabled}
+					// 選べなくなった後も、今の大きさは分かるように残す
+					disabled={disabled && candidate !== size}
 					onClick={() => onChoose(candidate)}
 				>
 					{candidate}×{candidate}

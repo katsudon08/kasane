@@ -46,18 +46,19 @@ export function MyMazes({ unlocked }: Props) {
 			</div>
 		);
 	}
+	return <MazeList />;
+}
+
+function NewMazeButton() {
 	return (
-		<Stack gap="md">
-			<Group>
-				<Button
-					renderRoot={(props) => <Link to="/mazes/new" {...props} />}
-					leftSection={<Plus aria-hidden size={28} />}
-				>
-					<NewMazeLabel />
-				</Button>
-			</Group>
-			<MazeList />
-		</Stack>
+		<Group>
+			<Button
+				renderRoot={(props) => <Link to="/mazes/new" {...props} />}
+				leftSection={<Plus aria-hidden size={28} />}
+			>
+				<NewMazeLabel />
+			</Button>
+		</Group>
 	);
 }
 
@@ -87,10 +88,11 @@ function MazeList() {
 	if (mazes.isPending || mazes.error instanceof StudentAccessLost) return null;
 	if (mazes.isError) return <OfflineNotice onRetry={() => void mazes.refetch()} />;
 
-	// まだ一つも作っていない間を、全部クリアした直後として目立たせる
+	// まだ一つも作っていない間を、全部クリアした直後として、ボタンごと目立たせる
 	if (mazes.data.length === 0) {
 		return (
-			<div className={`${classes.mazes} ${classes.mazesHighlighted}`}>
+			<Stack gap="md" className={`${classes.mazes} ${classes.mazesHighlighted}`}>
+				<NewMazeButton />
 				<Text>
 					まだ
 					<ruby>
@@ -102,25 +104,28 @@ function MazeList() {
 					</ruby>
 					ってみよう
 				</Text>
-			</div>
+			</Stack>
 		);
 	}
 	return (
-		<SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} className={classes.mazes}>
-			{mazes.data.map(({ mazeId, name, data }) => (
-				<Card
-					key={mazeId}
-					renderRoot={(props) => <Link to="/mazes/$mazeId" params={{ mazeId }} {...props} />}
-					withBorder
-					padding="md"
-					radius="lg"
-					className={classes.mazeCard}
-				>
-					<MazeMap maze={data} layer={startLayer(data)} className={classes.mazeMap} />
-					{/* 児童が入れた名前は、テキストとして描く */}
-					<Text fw={700}>{name}</Text>
-				</Card>
-			))}
-		</SimpleGrid>
+		<Stack gap="md">
+			<NewMazeButton />
+			<SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} className={classes.mazes}>
+				{mazes.data.map(({ mazeId, name, data }) => (
+					<Card
+						key={mazeId}
+						renderRoot={(props) => <Link to="/mazes/$mazeId" params={{ mazeId }} {...props} />}
+						withBorder
+						padding="md"
+						radius="lg"
+						className={classes.mazeCard}
+					>
+						<MazeMap maze={data} layer={startLayer(data)} className={classes.mazeMap} />
+						{/* 児童が入れた名前は、テキストとして描く */}
+						<Text fw={700}>{name}</Text>
+					</Card>
+				))}
+			</SimpleGrid>
+		</Stack>
 	);
 }

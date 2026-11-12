@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
 import "./app/styles/fonts.css";
+import "./app/styles/text.css";
 import { MantineProvider } from "@mantine/core";
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";

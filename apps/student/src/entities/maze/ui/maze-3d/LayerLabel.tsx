@@ -24,9 +24,15 @@ async function createLabelMaterial(text: string): Promise<MeshStandardMaterial> 
 	if (context === null) throw new Error("2Dの描画ができない");
 	context.font = FONT;
 	context.textAlign = "center";
-	context.textBaseline = "middle";
+	/*
+	 * 字の上端から下端までを測り、板の上下の真ん中に置く
+	 * textBaseline="middle"はフォントの枠の真ん中なので、字の形とずれ、縁の分も含めると下が板からはみ出す
+	 */
+	context.textBaseline = "alphabetic";
+	const { actualBoundingBoxAscent: ascent, actualBoundingBoxDescent: descent } =
+		context.measureText(text);
 	const x = canvas.width / 2;
-	const y = canvas.height / 2 + 8;
+	const y = (canvas.height + ascent - descent) / 2;
 	// 背景（明るい青）との差をはっきりさせるため、薄い青の字に濃い青の縁を付ける
 	context.lineJoin = "round";
 	context.lineWidth = 24;

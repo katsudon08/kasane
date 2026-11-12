@@ -1,11 +1,18 @@
 /*
  * 階の切り替えと、階を足す・減らすボタン（仕様書README.mdの「めいろをつくる / 変える」）
- * 今編集している階は青の塗りつぶし、他は枠だけにする
- * 足す・減らすは押せないようにはせず、できないときは理由の文言を出す
+ * 「1階」「2階」「3階」を横に並べ、今編集している階は青の塗りつぶし、他は枠だけにする
+ * まだない階も灰色で並べておき、階を足しても並びがずれないようにする
+ * 減らすは左、足すは右に置く。どちらも押せなくはせず、できないときは理由の文言を出す
  */
-import { Button, Group } from "@mantine/core";
+import { UnstyledButton } from "@mantine/core";
 import { Minus, Plus } from "lucide-react";
-import { memo } from "react";
+import { memo, useMemo } from "react";
+
+import { MAX_LAYERS } from "../../../features/edit-maze";
+import { Segmented } from "./Segmented";
+import type { SegmentedItem } from "./Segmented";
+
+import classes from "./MazeEditor.module.css";
 
 type Props = {
 	layerCount: number;
@@ -22,36 +29,28 @@ export const LayerControls = memo(function LayerControls({
 	onAdd,
 	onRemove,
 }: Props) {
-	return (
-		<Group gap="sm">
-			<Group gap="xs" role="group" aria-label="階">
-				{Array.from({ length: layerCount }, (_, index) => (
-					<Button
-						// 階は下から順に並び、入れ替わらないので、位置をkeyにする
-						key={index}
-						variant={index === layer ? "filled" : "outline"}
-						aria-pressed={index === layer}
-						onClick={() => onChoose(index)}
-					>
+	const items = useMemo<SegmentedItem<number>[]>(
+		() =>
+			Array.from({ length: MAX_LAYERS }, (_, index) => ({
+				value: index,
+				label: (
+					<>
 						{index + 1}
 						<ruby>
 							階<rt>かい</rt>
 						</ruby>
-					</Button>
-				))}
-			</Group>
-			<Group gap="xs">
-				<Button variant="default" leftSection={<Plus aria-hidden size={28} />} onClick={onAdd}>
-					<ruby>
-						階<rt>かい</rt>
-					</ruby>
-					を
-					<ruby>
-						足<rt>た</rt>
-					</ruby>
-					す
-				</Button>
-				<Button variant="default" leftSection={<Minus aria-hidden size={28} />} onClick={onRemove}>
+					</>
+				),
+				disabled: index >= layerCount,
+			})),
+		[layerCount],
+	);
+
+	return (
+		<div className={classes.layerControls}>
+			<UnstyledButton className={classes.stepButton} onClick={onRemove}>
+				<Minus aria-hidden size={24} />
+				<span>
 					<ruby>
 						階<rt>かい</rt>
 					</ruby>
@@ -60,8 +59,22 @@ export const LayerControls = memo(function LayerControls({
 						減<rt>へ</rt>
 					</ruby>
 					らす
-				</Button>
-			</Group>
-		</Group>
+				</span>
+			</UnstyledButton>
+			<Segmented items={items} selected={layer} onChoose={onChoose} label="階" />
+			<UnstyledButton className={classes.stepButton} onClick={onAdd}>
+				<Plus aria-hidden size={24} />
+				<span>
+					<ruby>
+						階<rt>かい</rt>
+					</ruby>
+					を
+					<ruby>
+						足<rt>た</rt>
+					</ruby>
+					す
+				</span>
+			</UnstyledButton>
+		</div>
 	);
 });

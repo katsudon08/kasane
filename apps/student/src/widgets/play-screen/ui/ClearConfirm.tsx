@@ -2,7 +2,7 @@
  * 「カードを全部消す」の確認（仕様書README.mdの「プログラムをつくる」）
  * 安全な側（残す）を青の塗りつぶしで強調し、押した結果が分かる言葉にする（README.mdの「めいろをつくる」の確認と同じ形）
  */
-import { Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { ConfirmDialog } from "../../../shared/ui/confirm-dialog";
 
 type Props = {
 	onClear: () => void;
@@ -12,9 +12,9 @@ type Props = {
 // 開いている間だけ描く
 export function ClearConfirm({ onClear, onCancel }: Props) {
 	return (
-		<Modal opened onClose={onCancel} centered size="lg" withCloseButton={false}>
-			<Stack gap="xl">
-				<Text fw={700} size="lg">
+		<ConfirmDialog
+			message={
+				<>
 					カードを
 					<ruby>
 						全部<rt>ぜんぶ</rt>
@@ -27,27 +27,31 @@ export function ClearConfirm({ onClear, onCancel }: Props) {
 						元<rt>もと</rt>
 					</ruby>
 					にもどせないよ
-				</Text>
-				<Group grow gap="sm">
-					<Button variant="outline" onClick={onClear}>
-						カードを
-						<ruby>
-							全部<rt>ぜんぶ</rt>
-						</ruby>
-						<ruby>
-							消<rt>け</rt>
-						</ruby>
-						す
-					</Button>
-					<Button onClick={onCancel}>
-						カードを
-						<ruby>
-							残<rt>のこ</rt>
-						</ruby>
-						す
-					</Button>
-				</Group>
-			</Stack>
-		</Modal>
+				</>
+			}
+			actionLabel={
+				<>
+					カードを
+					<ruby>
+						全部<rt>ぜんぶ</rt>
+					</ruby>
+					<ruby>
+						消<rt>け</rt>
+					</ruby>
+					す
+				</>
+			}
+			onAction={onClear}
+			safeLabel={
+				<>
+					カードを
+					<ruby>
+						残<rt>のこ</rt>
+					</ruby>
+					す
+				</>
+			}
+			onSafe={onCancel}
+		/>
 	);
 }

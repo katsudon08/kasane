@@ -61,7 +61,7 @@ export function MazeDetailPage({ mazeId }: Props) {
 					<Title order={1}>{maze.name}</Title>
 				</Group>
 				<MazeScene maze={maze.data} />
-				<Group>
+				<Group justify="center" gap="md">
 					<Button
 						renderRoot={(props) => (
 							<Link to="/mazes/$mazeId/play" params={{ mazeId: maze.mazeId }} {...props} />

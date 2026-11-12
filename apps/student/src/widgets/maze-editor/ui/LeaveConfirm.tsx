@@ -1,8 +1,8 @@
 /*
  * 作っている途中で画面を離れようとしたときの確認（仕様書README.mdの「めいろをつくる / 変える」）
- * 安全な側（作り続ける）を青の塗りつぶしで強調し、押した結果が分かる言葉にする
+ * 左に「作るのをやめる」（枠だけ）、右に「作り続ける」（青の塗りつぶし）
  */
-import { Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { ConfirmDialog } from "../../../shared/ui/confirm-dialog";
 
 type Props = {
 	onLeave: () => void;
@@ -12,9 +12,9 @@ type Props = {
 // 開いている間だけ描く
 export function LeaveConfirm({ onLeave, onStay }: Props) {
 	return (
-		<Modal opened onClose={onStay} centered size="lg" withCloseButton={false}>
-			<Stack gap="xl">
-				<Text fw={700} size="lg">
+		<ConfirmDialog
+			message={
+				<>
 					まだ
 					<ruby>
 						迷路<rt>めいろ</rt>
@@ -32,26 +32,30 @@ export function LeaveConfirm({ onLeave, onStay }: Props) {
 						消<rt>き</rt>
 					</ruby>
 					えるよ
-				</Text>
-				<Group grow gap="sm">
-					<Button variant="outline" onClick={onLeave}>
-						<ruby>
-							作<rt>つく</rt>
-						</ruby>
-						るのをやめる
-					</Button>
-					<Button onClick={onStay}>
-						<ruby>
-							作<rt>つく</rt>
-						</ruby>
-						り
-						<ruby>
-							続<rt>つづ</rt>
-						</ruby>
-						ける
-					</Button>
-				</Group>
-			</Stack>
-		</Modal>
+				</>
+			}
+			actionLabel={
+				<>
+					<ruby>
+						作<rt>つく</rt>
+					</ruby>
+					るのをやめる
+				</>
+			}
+			onAction={onLeave}
+			safeLabel={
+				<>
+					<ruby>
+						作<rt>つく</rt>
+					</ruby>
+					り
+					<ruby>
+						続<rt>つづ</rt>
+					</ruby>
+					ける
+				</>
+			}
+			onSafe={onStay}
+		/>
 	);
 }

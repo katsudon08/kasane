@@ -1,21 +1,22 @@
 /*
  * めいろをつくる / 変える（仕様書README.mdの「めいろをつくる / 変える」）
- * - 上部に「もどる」の矢印と「迷路の名前」の入力欄
+ * - 見出しは他の画面と同じく、「もどる」の矢印と画面の名前
  * - 左半分に、階の切り替えと足す・減らす・今見ている階のマス目・置けないときの理由
- * - 右半分に大きさ（新しく作るときだけ）と道具のパレット、その下に主ボタン「できあがり」
+ * - 右半分の上から、「迷路の名前」の入力欄と大きさ（新しく作るときだけ）を一列に、その下に道具のパレット、いちばん下に主ボタン「できあがり」
+ *   どれも見出しを上に置く
  * 編集中の迷路は端末のメモリだけに持ち、「できあがり」を押すまでサーバーへ送らない
  * 途中で画面を離れようとしたら、確認のモーダルを出す
  */
 import { WALL } from "@kasane/core";
 import type { Cell, Maze } from "@kasane/core";
-import { ActionIcon, Button, Group, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Group, TextInput, Title } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useBlocker, useNavigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
 import { mazeQueries } from "../../../entities/maze";
-import { EditErrorText, ToolPalette } from "../../../features/edit-maze";
+import { ToolPalette } from "../../../features/edit-maze";
 import type { MazeSize } from "../../../features/edit-maze";
 import { StudentAccessLost } from "../../../shared/api";
 import { NAME_MAX_LENGTH, nameOf } from "../../../shared/lib/name";
@@ -24,6 +25,7 @@ import { saveMaze } from "../api/save-maze";
 import type { SaveTarget } from "../api/save-maze";
 import { editorReducer, initialEditorState } from "../model/editor-reducer";
 import { EditableGrid } from "./EditableGrid";
+import { EditErrorCard } from "./EditErrorCard";
 import { LayerControls } from "./LayerControls";
 import { LeaveConfirm } from "./LeaveConfirm";
 import { SizePicker } from "./SizePicker";
@@ -111,25 +113,31 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 		<div className={classes.screen}>
 			<Group gap="sm" wrap="nowrap">
 				<BackLink target={target} />
-				{/* マス目を広く取るため、名前の見出しは入力欄の横に置く */}
-				<TextInput
-					classNames={{ root: classes.name, wrapper: classes.nameInput }}
-					label={
+				<Title order={1}>
+					{target.kind === "new" ? (
 						<>
 							<ruby>
 								迷路<rt>めいろ</rt>
 							</ruby>
-							の
+							を
 							<ruby>
-								名前<rt>なまえ</rt>
+								作<rt>つく</rt>
 							</ruby>
+							る
 						</>
-					}
-					value={input}
-					onChange={(event) => setInput(event.currentTarget.value)}
-					maxLength={NAME_MAX_LENGTH}
-					autoComplete="off"
-				/>
+					) : (
+						<>
+							<ruby>
+								迷路<rt>めいろ</rt>
+							</ruby>
+							を
+							<ruby>
+								変<rt>か</rt>
+							</ruby>
+							える
+						</>
+					)}
+				</Title>
 			</Group>
 			<div className={classes.main}>
 				<section className={classes.board} aria-label="マス目">
@@ -141,25 +149,57 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 						onRemove={onRemoveLayer}
 					/>
 					<EditableGrid maze={maze} layer={layer} onTap={onTap} />
-					{/* 画面が低くてマス目が収まらないときも、見えている範囲の下に出す */}
+					{/* 画面が低くてマス目の下に収まらないときも、見えている範囲の下に出す */}
 					<div className={classes.notice}>
-						{error !== null && (
-							<FailureMessage>
-								<EditErrorText reason={error.reason} />
-							</FailureMessage>
-						)}
+						{error !== null && <EditErrorCard reason={error.reason} />}
 					</div>
 				</section>
 				<div className={classes.side}>
-					{/* 大きさは左半分に置くとマス目が狭くなるので、道具の上に置く */}
-					{target.kind === "new" && (
-						<SizePicker
-							size={maze.layers[0]?.length ?? 0}
-							disabled={edited}
-							onChoose={onChooseSize}
+					{/* 名前と大きさは、同じ形（見出しを上に置く）で一列に並べる */}
+					<div className={classes.topRow}>
+						<TextInput
+							label={
+								<>
+									<ruby>
+										迷路<rt>めいろ</rt>
+									</ruby>
+									の
+									<ruby>
+										名前<rt>なまえ</rt>
+									</ruby>
+								</>
+							}
+							classNames={{ label: classes.sectionLabel }}
+							value={input}
+							onChange={(event) => setInput(event.currentTarget.value)}
+							maxLength={NAME_MAX_LENGTH}
+							autoComplete="off"
 						/>
-					)}
-					<ToolPalette tool={tool} startDirection={maze.startDirection} onChoose={setTool} />
+						{/* 大きさは新しく作るときだけ選ぶ */}
+						{target.kind === "new" && (
+							<div className={classes.section}>
+								<span className={classes.sectionLabel}>
+									<ruby>
+										大<rt>おお</rt>
+									</ruby>
+									きさ
+								</span>
+								<SizePicker
+									size={maze.layers[0]?.length ?? 0}
+									disabled={edited}
+									onChoose={onChooseSize}
+								/>
+							</div>
+						)}
+					</div>
+					<div className={classes.section}>
+						<span className={classes.sectionLabel}>
+							<ruby>
+								道具<rt>どうぐ</rt>
+							</ruby>
+						</span>
+						<ToolPalette tool={tool} startDirection={maze.startDirection} onChoose={setTool} />
+					</div>
 					<div className={classes.save}>
 						{offline && (
 							<FailureMessage>

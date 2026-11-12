@@ -1,11 +1,13 @@
 /*
  * 迷路の大きさ（一辺5・6・7）を選ぶ（仕様書README.mdの「めいろをつくる / 変える」）
- * 新しく作るときだけ出す。一度でも形を変えた後は選べない（途中で変えると形が崩れるため）
+ * 新しく作るときだけ出す。一度でも形を変えた後は、今の大きさのほかは選べない（途中で変えると形が崩れるため）
+ * 見た目は階の切り替えと同じ並びにする
  */
-import { Button, Group, Text } from "@mantine/core";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 
 import type { MazeSize } from "../../../features/edit-maze";
+import { Segmented } from "./Segmented";
+import type { SegmentedItem } from "./Segmented";
 
 const SIZES: readonly MazeSize[] = [5, 6, 7];
 
@@ -16,26 +18,14 @@ type Props = {
 };
 
 export const SizePicker = memo(function SizePicker({ size, disabled, onChoose }: Props) {
-	return (
-		<Group gap="sm" role="group" aria-label="大きさ">
-			<Text fw={700}>
-				<ruby>
-					大<rt>おお</rt>
-				</ruby>
-				きさ
-			</Text>
-			{SIZES.map((candidate) => (
-				<Button
-					key={candidate}
-					variant={candidate === size ? "light" : "outline"}
-					aria-pressed={candidate === size}
-					// 選べなくなった後も、今の大きさは分かるように残す
-					disabled={disabled && candidate !== size}
-					onClick={() => onChoose(candidate)}
-				>
-					{candidate}×{candidate}
-				</Button>
-			))}
-		</Group>
+	const items = useMemo<SegmentedItem<MazeSize>[]>(
+		() =>
+			SIZES.map((candidate) => ({
+				value: candidate,
+				label: `${candidate}×${candidate}`,
+				disabled: disabled && candidate !== size,
+			})),
+		[disabled, size],
 	);
+	return <Segmented items={items} selected={size as MazeSize} onChoose={onChoose} label="大きさ" />;
 });

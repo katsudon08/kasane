@@ -91,9 +91,9 @@ function MazeList() {
 	// まだ一つも作っていない間を、全部クリアした直後として、ボタンごと目立たせる
 	if (mazes.data.length === 0) {
 		return (
-			<Stack gap="md" className={`${classes.mazes} ${classes.mazesHighlighted}`}>
+			<Stack gap="md" align="center" className={`${classes.mazes} ${classes.mazesHighlighted}`}>
 				<NewMazeButton />
-				<Text>
+				<Text ta="center">
 					まだ
 					<ruby>
 						迷路<rt>めいろ</rt>

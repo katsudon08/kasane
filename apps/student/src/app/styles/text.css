@@ -1,0 +1,10 @@
+/*
+ * 児童画面の文の折り返し（仕様書README.mdの「文言のルール」）
+ * 日本語の文を、単語の途中ではなく文節の切れ目で折り返して読みやすくする
+ * 対応していないブラウザーでは、ふつうの折り返しになる。収まらない長い文節は、はみ出さずに折り返す
+ */
+body {
+	word-break: auto-phrase;
+	overflow-wrap: break-word;
+	text-wrap: pretty;
+}

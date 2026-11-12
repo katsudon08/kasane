@@ -101,9 +101,12 @@ export const ARROW_GLOW_GEOMETRY = new PlaneGeometry(1, 1).translate(0, 0, -0.06
 export const ARROW_HEIGHT = 0.5;
 
 // 金色のウォード錠の鍵。持ち手は輪（トーラス）、軸の先に歯。置くときに斜めに傾ける
-export const KEY_RING_GEOMETRY = new TorusGeometry(0.11, 0.035, 12, 32).translate(0, 0.55, 0);
-export const KEY_SHAFT_GEOMETRY = new CylinderGeometry(0.03, 0.03, 0.36, 12).translate(0, 0.27, 0);
-export const KEY_TEETH_GEOMETRY = new BoxGeometry(0.1, 0.1, 0.04).translate(0.06, 0.15, 0);
+// 傾けても鍵がマスの真ん中に残るよう、鍵全体の真ん中（歯の下端から輪の上端までの中ほど）を原点にする
+export const KEY_RING_GEOMETRY = new TorusGeometry(0.11, 0.035, 12, 32).translate(0, 0.16, 0);
+export const KEY_SHAFT_GEOMETRY = new CylinderGeometry(0.03, 0.03, 0.36, 12).translate(0, -0.12, 0);
+export const KEY_TEETH_GEOMETRY = new BoxGeometry(0.1, 0.1, 0.04).translate(0.06, -0.24, 0);
+// 鍵の真ん中を置く高さ。傾けても歯の先が床に付かない
+export const KEY_HEIGHT = 0.45;
 
 // 「1F」「2F」の文字を貼る板（横:縦 = 2:1。文字を描いた絵と同じ比）
 export const LABEL_GEOMETRY = new PlaneGeometry(1.6, 0.8);

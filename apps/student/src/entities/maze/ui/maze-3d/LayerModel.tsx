@@ -18,6 +18,7 @@ import {
 	FLAG_POLE_GEOMETRY,
 	HOLE_GEOMETRY,
 	HOLE_GLOW_GEOMETRY,
+	KEY_HEIGHT,
 	KEY_RING_GEOMETRY,
 	KEY_SHAFT_GEOMETRY,
 	KEY_TEETH_GEOMETRY,
@@ -103,7 +104,7 @@ export function LayerModel({ size, layer, positions, startDirection, materials }
 
 			{byCell.key.map((position) => (
 				// 鍵の形が分かるよう、横に傾けてから斜めに向ける
-				<group key={keyOf(position)} position={cellCenter(size, position)} rotation={KEY_ROTATION}>
+				<group key={keyOf(position)} position={keyPosition(size, position)} rotation={KEY_ROTATION}>
 					<mesh geometry={KEY_RING_GEOMETRY} material={materials.key} />
 					<mesh geometry={KEY_SHAFT_GEOMETRY} material={materials.key} />
 					<mesh geometry={KEY_TEETH_GEOMETRY} material={materials.key} />
@@ -116,6 +117,12 @@ export function LayerModel({ size, layer, positions, startDirection, materials }
 			</Suspense>
 		</group>
 	);
+}
+
+// 鍵は真ん中をマスの中心の真上に浮かせる
+function keyPosition(size: number, position: Position): [number, number, number] {
+	const [x, y, z] = cellCenter(size, position);
+	return [x, y + KEY_HEIGHT, z];
 }
 
 type TeleportArrowProps = {

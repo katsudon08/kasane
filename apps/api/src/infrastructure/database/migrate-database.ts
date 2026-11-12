@@ -1,5 +1,6 @@
 /*
- * テストの前に一度だけ、テスト用DBにマイグレーションを当てる（bunfig.tomlの[test].preload）
+ * DATABASE_URLのDBにマイグレーションを当てる
+ * テストの前に一度だけテスト用DBに当てる（bunfig.tomlの[test].preload）のと、本番のデプロイの前に本番のDBに当てる（railway.jsonのpreDeployCommand）のに使う
  * `drizzle-kit push`ではなくマイグレーションを当てるので、スキーマを変えて`drizzle-kit generate`を忘れるとテストが落ちる
  */
 import { join } from "node:path";

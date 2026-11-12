@@ -2,5 +2,5 @@
 env = false
 
 [test]
-# テストの前に一度だけ、テスト用DBにマイグレーションを当てる
-preload = ["./src/infrastructure/database/migrate-test-database.ts"]
+# テストの前に一度だけ、テスト用DBにマイグレーションを当てる（本番のデプロイの前にも同じスクリプトで当てる）
+preload = ["./src/infrastructure/database/migrate-database.ts"]

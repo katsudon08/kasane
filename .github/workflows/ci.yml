@@ -29,7 +29,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
+      # _headersのCSPを作るのにAPIのオリジンが要る。ビルドが通ることだけを確かめるので、手元と同じ値にする
       - run: mise run build
+        env:
+          VITE_API_ORIGIN: http://localhost:3000
+          VITE_STUDENT_ORIGIN: http://localhost:5173
   e2e:
     runs-on: ubuntu-latest
     services:

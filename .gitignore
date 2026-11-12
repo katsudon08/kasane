@@ -8,3 +8,4 @@ storybook-static/
 .neon
 test-results/
 playwright-report/
+.wrangler/

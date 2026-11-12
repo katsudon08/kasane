@@ -12,3 +12,4 @@
 
 - [コンセプト](docs/concepts/README.md)
 - [仕様](docs/specs/README.md)
+- [デプロイ](docs/deploy.md)

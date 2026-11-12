@@ -1,0 +1,11 @@
+// 児童用アプリの配信（Cloudflare Workersの静的アセット。docs/deploy.md）
+{
+	"name": "kasane-student",
+	"compatibility_date": "2026-11-01",
+	// アセットに無いURLだけを受け持つ
+	"main": "./worker.js",
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS",
+	},
+}

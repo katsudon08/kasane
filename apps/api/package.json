@@ -11,8 +11,7 @@
 		"test": "NODE_ENV=test dotenv run --override --file .env.test.local -- bun test --pass-with-no-tests",
 		"typecheck": "tsc",
 		"drizzle-kit:dev": "dotenv run --override --file .env.local -- drizzle-kit --config=drizzle-dev.config.ts",
-		"drizzle-kit:test": "dotenv run --override --file .env.test.local -- drizzle-kit --config=drizzle-test.config.ts",
-		"wscheck": "wscat -c"
+		"drizzle-kit:test": "dotenv run --override --file .env.test.local -- drizzle-kit --config=drizzle-test.config.ts"
 	},
 	"dependencies": {
 		"@elysia/cors": "catalog:",
@@ -29,7 +28,6 @@
 		"@types/pg": "catalog:",
 		"dotenv": "catalog:",
 		"drizzle-kit": "catalog:",
-		"neon": "catalog:",
-		"wscat": "catalog:"
+		"neon": "catalog:"
 	}
 }

@@ -1,0 +1,41 @@
+name: Deploy
+
+# 教師用・児童用アプリをCloudflareへ出す（docs/deploy.md）。APIはRailwayがmainを見て出す
+"on":
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # 出している途中のデプロイは止めず、次のデプロイを待たせる
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  frontend:
+    # 手で動かすときも、mainのコードだけを出す
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Cloudflareのトークンは、mainからしか出せないEnvironmentに置く
+    environment: production
+    strategy:
+      matrix:
+        app: [teacher, student]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      # VITE_API_ORIGINは画面がAPIを呼ぶ先と、_headersのCSPのconnect-srcの両方に入る
+      - run: pnpm --filter @kasane/${{ matrix.app }} build
+        env:
+          VITE_API_ORIGIN: ${{ vars.API_ORIGIN }}
+          VITE_STUDENT_ORIGIN: ${{ vars.STUDENT_ORIGIN }}
+      # wranglerは依存に入れず、版を固定してここでだけ使う
+      - run: pnpm dlx wrangler@4.156.2 deploy
+        working-directory: apps/${{ matrix.app }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_SEND_METRICS: "false"

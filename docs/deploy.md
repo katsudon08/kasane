@@ -8,19 +8,35 @@
 | ------------ | ---------------------------------------------------- | ------------------------------------------------------- |
 | 教師用アプリ | Cloudflare Workersの静的アセット（`kasane-teacher`） | `apps/teacher/wrangler.jsonc`・`apps/teacher/worker.js` |
 | 児童用アプリ | Cloudflare Workersの静的アセット（`kasane-student`） | `apps/student/wrangler.jsonc`・`apps/student/worker.js` |
-| API          | Railway（1台）                                       | `apps/api/Dockerfile`・`apps/api/railway.json`          |
+| API          | Railway（1台）                                       | `apps/api/Dockerfile`と、Railwayの画面の設定（下の表）  |
 | データベース | Neonの本番用プロジェクト                             | Railwayの環境変数`DATABASE_URL`                         |
 
 - **`main`にマージすると出る**
   - 教師用・児童用アプリは、GitHub Actions（`.github/workflows/deploy.yml`）がビルドしてCloudflareへ出す
   - APIは、Railwayが`main`を見て`apps/api/Dockerfile`でビルドして出す
 - **APIは、出す前に本番のDBへマイグレーションを当てる**
-  - `railway.json`の`preDeployCommand`で`migrate-database.ts`を動かす
+  - Railwayのpre-deploy stepで`migrate-database.ts`を動かす
 - **教師用・児童用アプリは、アセットに無いURLだけを`worker.js`が受け持つ**
   - 画面のURLには`index.html`を返し、`/assets/`の下は404を返す
 - **教師用・児童用アプリの応答ヘッダーは、ビルド時に`dist/_headers`へ書き出す**
   - 中身は各アプリの`vite.config.ts`にある（[backend.md「そのほかのセキュリティ設定」](specs/single/backend.md#そのほかのセキュリティ設定)）
   - CSPの`connect-src`は`VITE_API_ORIGIN`から作る
+
+## Railwayの設定
+
+APIのビルドと起動の設定は、Railwayの`@kasane/api`のSettingsに置きます（RailwayのConfig as Codeは新しいサービスで使えず、2026-12-01に廃止されるため、`railway.json`は置きません）。
+
+| 項目                    | 値                                                                                              |
+| ----------------------- | ----------------------------------------------------------------------------------------------- |
+| Source → Root Directory | 空（リポジトリのルート。Dockerfileが`packages/core`とlockfileを読むため）                       |
+| Source → Branch         | `main`                                                                                          |
+| Build → Builder         | Dockerfile（パスは`apps/api/Dockerfile`）                                                       |
+| Build → Watch Paths     | `/apps/api/**`・`/packages/core/**`・`/package.json`・`/pnpm-lock.yaml`・`/pnpm-workspace.yaml` |
+| Deploy → Start Command  | 空（Dockerfileの`CMD`で起動する）                                                               |
+| Deploy → Pre-deploy     | `bun run src/infrastructure/database/migrate-database.ts`                                       |
+| Deploy → Healthcheck    | `/health`                                                                                       |
+| Scale                   | `Southeast Asia (Singapore)`に1台（SSEの送り先をプロセスのメモリに持つため、2台にしない）       |
+| Edge → CDN Caching      | オフ                                                                                            |
 
 ## 環境変数
 
@@ -57,14 +73,9 @@
 3. **RailwayでAPIのサービスを作る**
    - GitHubのこのリポジトリからサービスを作る
      - Railwayが`apps/`の下を見てサービスを3つ作るので、`@kasane/teacher`と`@kasane/student`は消す
-   - `@kasane/api`のSettingsで次のようにする
-     - Root Directoryは空（リポジトリのルート）にする
-     - デプロイするブランチを`main`にする
-     - Custom Start Commandは空にする（`railway.json`とDockerfileの起動より優先されるため）
-     - Config-as-codeのパスを`/apps/api/railway.json`にする
-     - Regionは`Southeast Asia (Singapore)`にし、Replicasは1にする（`railway.json`の`numReplicas`でも1にしている）
-     - EdgeのCDN Cachingはオフのままにする
-   - Networkingでドメインを作ってAPIのオリジンを控える
+   - `@kasane/api`のSettingsを、上の「Railwayの設定」の表のとおりにする
+     - Railwayが自動で入れたStart Command（`pnpm --filter @kasane/api dev`）は消す
+   - Networkingでドメインを作ってAPIのオリジンを控える（ポートを聞かれたら`8080`）
    - Variablesに上の表の4つを入れる
 4. **GitHubのEnvironmentを作り、SecretとVariableを入れる**
    - リポジトリのSettings → EnvironmentsでEnvironment`production`を作る

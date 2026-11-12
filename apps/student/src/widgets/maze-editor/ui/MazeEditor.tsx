@@ -9,7 +9,7 @@
  */
 import { WALL } from "@kasane/core";
 import type { Cell, Maze } from "@kasane/core";
-import { ActionIcon, Button, Group, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Button, Group, Title } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useBlocker, useNavigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
@@ -19,8 +19,9 @@ import { mazeQueries } from "../../../entities/maze";
 import { ToolPalette } from "../../../features/edit-maze";
 import type { MazeSize } from "../../../features/edit-maze";
 import { StudentAccessLost } from "../../../shared/api";
-import { NAME_MAX_LENGTH, nameOf } from "../../../shared/lib/name";
+import { nameOf } from "../../../shared/lib/name";
 import { FailureMessage } from "../../../shared/ui/failure-message";
+import { NameInput } from "../../../shared/ui/name-input";
 import { saveMaze } from "../api/save-maze";
 import type { SaveTarget } from "../api/save-maze";
 import { editorReducer, initialEditorState } from "../model/editor-reducer";
@@ -155,7 +156,7 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 					</div>
 				</section>
 				<div className={classes.side}>
-					<TextInput
+					<NameInput
 						label={
 							<>
 								<ruby>
@@ -167,11 +168,9 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 								</ruby>
 							</>
 						}
-						classNames={{ label: classes.sectionLabel }}
+						labelClassName={classes.sectionLabel}
 						value={input}
-						onChange={(event) => setInput(event.currentTarget.value)}
-						maxLength={NAME_MAX_LENGTH}
-						autoComplete="off"
+						onChange={setInput}
 					/>
 					{/* 大きさは新しく作るときだけ選ぶ */}
 					{target.kind === "new" && (

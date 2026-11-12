@@ -28,3 +28,14 @@ export function nameOf(input: string): string | null {
 
 	return name;
 }
+
+/*
+ * 入力欄の値を、上限の文字数（UTF-16の単位。APIと同じ数え方）までに切る
+ * 2単位の字（絵文字など）が上限をまたぐときは、半分だけ残さずにその字ごと外す
+ */
+export function limitName(input: string): string {
+	if (input.length <= NAME_MAX_LENGTH) return input;
+	const code = input.charCodeAt(NAME_MAX_LENGTH - 1);
+	const splitsPair = code >= 0xd800 && code <= 0xdbff;
+	return input.slice(0, splitsPair ? NAME_MAX_LENGTH - 1 : NAME_MAX_LENGTH);
+}

@@ -1,0 +1,2 @@
+ALTER TABLE "mazes" ADD CONSTRAINT "mazes_name_length_check" CHECK (char_length("mazes"."name") between 1 and 20);--> statement-breakpoint
+ALTER TABLE "students" ADD CONSTRAINT "students_name_length_check" CHECK (char_length("students"."name") between 1 and 20);

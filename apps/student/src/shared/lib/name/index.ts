@@ -1,1 +1,1 @@
-export { NAME_MAX_LENGTH, nameOf } from "./name";
+export { NAME_MAX_LENGTH, limitName, nameOf } from "./name";

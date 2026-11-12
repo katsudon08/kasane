@@ -1,0 +1,6 @@
+/* 今の文字数。欄の右下に置く。文字は最低20px（仕様書README.mdの「見た目と操作のルール」） */
+.count {
+	margin-top: 4px;
+	font-size: var(--mantine-font-size-sm);
+	text-align: right;
+}

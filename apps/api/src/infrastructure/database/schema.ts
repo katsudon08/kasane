@@ -45,13 +45,17 @@ export const students = pgTable(
 		lessonId: uuid("lesson_id")
 			.notNull()
 			.references(() => lessons.id),
-		// 同じ授業に同じ名前の児童がいてもよい（名前にユニーク制約を付けない）
+		// 同じ授業に同じ名前の児童がいてもよい（名前にユニーク制約を付けない）。1〜20文字
 		name: text().notNull(),
 		// 児童のトークンのSHA-256
 		tokenHash: text("token_hash").notNull().unique(),
 		createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	},
-	(table) => [index("students_lesson_id_created_at_idx").on(table.lessonId, table.createdAt)],
+	(table) => [
+		index("students_lesson_id_created_at_idx").on(table.lessonId, table.createdAt),
+		// 1〜20文字（APIでも同じ範囲に限る）
+		check("students_name_length_check", sql`char_length(${table.name}) between 1 and 20`),
+	],
 );
 
 export const mazes = pgTable(
@@ -66,7 +70,11 @@ export const mazes = pgTable(
 		createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 		updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 	},
-	(table) => [index("mazes_student_id_idx").on(table.studentId)],
+	(table) => [
+		index("mazes_student_id_idx").on(table.studentId),
+		// 1〜20文字（APIでも同じ範囲に限る）
+		check("mazes_name_length_check", sql`char_length(${table.name}) between 1 and 20`),
+	],
 );
 
 // 1回の挑戦（プログラムを1回送った記録）。追加だけで更新しない

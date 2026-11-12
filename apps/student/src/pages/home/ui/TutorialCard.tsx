@@ -26,7 +26,7 @@ export function TutorialCard({ tutorial, state }: Props) {
 				{state === "locked" && <Lock aria-hidden size={32} />}
 			</span>
 			<span className={classes.number}>{tutorial.no}</span>
-			<Text size="xs" inherit>
+			<Text size="xs" inherit className={classes.name}>
 				<RubyText value={tutorial.name} />
 			</Text>
 		</>

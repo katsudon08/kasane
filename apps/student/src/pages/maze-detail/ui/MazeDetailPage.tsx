@@ -20,6 +20,15 @@ import { useMyMaze } from "../model/use-my-maze";
 import { DeleteConfirm } from "./DeleteConfirm";
 import { MazeQrModal } from "./MazeQrModal";
 
+/*
+ * ボタン4つを、横長のタブレット（幅1080px以上）で1行に収める
+ * 主ボタンは一番大きく（文字22px）、副ボタンは児童画面の最小の文字（20px）にして、左右の余白を詰める
+ * 幅が足りない画面では2行に折り返す
+ */
+const PRIMARY_SIZE = "lg";
+const SECONDARY_SIZE = "md";
+const SECONDARY_PADDING = "md";
+
 type Props = {
 	// URLの$mazeIdの値
 	mazeId: string;
@@ -64,8 +73,9 @@ export function MazeDetailPage({ mazeId }: Props) {
 					<Title order={1}>{maze.name}</Title>
 				</Group>
 				<MazeScene maze={maze.data} />
-				<Group justify="center" gap="md">
+				<Group justify="center" gap="xs">
 					<Button
+						size={PRIMARY_SIZE}
 						renderRoot={(props) => (
 							<Link to="/mazes/$mazeId/play" params={{ mazeId: maze.mazeId }} {...props} />
 						)}
@@ -81,6 +91,8 @@ export function MazeDetailPage({ mazeId }: Props) {
 						ぶ
 					</Button>
 					<Button
+						size={SECONDARY_SIZE}
+						px={SECONDARY_PADDING}
 						variant="default"
 						renderRoot={(props) => (
 							<Link to="/mazes/$mazeId/edit" params={{ mazeId: maze.mazeId }} {...props} />
@@ -96,7 +108,12 @@ export function MazeDetailPage({ mazeId }: Props) {
 						</ruby>
 						える
 					</Button>
-					<Button variant="default" onClick={() => setShowingQr(true)}>
+					<Button
+						size={SECONDARY_SIZE}
+						px={SECONDARY_PADDING}
+						variant="default"
+						onClick={() => setShowingQr(true)}
+					>
 						この
 						<ruby>
 							迷路<rt>めいろ</rt>
@@ -107,7 +124,12 @@ export function MazeDetailPage({ mazeId }: Props) {
 						</ruby>
 						せる
 					</Button>
-					<Button variant="default" onClick={() => setConfirmingDelete(true)}>
+					<Button
+						size={SECONDARY_SIZE}
+						px={SECONDARY_PADDING}
+						variant="default"
+						onClick={() => setConfirmingDelete(true)}
+					>
 						この
 						<ruby>
 							迷路<rt>めいろ</rt>

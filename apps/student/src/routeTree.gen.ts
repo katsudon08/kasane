@@ -13,6 +13,7 @@ import { Route as StudentRouteImport } from './app/routes/_student'
 import { Route as EndedRouteImport } from './app/routes/ended'
 import { Route as JoinRouteImport } from './app/routes/join'
 import { Route as StudentIndexRouteImport } from './app/routes/_student/index'
+import { Route as StudentMazesMazeIdIndexRouteImport } from './app/routes/_student/mazes/$mazeId/index'
 import { Route as StudentTutorialsNoIndexRouteImport } from './app/routes/_student/tutorials/$no/index'
 
 const StudentRoute = StudentRouteImport.update({
@@ -34,6 +35,11 @@ const StudentIndexRoute = StudentIndexRouteImport.update({
   path: '/',
   getParentRoute: () => StudentRoute,
 } as any)
+const StudentMazesMazeIdIndexRoute = StudentMazesMazeIdIndexRouteImport.update({
+  id: '/mazes/$mazeId/',
+  path: '/mazes/$mazeId/',
+  getParentRoute: () => StudentRoute,
+} as any)
 const StudentTutorialsNoIndexRoute = StudentTutorialsNoIndexRouteImport.update({
   id: '/tutorials/$no/',
   path: '/tutorials/$no/',
@@ -44,12 +50,14 @@ export interface FileRoutesByFullPath {
   '/': typeof StudentIndexRoute
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
+  '/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
   '/tutorials/$no/': typeof StudentTutorialsNoIndexRoute
 }
 export interface FileRoutesByTo {
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
   '/': typeof StudentIndexRoute
+  '/mazes/$mazeId': typeof StudentMazesMazeIdIndexRoute
   '/tutorials/$no': typeof StudentTutorialsNoIndexRoute
 }
 export interface FileRoutesById {
@@ -58,19 +66,21 @@ export interface FileRoutesById {
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
   '/_student/': typeof StudentIndexRoute
+  '/_student/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
   '/_student/tutorials/$no/': typeof StudentTutorialsNoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ended' | '/join' | '/tutorials/$no/'
+  fullPaths: '/' | '/ended' | '/join' | '/mazes/$mazeId/' | '/tutorials/$no/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/ended' | '/join' | '/' | '/tutorials/$no'
+  to: '/ended' | '/join' | '/' | '/mazes/$mazeId' | '/tutorials/$no'
   id:
     | '__root__'
     | '/_student'
     | '/ended'
     | '/join'
     | '/_student/'
+    | '/_student/mazes/$mazeId/'
     | '/_student/tutorials/$no/'
   fileRoutesById: FileRoutesById
 }
@@ -110,6 +120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentIndexRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/_student/mazes/$mazeId/': {
+      id: '/_student/mazes/$mazeId/'
+      path: '/mazes/$mazeId'
+      fullPath: '/mazes/$mazeId/'
+      preLoaderRoute: typeof StudentMazesMazeIdIndexRouteImport
+      parentRoute: typeof StudentRoute
+    }
     '/_student/tutorials/$no/': {
       id: '/_student/tutorials/$no/'
       path: '/tutorials/$no'
@@ -122,11 +139,13 @@ declare module '@tanstack/react-router' {
 
 interface StudentRouteChildren {
   StudentIndexRoute: typeof StudentIndexRoute
+  StudentMazesMazeIdIndexRoute: typeof StudentMazesMazeIdIndexRoute
   StudentTutorialsNoIndexRoute: typeof StudentTutorialsNoIndexRoute
 }
 
 const StudentRouteChildren: StudentRouteChildren = {
   StudentIndexRoute: StudentIndexRoute,
+  StudentMazesMazeIdIndexRoute: StudentMazesMazeIdIndexRoute,
   StudentTutorialsNoIndexRoute: StudentTutorialsNoIndexRoute,
 }
 

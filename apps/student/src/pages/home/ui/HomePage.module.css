@@ -76,6 +76,21 @@
 	border-radius: var(--mantine-radius-lg);
 }
 
+/* 自分の迷路のカード。ミニマップと名前を縦に並べる */
+.mazeCard {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	color: inherit;
+	text-decoration: none;
+}
+
+.mazeMap {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1;
+}
+
 /* 全部クリアした直後（まだ迷路を作っていない間）は、色つきにして目立たせる */
 .mazesHighlighted {
 	border-color: var(--mantine-color-blue-6);

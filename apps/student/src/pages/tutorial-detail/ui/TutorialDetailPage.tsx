@@ -2,7 +2,7 @@
  * もんだいのしょうさい（仕様書README.mdの「もんだいのしょうさい / じぶんのめいろのしょうさい」）
  * 見出しは「{番号}. {名前}」、左に「もどる」の矢印（ホームへ）
  * 番号が正しくない・まだ解けない問題（isTutorialUnlockedが偽）なら、ホームへ移る。チュートリアルは定数なので通信しない
- * 迷路の3Dと「この迷路で遊ぶ」は、タスク11・12で足す
+ * 画面の大部分に迷路の3D。「この迷路で遊ぶ」はタスク12で足す
  */
 import { isTutorialUnlocked } from "@kasane/core";
 import { ActionIcon, Container, Group, Stack, Title } from "@mantine/core";
@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, Navigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
+import { MazeScene } from "../../../entities/maze";
 import { meQueries } from "../../../entities/student";
 import { StudentAccessLost } from "../../../shared/api";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
@@ -53,6 +54,7 @@ export function TutorialDetailPage({ noParam }: Props) {
 						{tutorial.no}. <RubyText value={tutorial.name} />
 					</Title>
 				</Group>
+				<MazeScene maze={tutorial.maze} />
 			</Stack>
 		</Container>
 	);

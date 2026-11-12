@@ -2,14 +2,17 @@
  * ホームの「自分の迷路」（仕様書README.mdの「ホーム」）
  * チュートリアルを全部クリアするまでは灰色＋鍵で、一覧を取りに行かない（canCreateMazeが真になってからGET /me/mazes）
  * 全部クリアした後は、更新が新しい順に左上から右下へ並べる
+ * 一覧は2Dのミニマップで描き（3Dはしょうさいとプレイだけ）、押すとじぶんのめいろのしょうさいへ移る
+ * ミニマップには、プレイを始めたときにロボットがいる階（スタートの階）を描く
  */
 import { Card, SimpleGrid, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
 
+import { MazeMap, mazeQueries, startLayer } from "../../../entities/maze";
 import { StudentAccessLost } from "../../../shared/api";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
-import { mazeQueries } from "../api/maze-api";
 
 import classes from "./HomePage.module.css";
 
@@ -70,8 +73,16 @@ function MazeList() {
 	}
 	return (
 		<SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} className={classes.mazes}>
-			{mazes.data.map(({ mazeId, name }) => (
-				<Card key={mazeId} withBorder padding="md" radius="lg">
+			{mazes.data.map(({ mazeId, name, data }) => (
+				<Card
+					key={mazeId}
+					renderRoot={(props) => <Link to="/mazes/$mazeId" params={{ mazeId }} {...props} />}
+					withBorder
+					padding="md"
+					radius="lg"
+					className={classes.mazeCard}
+				>
+					<MazeMap maze={data} layer={startLayer(data)} className={classes.mazeMap} />
 					{/* 児童が入れた名前は、テキストとして描く */}
 					<Text fw={700}>{name}</Text>
 				</Card>

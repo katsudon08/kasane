@@ -16,7 +16,11 @@ concurrency:
 
 jobs:
   frontend:
+    # 手で動かすときも、mainのコードだけを出す
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # Cloudflareのトークンは、mainからしか出せないEnvironmentに置く
+    environment: production
     strategy:
       matrix:
         app: [teacher, student]

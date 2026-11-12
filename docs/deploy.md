@@ -36,9 +36,11 @@
 
 ### GitHub（Actions）
 
+どれもEnvironment`production`に入れます。
+
 | 種類     | 名前                    | 値                                                                          |
 | -------- | ----------------------- | --------------------------------------------------------------------------- |
-| Secret   | `CLOUDFLARE_API_TOKEN`  | Cloudflareの「Edit Cloudflare Workers」のテンプレートで作ったAPIトークン    |
+| Secret   | `CLOUDFLARE_API_TOKEN`  | 対象のアカウントの「Workers Scripts:Edit」だけを許したAPIトークン           |
 | Variable | `CLOUDFLARE_ACCOUNT_ID` | CloudflareのアカウントID                                                    |
 | Variable | `API_ORIGIN`            | APIのオリジン（Railwayで作ったドメイン）。ビルドの`VITE_API_ORIGIN`になる   |
 | Variable | `STUDENT_ORIGIN`        | 児童用アプリのオリジン。ビルドの`VITE_STUDENT_ORIGIN`（授業QRの中身）になる |
@@ -50,7 +52,7 @@
 2. **Cloudflareで出す先を用意する**
    - Workersの`workers.dev`のサブドメインを決める
      - 教師用・児童用アプリのオリジンは`https://kasane-teacher.{サブドメイン}.workers.dev`と`https://kasane-student.{サブドメイン}.workers.dev`になる
-   - 「Edit Cloudflare Workers」のテンプレートでAPIトークンを作る
+   - カスタムトークンで、対象のアカウントの「Workers Scripts:Edit」だけを許したAPIトークンを作る
 3. **RailwayでAPIのサービスを作る**
    - GitHubのこのリポジトリからサービスを作る
    - Settingsで次のようにする
@@ -60,8 +62,10 @@
      - Replicasは1のままにする
    - Networkingでドメインを作ってAPIのオリジンを控える
    - Variablesに`DATABASE_URL`・`TEACHER_ORIGIN`・`STUDENT_ORIGIN`を入れる
-4. **GitHubのSecretとVariableを入れる**
-   - リポジトリのSettings → Secrets and variables → Actionsに、上の表の4つを入れる
+4. **GitHubのEnvironmentを作り、SecretとVariableを入れる**
+   - リポジトリのSettings → EnvironmentsでEnvironment`production`を作る
+     - Deployment branchesを`main`だけにする
+   - そのEnvironmentに、上の表の4つを入れる
 5. **`main`にマージする**
    - 出し直すだけのときは、ActionsのDeployを手で動かす（workflow_dispatch）
 

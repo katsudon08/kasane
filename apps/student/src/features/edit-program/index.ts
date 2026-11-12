@@ -16,5 +16,5 @@ export { programRows } from "./lib/program-rows";
 export type { ProgramRow } from "./lib/program-rows";
 export { CardList } from "./ui/CardList";
 export type { CurrentCard } from "./ui/CardList";
-export { CardIcon, CardName } from "./ui/CardLabel";
+export { CardName } from "./ui/CardLabel";
 export { RepeatTimesModal } from "./ui/RepeatTimesModal";

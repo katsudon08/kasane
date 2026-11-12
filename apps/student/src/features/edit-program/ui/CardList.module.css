@@ -23,6 +23,11 @@
 	align-items: stretch;
 }
 
+/* 差し込み位置の線は、上下のカードとの間を空ける */
+.lineRow {
+	margin-block: 4px;
+}
+
 /* 字下げの縦線（エディタのインデントの線） */
 .guide {
 	flex: 0 0 var(--indent);
@@ -37,8 +42,8 @@
 	align-items: center;
 	gap: 4px;
 	min-width: 0;
-	min-height: 72px;
-	padding: 0 4px 0 0;
+	min-height: 84px;
+	padding: 8px 6px 8px 0;
 	border: 3px solid var(--card-border);
 	border-radius: var(--mantine-radius-md);
 	background: var(--card-bg);
@@ -148,13 +153,19 @@
 	cursor: default;
 }
 
+/* ゴミ箱は、カーソルを当てると背景を赤くして、消すボタンだと分かるようにする */
+.trash:not(:disabled):hover {
+	background: var(--mantine-color-red-6);
+	color: var(--mantine-color-white);
+}
+
 /* 差し込み位置: 太い青の線と、左端の「ここに入る」の印 */
 .line {
 	display: flex;
 	flex: 1;
 	align-items: center;
 	min-width: 0;
-	height: 32px;
+	height: 48px;
 	background: linear-gradient(var(--mantine-color-blue-6), var(--mantine-color-blue-6)) center /
 		100% 6px no-repeat;
 }
@@ -162,8 +173,8 @@
 .lineLabel {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-	padding: 0 12px 0 8px;
+	gap: 8px;
+	padding: 6px 18px 6px 12px;
 	border-radius: 999px;
 	background: var(--mantine-color-blue-6);
 	color: var(--mantine-color-white);

@@ -15,7 +15,7 @@ import { memo, useEffect, useMemo, useRef } from "react";
 import type { Cursor } from "../lib/program-edit";
 import { programRows } from "../lib/program-rows";
 import type { ProgramRow } from "../lib/program-rows";
-import { CardIcon, CardName } from "./CardLabel";
+import { CardName } from "./CardLabel";
 
 import classes from "./CardList.module.css";
 
@@ -234,7 +234,6 @@ const CardRow = memo(function CardRow({
 					<span className={classes.number}>{number}</span>
 					{highlight === "current" && <Play aria-hidden size={24} className={classes.mark} />}
 					{highlight === "failed" && <CircleX aria-hidden size={24} className={classes.mark} />}
-					<CardIcon type={command.type} />
 					<span className={classes.name}>
 						<CardName type={command.type} />
 					</span>
@@ -271,6 +270,7 @@ const CardRow = memo(function CardRow({
 				<ActionIcon
 					variant="subtle"
 					color="gray"
+					className={classes.trash}
 					onClick={() => onRemove(path)}
 					disabled={!editable}
 					aria-label={`${number}まい目のカードを消す`}
@@ -302,7 +302,6 @@ const EndRow = memo(function EndRow({ depth, cursor, editable, onCursor }: EndRo
 					aria-label="くりかえしの後ろに入れる"
 				>
 					<span className={classes.number} />
-					<CardIcon type="end" />
 					<span className={classes.name}>
 						<CardName type="end" />
 					</span>

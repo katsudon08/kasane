@@ -12,11 +12,12 @@ import { Instances } from "./Instances";
 import { LayerLabel } from "./LayerLabel";
 import {
 	ARROW_GEOMETRY,
+	ARROW_GLOW_GEOMETRY,
 	ARROW_HEIGHT,
 	FLAG_GEOMETRY,
 	FLAG_POLE_GEOMETRY,
 	HOLE_GEOMETRY,
-	HOLE_RING_GEOMETRY,
+	HOLE_GLOW_GEOMETRY,
 	KEY_RING_GEOMETRY,
 	KEY_SHAFT_GEOMETRY,
 	KEY_TEETH_GEOMETRY,
@@ -25,6 +26,9 @@ import {
 	WALL_GEOMETRY,
 } from "./parts";
 import type { PartMaterials } from "./parts";
+
+// 鍵の傾き。横に約35度傾けて（z軸）、斜め45度に向ける（y軸）
+const KEY_ROTATION: [number, number, number] = [0, Math.PI / 4, -Math.PI / 5];
 
 type Props = {
 	size: number;
@@ -57,8 +61,8 @@ export function LayerModel({ size, layer, positions, startDirection, materials }
 			<Instances
 				size={size}
 				positions={byCell.hole}
-				geometry={HOLE_RING_GEOMETRY}
-				material={materials.holeRing}
+				geometry={HOLE_GLOW_GEOMETRY}
+				material={materials.holeGlow}
 			/>
 
 			{byCell.start.map((position) => (
@@ -98,8 +102,8 @@ export function LayerModel({ size, layer, positions, startDirection, materials }
 			))}
 
 			{byCell.key.map((position) => (
-				// 鍵の形が分かるよう、斜めに向けて立てる
-				<group key={keyOf(position)} position={cellCenter(size, position)} rotation-y={Math.PI / 4}>
+				// 鍵の形が分かるよう、横に傾けてから斜めに向ける
+				<group key={keyOf(position)} position={cellCenter(size, position)} rotation={KEY_ROTATION}>
 					<mesh geometry={KEY_RING_GEOMETRY} material={materials.key} />
 					<mesh geometry={KEY_SHAFT_GEOMETRY} material={materials.key} />
 					<mesh geometry={KEY_TEETH_GEOMETRY} material={materials.key} />
@@ -126,6 +130,10 @@ function TeleportArrow({ size, position, up, materials }: TeleportArrowProps) {
 	const [x, y, z] = cellCenter(size, position);
 	return (
 		<Billboard position={[x, y + ARROW_HEIGHT, z]}>
+			<mesh
+				geometry={ARROW_GLOW_GEOMETRY}
+				material={up ? materials.teleportUpGlow : materials.teleportDownGlow}
+			/>
 			<mesh
 				geometry={ARROW_GEOMETRY}
 				material={up ? materials.teleportUp : materials.teleportDown}

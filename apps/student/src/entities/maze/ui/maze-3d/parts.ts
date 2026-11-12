@@ -8,6 +8,7 @@ import {
 	CanvasTexture,
 	CircleGeometry,
 	CylinderGeometry,
+	DoubleSide,
 	ExtrudeGeometry,
 	MeshStandardMaterial,
 	PlaneGeometry,
@@ -37,13 +38,16 @@ export const WALL_GEOMETRY = new BoxGeometry(1, WALL_HEIGHT + TILE_THICKNESS, 1)
 	0,
 );
 
-// 穴（ブラックホール）。黒い円の上に、光る輪を少し浮かせて重ねる
-export const HOLE_GEOMETRY = new CircleGeometry(0.4, 32)
+/*
+ * 穴（ブラックホール）。黒い円の上に、オレンジに光る輪を少し浮かせて重ねる
+ * 輪は、外へぼやけて広がる光の模様を板に描く（後処理のブルームを使わずに、光がにじんで見えるようにする）
+ */
+export const HOLE_GEOMETRY = new CircleGeometry(0.32, 32)
 	.rotateX(-Math.PI / 2)
 	.translate(0, 0.005, 0);
-export const HOLE_RING_GEOMETRY = new TorusGeometry(0.4, 0.035, 8, 40)
+export const HOLE_GLOW_GEOMETRY = new PlaneGeometry(1, 1)
 	.rotateX(-Math.PI / 2)
-	.translate(0, 0.08, 0);
+	.translate(0, 0.06, 0);
 
 // スタートの「＜」の形の矢印。+xを向き、床に寝かせる（向きは置くときにy軸まわりに回す）
 function chevronShape(): Shape {
@@ -91,10 +95,12 @@ export const ARROW_GEOMETRY = new ExtrudeGeometry(arrowShape(), {
 	depth: 0.08,
 	bevelEnabled: false,
 }).translate(0, 0, -0.04);
+// 矢印の後ろに置く、ぼやけて広がる光の板
+export const ARROW_GLOW_GEOMETRY = new PlaneGeometry(1, 1).translate(0, 0, -0.06);
 // 矢印の中心を置く高さ
 export const ARROW_HEIGHT = 0.5;
 
-// 金色のウォード錠の鍵。持ち手は輪（トーラス）、軸の先に歯。立てて置く
+// 金色のウォード錠の鍵。持ち手は輪（トーラス）、軸の先に歯。置くときに斜めに傾ける
 export const KEY_RING_GEOMETRY = new TorusGeometry(0.11, 0.035, 12, 32).translate(0, 0.55, 0);
 export const KEY_SHAFT_GEOMETRY = new CylinderGeometry(0.03, 0.03, 0.36, 12).translate(0, 0.27, 0);
 export const KEY_TEETH_GEOMETRY = new BoxGeometry(0.1, 0.1, 0.04).translate(0.06, 0.15, 0);
@@ -177,23 +183,119 @@ function wallTexture(): CanvasTexture {
 	return toTexture(canvas);
 }
 
+const GLOW_SIZE = 256;
+const GLOW_CENTER = GLOW_SIZE / 2;
+
+/*
+ * 穴の輪の光。画像の真ん中は透明で、輪のところが明るく、外へぼやけて消える
+ * 手前（south）の側を明るくして、ブラックホールの写真のような偏りを付ける
+ */
+function holeGlowTexture(): CanvasTexture {
+	const [canvas, context] = canvas2d(GLOW_SIZE);
+	const ring = context.createRadialGradient(
+		GLOW_CENTER,
+		GLOW_CENTER,
+		0,
+		GLOW_CENTER,
+		GLOW_CENTER,
+		GLOW_CENTER,
+	);
+	ring.addColorStop(0, "rgba(255, 120, 0, 0)");
+	ring.addColorStop(0.56, "rgba(255, 120, 0, 0)");
+	ring.addColorStop(0.64, "rgba(255, 150, 20, 0.9)");
+	ring.addColorStop(0.7, "rgba(255, 210, 120, 1)");
+	ring.addColorStop(0.8, "rgba(255, 120, 0, 0.6)");
+	ring.addColorStop(1, "rgba(255, 80, 0, 0)");
+	context.fillStyle = ring;
+	context.fillRect(0, 0, GLOW_SIZE, GLOW_SIZE);
+
+	// 明るい側。輪の形からはみ出さないよう、輪の範囲だけに重ねる
+	context.save();
+	context.beginPath();
+	context.arc(GLOW_CENTER, GLOW_CENTER, GLOW_CENTER * 0.9, 0, Math.PI * 2);
+	context.arc(GLOW_CENTER, GLOW_CENTER, GLOW_CENTER * 0.6, 0, Math.PI * 2, true);
+	context.clip();
+	const bright = context.createRadialGradient(
+		GLOW_CENTER,
+		GLOW_SIZE * 0.82,
+		0,
+		GLOW_CENTER,
+		GLOW_SIZE * 0.82,
+		GLOW_CENTER * 0.8,
+	);
+	bright.addColorStop(0, "rgba(255, 240, 190, 0.9)");
+	bright.addColorStop(1, "rgba(255, 200, 120, 0)");
+	context.globalCompositeOperation = "lighter";
+	context.fillStyle = bright;
+	context.fillRect(0, 0, GLOW_SIZE, GLOW_SIZE);
+	context.restore();
+	return toTexture(canvas);
+}
+
+// テレポートの矢印の後ろの光。白でぼかして描き、色は材質の発光の色で付ける
+function softGlowTexture(): CanvasTexture {
+	const [canvas, context] = canvas2d(GLOW_SIZE);
+	const glow = context.createRadialGradient(
+		GLOW_CENTER,
+		GLOW_CENTER,
+		0,
+		GLOW_CENTER,
+		GLOW_CENTER,
+		GLOW_CENTER,
+	);
+	glow.addColorStop(0, "rgba(255, 255, 255, 0.85)");
+	glow.addColorStop(0.4, "rgba(255, 255, 255, 0.35)");
+	glow.addColorStop(1, "rgba(255, 255, 255, 0)");
+	context.fillStyle = glow;
+	context.fillRect(0, 0, GLOW_SIZE, GLOW_SIZE);
+	return toTexture(canvas);
+}
+
 // 材質
 
 export type PartMaterials = {
 	tile: MeshStandardMaterial;
 	wall: MeshStandardMaterial;
 	hole: MeshStandardMaterial;
-	holeRing: MeshStandardMaterial;
+	holeGlow: MeshStandardMaterial;
 	start: MeshStandardMaterial;
 	flagPole: MeshStandardMaterial;
 	flag: MeshStandardMaterial;
 	teleportUp: MeshStandardMaterial;
+	teleportUpGlow: MeshStandardMaterial;
 	teleportDown: MeshStandardMaterial;
+	teleportDownGlow: MeshStandardMaterial;
 	key: MeshStandardMaterial;
 };
 
 const TILE_TEXTURE = tileTexture();
 const WALL_TEXTURE = wallTexture();
+const HOLE_GLOW_TEXTURE = holeGlowTexture();
+const SOFT_GLOW_TEXTURE = softGlowTexture();
+
+/*
+ * 光の板の材質。色は付けず（黒）、模様の色と明るさをそのまま発光にする
+ * 明るさを抑える変換（トーンマッピング）をかけず、奥の物を隠さないように深さを書き込まない
+ */
+function glowMaterial(
+	texture: CanvasTexture,
+	emissive: string,
+	opacity: number,
+	intensity: number,
+): MeshStandardMaterial {
+	return new MeshStandardMaterial({
+		color: "#000000",
+		map: texture,
+		emissive,
+		emissiveMap: texture,
+		emissiveIntensity: intensity,
+		transparent: true,
+		opacity,
+		depthWrite: false,
+		toneMapped: false,
+		side: DoubleSide,
+	});
+}
 
 function createMaterials(opacity: number): PartMaterials {
 	// 透かす階も深さは書き込む（同じ階の壁の裏側の面まで透けて見えると、形が分かりにくい）
@@ -202,12 +304,7 @@ function createMaterials(opacity: number): PartMaterials {
 		tile: new MeshStandardMaterial({ ...common, map: TILE_TEXTURE, roughness: 0.95 }),
 		wall: new MeshStandardMaterial({ ...common, map: WALL_TEXTURE, roughness: 0.95 }),
 		hole: new MeshStandardMaterial({ ...common, color: "#000000", roughness: 1 }),
-		holeRing: new MeshStandardMaterial({
-			...common,
-			color: "#ff8a00",
-			emissive: "#ff7a00",
-			emissiveIntensity: 1.2,
-		}),
+		holeGlow: glowMaterial(HOLE_GLOW_TEXTURE, "#ffffff", opacity, 1.3),
 		start: new MeshStandardMaterial({
 			...common,
 			color: "#1c7ed6",
@@ -219,15 +316,19 @@ function createMaterials(opacity: number): PartMaterials {
 		teleportUp: new MeshStandardMaterial({
 			...common,
 			color: "#e03131",
-			emissive: "#e03131",
-			emissiveIntensity: 0.45,
+			emissive: "#ff3b3b",
+			emissiveIntensity: 0.9,
+			toneMapped: false,
 		}),
+		teleportUpGlow: glowMaterial(SOFT_GLOW_TEXTURE, "#ff4d4d", opacity, 1.2),
 		teleportDown: new MeshStandardMaterial({
 			...common,
 			color: "#1971c2",
-			emissive: "#1c7ed6",
-			emissiveIntensity: 0.45,
+			emissive: "#339af0",
+			emissiveIntensity: 0.9,
+			toneMapped: false,
 		}),
+		teleportDownGlow: glowMaterial(SOFT_GLOW_TEXTURE, "#4dabf7", opacity, 1.2),
 		key: new MeshStandardMaterial({ ...common, color: "#f2b705", metalness: 0.7, roughness: 0.3 }),
 	};
 }

@@ -2,7 +2,8 @@
  * じぶんのめいろのしょうさい（仕様書README.mdの「もんだいのしょうさい / じぶんのめいろのしょうさい」）
  * 見出しは迷路の名前、左に「もどる」の矢印（ホームへ）。画面の大部分に迷路の3D
  * 迷路はGET /me/mazesのキャッシュからmazeIdで探す（use-my-maze）
- * 3Dの下に、主ボタン「この迷路で遊ぶ」、副ボタン「この迷路を変える」「この迷路を消す」を横に並べる
+ * 3Dの下に、主ボタン「この迷路で遊ぶ」、副ボタン「この迷路を変える」「この迷路をQRコードで見せる」「この迷路を消す」を横に並べる
+ * QRコードで見せるは、モーダルにQRを出す（サーバーは呼ばない）
  * 消すは確認を出してからDELETE /me/mazes/:mazeIdを呼び、ホームへ戻る（一覧は無効化して取り直す）
  */
 import { ActionIcon, Button, Container, Group, Stack, Title } from "@mantine/core";
@@ -17,6 +18,16 @@ import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { deleteMaze } from "../api/delete-maze";
 import { useMyMaze } from "../model/use-my-maze";
 import { DeleteConfirm } from "./DeleteConfirm";
+import { MazeQrModal } from "./MazeQrModal";
+
+/*
+ * ボタン4つを、横長のタブレット（幅1080px以上）で1行に収める
+ * 主ボタンは一番大きく（文字22px）、副ボタンは児童画面の最小の文字（20px）にして、左右の余白を詰める
+ * 幅が足りない画面では2行に折り返す
+ */
+const PRIMARY_SIZE = "lg";
+const SECONDARY_SIZE = "md";
+const SECONDARY_PADDING = "md";
 
 type Props = {
 	// URLの$mazeIdの値
@@ -26,6 +37,7 @@ type Props = {
 export function MazeDetailPage({ mazeId }: Props) {
 	const access = useMyMaze(mazeId);
 	const [confirmingDelete, setConfirmingDelete] = useState(false);
+	const [showingQr, setShowingQr] = useState(false);
 
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -61,8 +73,9 @@ export function MazeDetailPage({ mazeId }: Props) {
 					<Title order={1}>{maze.name}</Title>
 				</Group>
 				<MazeScene maze={maze.data} />
-				<Group justify="center" gap="md">
+				<Group justify="center" gap="xs">
 					<Button
+						size={PRIMARY_SIZE}
 						renderRoot={(props) => (
 							<Link to="/mazes/$mazeId/play" params={{ mazeId: maze.mazeId }} {...props} />
 						)}
@@ -78,6 +91,8 @@ export function MazeDetailPage({ mazeId }: Props) {
 						ぶ
 					</Button>
 					<Button
+						size={SECONDARY_SIZE}
+						px={SECONDARY_PADDING}
 						variant="default"
 						renderRoot={(props) => (
 							<Link to="/mazes/$mazeId/edit" params={{ mazeId: maze.mazeId }} {...props} />
@@ -93,7 +108,28 @@ export function MazeDetailPage({ mazeId }: Props) {
 						</ruby>
 						える
 					</Button>
-					<Button variant="default" onClick={() => setConfirmingDelete(true)}>
+					<Button
+						size={SECONDARY_SIZE}
+						px={SECONDARY_PADDING}
+						variant="default"
+						onClick={() => setShowingQr(true)}
+					>
+						この
+						<ruby>
+							迷路<rt>めいろ</rt>
+						</ruby>
+						をQRコードで
+						<ruby>
+							見<rt>み</rt>
+						</ruby>
+						せる
+					</Button>
+					<Button
+						size={SECONDARY_SIZE}
+						px={SECONDARY_PADDING}
+						variant="default"
+						onClick={() => setConfirmingDelete(true)}
+					>
 						この
 						<ruby>
 							迷路<rt>めいろ</rt>
@@ -106,6 +142,9 @@ export function MazeDetailPage({ mazeId }: Props) {
 					</Button>
 				</Group>
 			</Stack>
+			{showingQr && (
+				<MazeQrModal name={maze.name} maze={maze.data} onClose={() => setShowingQr(false)} />
+			)}
 			{confirmingDelete && (
 				<DeleteConfirm
 					deleting={remove.isPending}

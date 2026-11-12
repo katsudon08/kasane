@@ -25,6 +25,7 @@
 		"@tanstack/react-router": "catalog:",
 		"@yudiel/react-qr-scanner": "catalog:",
 		"lucide-react": "catalog:",
+		"qrcode.react": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"three": "catalog:",

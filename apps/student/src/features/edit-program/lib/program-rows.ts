@@ -2,9 +2,11 @@
  * カードの並びを、画面に上から並べる行にする（仕様書README.mdの「プログラムをつくる」「ロボットを動かす」）
  * - 1枚が1つの命令。くりかえしの中の命令は字下げする（depth）
  * - 番号は木を上から数えた順（1始まり）。閉じたくりかえしの中のカードも数える
- * - 出っ張り（slot）は、そのカードの直後を指す差し込み位置。開いたくりかえしの出っ張りは、bodyの下に置く
- * - 同じ差し込み位置を二つの出っ張りで出さない。bodyの末尾は、最後のカードの出っ張りがそこを指すので、bodyが空のときだけ出す
- * - bodyの先頭を指す出っ張りはないので、差し込み位置がそこにあるとき（消した後など）だけ、先頭に差し込み位置を出す
+ * - 開いているくりかえしの中の命令の下に、「くりかえし終わり」の行を出す
+ * - どの行も、押したときの差し込み位置（cursor）を持つ。差し込み位置の青い線は、cursorが今の差し込み位置と同じ行の下に引く
+ *   - カード: その直後。開いているくりかえしのカードは、その中の先頭
+ *   - 「くりかえし終わり」: くりかえしの直後
+ * - 一番外側の先頭を指す行はないので、差し込み位置がそこにあるとき（カードがないとき・消した後など）だけ、先頭の行を出す
  */
 import type { Command, Program } from "@kasane/core";
 
@@ -20,10 +22,12 @@ export type ProgramRow =
 			depth: number;
 			// くりかえしの中を開いているか（くりかえし以外はfalse）
 			open: boolean;
-			// カードの下の出っ張りが指す差し込み位置。開いたくりかえしはbodyの下に別の行で出すのでnull
-			slot: Cursor | null;
+			cursor: Cursor;
 	  }
-	| { kind: "slot"; cursor: Cursor; depth: number };
+	// 開いているくりかえしの「くりかえし終わり」。pathはくりかえしの位置
+	| { kind: "end"; path: number[]; depth: number; cursor: Cursor }
+	// 一番外側の先頭
+	| { kind: "head"; depth: 0; cursor: Cursor };
 
 type Options = {
 	// 閉じているくりかえし（命令のオブジェクトで覚える）
@@ -51,30 +55,28 @@ export function programRows(program: Program, options: Options): ProgramRow[] {
 		(options.current !== null && startsWith(options.current, path));
 
 	const addBody = (body: readonly Command[], bodyPath: number[], depth: number) => {
-		const head = [...bodyPath, 0];
-		if (body.length === 0 || samePath(options.cursor, head)) {
-			rows.push({ kind: "slot", cursor: head, depth });
-		}
-
 		body.forEach((command, index) => {
 			number += 1;
 			const path = [...bodyPath, index];
 			const after = [...bodyPath, index + 1];
 			if (command.type !== "repeat") {
-				rows.push({ kind: "card", command, path, number, depth, open: false, slot: after });
+				rows.push({ kind: "card", command, path, number, depth, open: false, cursor: after });
 				return;
 			}
 			if (!isOpen(command, path)) {
-				rows.push({ kind: "card", command, path, number, depth, open: false, slot: after });
+				rows.push({ kind: "card", command, path, number, depth, open: false, cursor: after });
 				number += countCommands(command.body);
 				return;
 			}
-			rows.push({ kind: "card", command, path, number, depth, open: true, slot: null });
+			rows.push({ kind: "card", command, path, number, depth, open: true, cursor: [...path, 0] });
 			addBody(command.body, path, depth + 1);
-			rows.push({ kind: "slot", cursor: after, depth });
+			rows.push({ kind: "end", path, depth, cursor: after });
 		});
 	};
 
+	if (program.length === 0 || samePath(options.cursor, [0])) {
+		rows.push({ kind: "head", depth: 0, cursor: [0] });
+	}
 	addBody(program, [], 0);
 	return rows;
 }

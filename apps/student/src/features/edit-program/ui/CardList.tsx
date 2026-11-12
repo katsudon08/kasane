@@ -1,18 +1,20 @@
 /*
  * カードの並び（仕様書README.mdの「プログラムをつくる」「ロボットを動かす」）
  * - 木構造をそのまま表示する。くりかえしの中の命令は字下げし、エディタのインデントの線のような縦線を引く
- * - カードの形はジグソーパズルのピース（上がへこみ、下が出っ張り）。出っ張りが「ここに入れる」ボタン
- * - 左端に番号（木を上から数えた順）、右端にゴミ箱。くりかえしは回数のボタンと、押すと開閉する名前
- * - 差し込み位置は枠と色で、動かしている間の今のカードは枠と色とアイコンで示す（止まったカードは赤）
+ * - 左端に番号（木を上から数えた順）、右端にゴミ箱。くりかえしは回数のボタンと開閉ボタン
+ * - 開いているくりかえしの中の命令の下に、「くりかえし終わり」の行を出す
+ * - カードを押すと、そのカードの直後が差し込み位置になる。差し込み位置は太い青の線と「ここに入る」の印で示す
+ * - 動かしている間の今のカードは枠と色とアイコンで示す（止まったカードは赤）
  * - 読み取ったカードは、差し込み位置に飛び込む動きで入る
  */
 import type { Command, Program } from "@kasane/core";
 import { ActionIcon, UnstyledButton } from "@mantine/core";
-import { ChevronDown, ChevronRight, CircleX, Play, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronRight, CircleX, Play, Trash2 } from "lucide-react";
 import { memo, useEffect, useMemo, useRef } from "react";
 
 import type { Cursor } from "../lib/program-edit";
 import { programRows } from "../lib/program-rows";
+import type { ProgramRow } from "../lib/program-rows";
 import { CardIcon, CardName } from "./CardLabel";
 
 import classes from "./CardList.module.css";
@@ -52,6 +54,17 @@ function commandKey(command: Command): string {
 	return `card-${id}`;
 }
 
+function rowKey(row: ProgramRow): string {
+	if (row.kind === "card") return commandKey(row.command);
+	if (row.kind === "end") return `end-${row.path.join(".")}`;
+	return "head";
+}
+
+// 差し込み位置の線を引く深さ。開いているくりかえしのカードの下は、その中なので一段深い
+function lineDepth(row: ProgramRow): number {
+	return row.kind === "card" && row.open ? row.depth + 1 : row.depth;
+}
+
 export function CardList({
 	program,
 	cursor,
@@ -80,43 +93,46 @@ export function CardList({
 	}, [focusKey]);
 
 	return (
-		<div ref={list} className={classes.list} aria-label="カードの並び">
-			{rows.map((row) =>
-				row.kind === "card" ? (
-					<CardRow
-						key={commandKey(row.command)}
-						command={row.command}
-						path={row.path}
-						number={row.number}
-						depth={row.depth}
-						open={row.open}
-						slot={row.slot}
-						slotActive={editable && row.slot !== null && samePath(row.slot, cursor)}
-						highlight={
-							current !== null && samePath(current.path, row.path)
-								? current.failed
-									? "failed"
-									: "current"
-								: "none"
-						}
-						arrived={row.command === arrived}
-						editable={editable}
-						onCursor={onCursor}
-						onRemove={onRemove}
-						onToggle={onToggle}
-						onTimes={onTimes}
-					/>
-				) : (
-					<SlotRow
-						key={`slot-${row.cursor.join(".")}`}
-						cursor={row.cursor}
-						depth={row.depth}
-						active={editable && samePath(row.cursor, cursor)}
-						editable={editable}
-						onCursor={onCursor}
-					/>
-				),
-			)}
+		<div ref={list} className={classes.list}>
+			{rows.map((row) => {
+				const lined = editable && samePath(row.cursor, cursor);
+				return (
+					<div key={rowKey(row)}>
+						{row.kind === "card" && (
+							<CardRow
+								command={row.command}
+								path={row.path}
+								number={row.number}
+								depth={row.depth}
+								open={row.open}
+								cursor={row.cursor}
+								highlight={
+									current !== null && samePath(current.path, row.path)
+										? current.failed
+											? "failed"
+											: "current"
+										: "none"
+								}
+								arrived={row.command === arrived}
+								editable={editable}
+								onCursor={onCursor}
+								onRemove={onRemove}
+								onToggle={onToggle}
+								onTimes={onTimes}
+							/>
+						)}
+						{row.kind === "end" && (
+							<EndRow
+								depth={row.depth}
+								cursor={row.cursor}
+								editable={editable}
+								onCursor={onCursor}
+							/>
+						)}
+						{lined && <InsertLine depth={lineDepth(row)} />}
+					</div>
+				);
+			})}
 		</div>
 	);
 }
@@ -129,28 +145,22 @@ function Guides({ depth }: { depth: number }) {
 	));
 }
 
-type BumpProps = {
-	cursor: Cursor;
-	active: boolean;
-	editable: boolean;
-	onCursor: (cursor: Cursor) => void;
-};
-
-// 下の出っ張り。押すとそこが差し込み位置になる
-function Bump({ cursor, active, editable, onCursor }: BumpProps) {
+// 差し込み位置。太い青の線と「ここに入る」の印
+function InsertLine({ depth }: { depth: number }) {
 	return (
-		<button
-			type="button"
-			className={classes.bump}
-			data-active={active}
-			data-focus={active}
-			aria-label="ここに入れる"
-			aria-pressed={active}
-			disabled={!editable}
-			onClick={() => onCursor(cursor)}
-		>
-			<Plus aria-hidden size={20} strokeWidth={3} />
-		</button>
+		<div className={classes.lineRow} data-focus="true">
+			<Guides depth={depth} />
+			<div className={classes.line}>
+				<span className={classes.lineLabel}>
+					<ArrowRight aria-hidden size={24} strokeWidth={3} />
+					ここに
+					<ruby>
+						入<rt>はい</rt>
+					</ruby>
+					る
+				</span>
+			</div>
+		</div>
 	);
 }
 
@@ -160,8 +170,7 @@ type CardRowProps = {
 	number: number;
 	depth: number;
 	open: boolean;
-	slot: Cursor | null;
-	slotActive: boolean;
+	cursor: Cursor;
 	highlight: "none" | "current" | "failed";
 	arrived: boolean;
 	editable: boolean;
@@ -179,8 +188,7 @@ function sameRow(before: CardRowProps, after: CardRowProps): boolean {
 		before.number === after.number &&
 		before.depth === after.depth &&
 		before.open === after.open &&
-		samePath(before.slot, after.slot) &&
-		before.slotActive === after.slotActive &&
+		samePath(before.cursor, after.cursor) &&
 		before.highlight === after.highlight &&
 		before.arrived === after.arrived &&
 		before.editable === after.editable &&
@@ -197,8 +205,7 @@ const CardRow = memo(function CardRow({
 	number,
 	depth,
 	open,
-	slot,
-	slotActive,
+	cursor,
 	highlight,
 	arrived,
 	editable,
@@ -207,95 +214,99 @@ const CardRow = memo(function CardRow({
 	onToggle,
 	onTimes,
 }: CardRowProps) {
-	const Chevron = open ? ChevronDown : ChevronRight;
-
 	return (
 		<div className={classes.row}>
 			<Guides depth={depth} />
-			<div className={classes.piece}>
-				<div
-					className={classes.card}
-					data-type={command.type}
-					data-highlight={highlight}
-					data-arrived={arrived}
-					data-focus={highlight !== "none"}
+			<div
+				className={classes.card}
+				data-type={command.type}
+				data-highlight={highlight}
+				data-arrived={arrived}
+				data-focus={highlight !== "none"}
+			>
+				{/* カードを押すと、その直後（開いているくりかえしはその中の先頭）が差し込み位置になる */}
+				<UnstyledButton
+					className={classes.body}
+					onClick={() => onCursor(cursor)}
+					disabled={!editable}
+					aria-label={`${number}まい目のカードの後ろに入れる`}
 				>
 					<span className={classes.number}>{number}</span>
 					{highlight === "current" && <Play aria-hidden size={24} className={classes.mark} />}
 					{highlight === "failed" && <CircleX aria-hidden size={24} className={classes.mark} />}
-					{command.type === "repeat" ? (
-						<>
-							<UnstyledButton
-								className={classes.name}
-								onClick={() => onToggle(path)}
-								disabled={!editable}
-								aria-expanded={open}
-							>
-								<CardIcon type="repeat" />
-								<span>
-									<CardName type="repeat" />
-								</span>
-								<Chevron aria-hidden size={24} />
-							</UnstyledButton>
-							<UnstyledButton
-								className={classes.times}
-								onClick={() => onTimes(path)}
-								disabled={!editable}
-								aria-label={`くりかえす回数（${command.times}回）を変える`}
-							>
-								{command.times}
-								<ruby>
-									回<rt>かい</rt>
-								</ruby>
-							</UnstyledButton>
-						</>
-					) : (
-						<span className={classes.name}>
-							<CardIcon type={command.type} />
-							<span>
-								<CardName type={command.type} />
-							</span>
-						</span>
-					)}
-					<ActionIcon
-						variant="subtle"
-						color="gray"
-						onClick={() => onRemove(path)}
-						disabled={!editable}
-						aria-label={`${number}まい目のカードを消す`}
-					>
-						<Trash2 aria-hidden size={28} />
-					</ActionIcon>
-				</div>
-				{slot !== null && (
-					<Bump cursor={slot} active={slotActive} editable={editable} onCursor={onCursor} />
+					<CardIcon type={command.type} />
+					<span className={classes.name}>
+						<CardName type={command.type} />
+					</span>
+				</UnstyledButton>
+				{command.type === "repeat" && (
+					<>
+						<UnstyledButton
+							className={classes.times}
+							onClick={() => onTimes(path)}
+							disabled={!editable}
+							aria-label={`くりかえす回数（${command.times}回）を変える`}
+						>
+							{command.times}
+							<ruby>
+								回<rt>かい</rt>
+							</ruby>
+						</UnstyledButton>
+						<ActionIcon
+							variant="subtle"
+							color="dark"
+							onClick={() => onToggle(path)}
+							disabled={!editable}
+							aria-expanded={open}
+							aria-label={open ? "くりかえしの中を閉じる" : "くりかえしの中を開く"}
+						>
+							{open ? (
+								<ChevronDown aria-hidden size={32} />
+							) : (
+								<ChevronRight aria-hidden size={32} />
+							)}
+						</ActionIcon>
+					</>
 				)}
+				<ActionIcon
+					variant="subtle"
+					color="gray"
+					onClick={() => onRemove(path)}
+					disabled={!editable}
+					aria-label={`${number}まい目のカードを消す`}
+				>
+					<Trash2 aria-hidden size={28} />
+				</ActionIcon>
 			</div>
 		</div>
 	);
 }, sameRow);
 
-type SlotRowProps = {
-	cursor: Cursor;
+type EndRowProps = {
 	depth: number;
-	active: boolean;
+	cursor: Cursor;
 	editable: boolean;
 	onCursor: (cursor: Cursor) => void;
 };
 
-/*
- * カードに付かない出っ張り
- * - 中が空のくりかえし・空の並び・先頭: そこに入れる場所
- * - 開いたくりかえしのbodyの下: くりかえしの直後（くりかえしの終わりの縁に付ける）
- */
-const SlotRow = memo(function SlotRow({ cursor, depth, active, editable, onCursor }: SlotRowProps) {
-	const blockEnd = cursor.at(-1) !== 0;
+// 開いているくりかえしの「くりかえし終わり」。押すと、くりかえしの直後が差し込み位置になる
+const EndRow = memo(function EndRow({ depth, cursor, editable, onCursor }: EndRowProps) {
 	return (
 		<div className={classes.row}>
 			<Guides depth={depth} />
-			<div className={classes.piece}>
-				<div className={blockEnd ? classes.blockEnd : classes.space} />
-				<Bump cursor={cursor} active={active} editable={editable} onCursor={onCursor} />
+			<div className={classes.card} data-type="end">
+				<UnstyledButton
+					className={classes.body}
+					onClick={() => onCursor(cursor)}
+					disabled={!editable}
+					aria-label="くりかえしの後ろに入れる"
+				>
+					<span className={classes.number} />
+					<CardIcon type="end" />
+					<span className={classes.name}>
+						<CardName type="end" />
+					</span>
+				</UnstyledButton>
 			</div>
 		</div>
 	);

@@ -9,8 +9,8 @@ import type { Direction, Step } from "@kasane/core";
 import type { RobotState } from "./run-playback";
 import { DIRECTION_ANGLES } from "./scene-layout";
 
-// stepsを1ターン0.6秒でなぞる
-export const TURN_SECONDS = 0.6;
+// stepsを1ターン1秒でなぞる
+export const TURN_SECONDS = 1;
 
 export type PhaseKind =
 	| "move"
@@ -24,7 +24,7 @@ export type PhaseKind =
 	| "jump"
 	| "fall";
 
-// 区切りごとの長さ（秒）。進む・回る・うめる・ぶつかるは1ターンの0.6秒。続けてする動きは、その後に足す
+// 区切りごとの長さ（秒）。進む・回る・うめる・ぶつかるは1ターンの1秒。続けてする動きは、その後に足す
 const PHASE_SECONDS: Readonly<Record<PhaseKind, number>> = {
 	move: TURN_SECONDS,
 	turn: TURN_SECONDS,

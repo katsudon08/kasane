@@ -2,7 +2,7 @@
  * めいろをつくる / 変える（仕様書README.mdの「めいろをつくる / 変える」）
  * - 見出しは他の画面と同じく、「もどる」の矢印と画面の名前
  * - 左半分に、階の切り替えと足す・減らす・今見ている階のマス目・置けないときの理由
- * - 右半分の上から、「迷路の名前」の入力欄と大きさ（新しく作るときだけ）を一列に、その下に道具のパレット、いちばん下に主ボタン「できあがり」
+ * - 右半分の上から、「迷路の名前」の入力欄・大きさ（新しく作るときだけ）・道具のパレットを一行ずつ、いちばん下に主ボタン「できあがり」
  *   どれも見出しを上に置く
  * 編集中の迷路は端末のメモリだけに持ち、「できあがり」を押すまでサーバーへ送らない
  * 途中で画面を離れようとしたら、確認のモーダルを出す
@@ -155,43 +155,40 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 					</div>
 				</section>
 				<div className={classes.side}>
-					{/* 名前と大きさは、同じ形（見出しを上に置く）で一列に並べる */}
-					<div className={classes.topRow}>
-						<TextInput
-							label={
-								<>
-									<ruby>
-										迷路<rt>めいろ</rt>
-									</ruby>
-									の
-									<ruby>
-										名前<rt>なまえ</rt>
-									</ruby>
-								</>
-							}
-							classNames={{ label: classes.sectionLabel }}
-							value={input}
-							onChange={(event) => setInput(event.currentTarget.value)}
-							maxLength={NAME_MAX_LENGTH}
-							autoComplete="off"
-						/>
-						{/* 大きさは新しく作るときだけ選ぶ */}
-						{target.kind === "new" && (
-							<div className={classes.section}>
-								<span className={classes.sectionLabel}>
-									<ruby>
-										大<rt>おお</rt>
-									</ruby>
-									きさ
-								</span>
-								<SizePicker
-									size={maze.layers[0]?.length ?? 0}
-									disabled={edited}
-									onChoose={onChooseSize}
-								/>
-							</div>
-						)}
-					</div>
+					<TextInput
+						label={
+							<>
+								<ruby>
+									迷路<rt>めいろ</rt>
+								</ruby>
+								の
+								<ruby>
+									名前<rt>なまえ</rt>
+								</ruby>
+							</>
+						}
+						classNames={{ label: classes.sectionLabel }}
+						value={input}
+						onChange={(event) => setInput(event.currentTarget.value)}
+						maxLength={NAME_MAX_LENGTH}
+						autoComplete="off"
+					/>
+					{/* 大きさは新しく作るときだけ選ぶ */}
+					{target.kind === "new" && (
+						<div className={classes.section}>
+							<span className={classes.sectionLabel}>
+								<ruby>
+									大<rt>おお</rt>
+								</ruby>
+								きさ
+							</span>
+							<SizePicker
+								size={maze.layers[0]?.length ?? 0}
+								disabled={edited}
+								onChoose={onChooseSize}
+							/>
+						</div>
+					)}
 					<div className={classes.section}>
 						<span className={classes.sectionLabel}>
 							<ruby>

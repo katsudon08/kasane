@@ -5,7 +5,7 @@
 .palette {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--mantine-spacing-xs);
+	gap: 8px;
 }
 
 .tool {
@@ -13,7 +13,7 @@
 	align-items: center;
 	gap: var(--mantine-spacing-sm);
 	min-height: 64px;
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	padding: 4px var(--mantine-spacing-sm);
 	border: 3px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-lg);
 	background: var(--mantine-color-white);
@@ -30,6 +30,6 @@
 
 .icon {
 	flex-shrink: 0;
-	width: 44px;
-	height: 44px;
+	width: 40px;
+	height: 40px;
 }

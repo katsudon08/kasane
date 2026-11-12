@@ -1,8 +1,8 @@
 /*
  * 階の切り替えと、階を足す・減らすボタン（仕様書README.mdの「めいろをつくる / 変える」）
- * 「1階」「2階」「3階」を横に並べ、今編集している階は青の塗りつぶし、他は枠だけにする
+ * 階は3Dの文字と同じ「1F」「2F」「3F」で横に並べ、今編集している階は青の塗りつぶし、他は枠だけにする
  * まだない階も灰色で並べておき、階を足しても並びがずれないようにする
- * 減らすは左、足すは右に置く。どちらも押せなくはせず、できないときは理由の文言を出す
+ * 減らす（−）は左、足す（＋）は右に置く。どちらも押せなくはせず、できないときは理由の文言を出す
  */
 import { UnstyledButton } from "@mantine/core";
 import { Minus, Plus } from "lucide-react";
@@ -33,14 +33,7 @@ export const LayerControls = memo(function LayerControls({
 		() =>
 			Array.from({ length: MAX_LAYERS }, (_, index) => ({
 				value: index,
-				label: (
-					<>
-						{index + 1}
-						<ruby>
-							階<rt>かい</rt>
-						</ruby>
-					</>
-				),
+				label: `${index + 1}F`,
 				disabled: index >= layerCount,
 			})),
 		[layerCount],
@@ -48,32 +41,12 @@ export const LayerControls = memo(function LayerControls({
 
 	return (
 		<div className={classes.layerControls}>
-			<UnstyledButton className={classes.stepButton} onClick={onRemove}>
-				<Minus aria-hidden size={24} />
-				<span>
-					<ruby>
-						階<rt>かい</rt>
-					</ruby>
-					を
-					<ruby>
-						減<rt>へ</rt>
-					</ruby>
-					らす
-				</span>
+			<UnstyledButton className={classes.stepButton} onClick={onRemove} aria-label="階を減らす">
+				<Minus aria-hidden size={32} />
 			</UnstyledButton>
 			<Segmented items={items} selected={layer} onChoose={onChoose} label="階" />
-			<UnstyledButton className={classes.stepButton} onClick={onAdd}>
-				<Plus aria-hidden size={24} />
-				<span>
-					<ruby>
-						階<rt>かい</rt>
-					</ruby>
-					を
-					<ruby>
-						足<rt>た</rt>
-					</ruby>
-					す
-				</span>
+			<UnstyledButton className={classes.stepButton} onClick={onAdd} aria-label="階を足す">
+				<Plus aria-hidden size={32} />
 			</UnstyledButton>
 		</div>
 	);

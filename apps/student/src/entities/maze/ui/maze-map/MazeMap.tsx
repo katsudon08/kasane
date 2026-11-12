@@ -1,0 +1,163 @@
+/*
+ * 迷路の2D（仕様書README.mdの「迷路の2D（エディタとミニマップで共通）」）
+ * エディタのマス目、ホームの「自分の迷路」のミニマップ、プレイ画面の右上のミニマップで使う
+ * SVGで描き、拡大しても崩れないようにする。1マスを1の大きさにして、迷路の一辺をviewBoxにする
+ * 旗・鍵・スタートの矢印はLucide Reactのアイコン、穴とテレポートの矢印は自前のSVG
+ */
+import type { Cell, Direction, Maze } from "@kasane/core";
+import { Flag, Key } from "lucide-react";
+import { memo, useId } from "react";
+
+import { START_CHEVRONS } from "../../lib/start-chevrons";
+
+const COLORS = {
+	floor: "#ced4da",
+	crack: "#a3aab2",
+	grid: "#f1f3f5",
+	wall: "#495057",
+	hole: "#000000",
+	holeRing: "#ff8a00",
+	start: "#1c7ed6",
+	goal: "#2f9e44",
+	teleportUp: "#e03131",
+	teleportDown: "#1971c2",
+	key: "#e8a800",
+} as const;
+
+// アイコンを置く余白（1マスに対する割合）
+const ICON_INSET = 0.1;
+const ICON_SIZE = 1 - ICON_INSET * 2;
+
+type Props = {
+	maze: Maze;
+	// 描く階（0が1階）
+	layer: number;
+	className?: string;
+};
+
+// ホームでは迷路の数だけ並ぶので、迷路が変わらなければ描き直さない
+export const MazeMap = memo(function MazeMap({ maze, layer, className }: Props) {
+	// 一つの画面に複数のミニマップが並ぶので、光らせる効果の名前を部品ごとに分ける
+	const glowId = `glow-${useId().replace(/[^a-zA-Z0-9-]/g, "")}`;
+	const rows = maze.layers[layer] ?? [];
+	const size = rows.length;
+
+	return (
+		<svg viewBox={`0 0 ${size} ${size}`} className={className} aria-hidden>
+			<defs>
+				<filter id={glowId} x="-50%" y="-50%" width="200%" height="200%">
+					<feGaussianBlur stdDeviation="0.05" result="blur" />
+					<feMerge>
+						<feMergeNode in="blur" />
+						<feMergeNode in="SourceGraphic" />
+					</feMerge>
+				</filter>
+			</defs>
+			{rows.map((cells, y) =>
+				cells.map((cell, x) => (
+					// マスは並びが変わらないので、位置をkeyにする
+					<g key={`${y}-${x}`} transform={`translate(${x} ${y})`}>
+						<MapCell cell={cell} startDirection={maze.startDirection} glow={`url(#${glowId})`} />
+					</g>
+				)),
+			)}
+		</svg>
+	);
+});
+
+type MapCellProps = { cell: Cell; startDirection: Direction; glow: string };
+
+function MapCell({ cell, startDirection, glow }: MapCellProps) {
+	if (cell === "wall") return <rect width={1} height={1} fill={COLORS.wall} />;
+
+	return (
+		<>
+			<FloorTile />
+			<CellMark cell={cell} startDirection={startDirection} glow={glow} />
+		</>
+	);
+}
+
+// グレーの正方形（ひび割れたコンクリート）。枠線でマス目が分かるようにする
+function FloorTile() {
+	return (
+		<>
+			<rect width={1} height={1} fill={COLORS.floor} stroke={COLORS.grid} strokeWidth={0.04} />
+			<path
+				d="M0.18 0.24 L0.36 0.4 L0.46 0.38 L0.62 0.6 M0.46 0.38 L0.52 0.26 M0.72 0.76 L0.82 0.86"
+				fill="none"
+				stroke={COLORS.crack}
+				strokeWidth={0.025}
+				strokeLinecap="round"
+			/>
+		</>
+	);
+}
+
+function CellMark({ cell, startDirection, glow }: MapCellProps) {
+	switch (cell) {
+		case "hole":
+			// 黒い丸の外側に、オレンジに光る輪
+			return (
+				<>
+					<circle cx={0.5} cy={0.5} r={0.3} fill={COLORS.hole} />
+					<circle
+						cx={0.5}
+						cy={0.5}
+						r={0.36}
+						fill="none"
+						stroke={COLORS.holeRing}
+						strokeWidth={0.07}
+						filter={glow}
+					/>
+				</>
+			);
+		case "start": {
+			const Chevron = START_CHEVRONS[startDirection];
+			return (
+				<Chevron
+					x={ICON_INSET}
+					y={ICON_INSET}
+					size={ICON_SIZE}
+					color={COLORS.start}
+					strokeWidth={3.5}
+				/>
+			);
+		}
+		case "goal":
+			return (
+				<Flag
+					x={ICON_INSET}
+					y={ICON_INSET}
+					size={ICON_SIZE}
+					color={COLORS.goal}
+					strokeWidth={2.5}
+				/>
+			);
+		case "key":
+			return (
+				<Key x={ICON_INSET} y={ICON_INSET} size={ICON_SIZE} color={COLORS.key} strokeWidth={2.5} />
+			);
+		case "teleportUp":
+			return <TeleportArrow color={COLORS.teleportUp} up glow={glow} />;
+		case "teleportDown":
+			return <TeleportArrow color={COLORS.teleportDown} up={false} glow={glow} />;
+		case "floor":
+		case "wall":
+			return null;
+	}
+}
+
+type TeleportArrowProps = { color: string; up: boolean; glow: string };
+
+// 棒が幅のある長方形の矢印。弱く光らせる
+function TeleportArrow({ color, up, glow }: TeleportArrowProps) {
+	return (
+		<path
+			d="M0.42 0.85 L0.58 0.85 L0.58 0.5 L0.78 0.5 L0.5 0.15 L0.22 0.5 L0.42 0.5 Z"
+			fill={color}
+			filter={glow}
+			transform={up ? undefined : "rotate(180 0.5 0.5)"}
+		/>
+	);
+}

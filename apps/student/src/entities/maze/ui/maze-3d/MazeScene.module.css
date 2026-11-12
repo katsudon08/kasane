@@ -1,0 +1,18 @@
+/*
+ * 迷路の3Dを描く場所（仕様書README.mdの「もんだいのしょうさい / じぶんのめいろのしょうさい」）
+ * 画面の大部分に描く。基調の青と白に合わせ、背景は明るい青のグラデーションにする
+ */
+.stage {
+	position: relative;
+	height: min(68dvh, 760px);
+	min-height: 360px;
+	overflow: hidden;
+	border-radius: var(--mantine-radius-lg);
+	background: linear-gradient(
+		180deg,
+		var(--mantine-color-blue-1) 0%,
+		var(--mantine-color-blue-0) 100%
+	);
+	/* 指で回す操作を、ページのスクロールに取られないようにする */
+	touch-action: none;
+}

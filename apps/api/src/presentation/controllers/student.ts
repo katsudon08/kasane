@@ -13,6 +13,7 @@ import type { GetMe } from "../../application/usecases/get-me";
 import type { JoinLesson } from "../../application/usecases/join-lesson";
 import type { ListMazes } from "../../application/usecases/list-mazes";
 import type { ReplaceMaze } from "../../application/usecases/replace-maze";
+import type { SkipTutorials } from "../../application/usecases/skip-tutorials";
 import type { WatchLessonAsStudent } from "../../application/usecases/watch-lesson-as-student";
 import { failure } from "../failure";
 import type { Auth } from "../middlewares/auth";
@@ -30,6 +31,7 @@ import {
 	mazesBody,
 	meBody,
 	notFoundBody,
+	skipInput,
 	tokenBody,
 	tutorialLockedBody,
 	tutorialParams,
@@ -41,6 +43,7 @@ type StudentControllerDeps = {
 	joinLesson: JoinLesson;
 	getMe: GetMe;
 	attemptTutorial: AttemptTutorial;
+	skipTutorials: SkipTutorials;
 	attemptMaze: AttemptMaze;
 	listMazes: ListMazes;
 	createMaze: CreateMaze;
@@ -62,6 +65,7 @@ export const studentController = ({
 	joinLesson,
 	getMe,
 	attemptTutorial,
+	skipTutorials,
 	attemptMaze,
 	listMazes,
 	createMaze,
@@ -117,6 +121,21 @@ export const studentController = ({
 					403: tutorialLockedBody,
 					422: invalidInputBody,
 				},
+			},
+		)
+		// 問題を飛ばす。to問目から始められるよう、1〜to - 1問目をクリアしたことにする
+		.post(
+			"/me/tutorials/skip",
+			async ({ studentId, lessonId, body }) => {
+				const result = await skipTutorials({ studentId, lessonId, to: body.to });
+				if (!result.ok) return failure(result.reason);
+
+				return status(204);
+			},
+			{
+				student: true,
+				body: skipInput,
+				response: { 204: t.Void(), 422: invalidInputBody },
 			},
 		)
 		.post(

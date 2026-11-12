@@ -18,6 +18,8 @@
 		},
 		// 依存先パッケージの変更でキャッシュを無効化しつつ、依存先のタスク完了を待たずに並列実行する
 		"typecheck": { "dependsOn": ["^transit"] },
+		// ルート直下（Playwrightの設定・E2E・oxlintのプラグイン）の型チェック
+		"//#typecheck": {},
 		"test": { "dependsOn": ["^transit"] },
 		"//#lint": {},
 		"lint:fsd": {
@@ -37,6 +39,10 @@
 		},
 		"//#check:fix": {
 			"dependsOn": ["//#lint:fix", "//#fmt:fix"]
+		},
+		// E2Eは開発サーバーを起動して実行するため、キャッシュしない
+		"//#e2e": {
+			"cache": false
 		},
 		"storybook": {
 			"persistent": true,

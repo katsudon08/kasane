@@ -9,50 +9,247 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/routes/__root'
-import { Route as IndexRouteImport } from './app/routes/index'
+import { Route as StudentRouteImport } from './app/routes/_student'
+import { Route as EndedRouteImport } from './app/routes/ended'
+import { Route as JoinRouteImport } from './app/routes/join'
+import { Route as StudentIndexRouteImport } from './app/routes/_student/index'
+import { Route as StudentMazesNewRouteImport } from './app/routes/_student/mazes/new'
+import { Route as StudentMazesMazeIdIndexRouteImport } from './app/routes/_student/mazes/$mazeId/index'
+import { Route as StudentMazesMazeIdEditRouteImport } from './app/routes/_student/mazes/$mazeId/edit'
+import { Route as StudentMazesMazeIdPlayRouteImport } from './app/routes/_student/mazes/$mazeId/play'
+import { Route as StudentTutorialsNoIndexRouteImport } from './app/routes/_student/tutorials/$no/index'
+import { Route as StudentTutorialsNoPlayRouteImport } from './app/routes/_student/tutorials/$no/play'
 
-const IndexRoute = IndexRouteImport.update({
+const StudentRoute = StudentRouteImport.update({
+  id: '/_student',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EndedRoute = EndedRouteImport.update({
+  id: '/ended',
+  path: '/ended',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentIndexRoute = StudentIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentMazesNewRoute = StudentMazesNewRouteImport.update({
+  id: '/mazes/new',
+  path: '/mazes/new',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentMazesMazeIdIndexRoute = StudentMazesMazeIdIndexRouteImport.update({
+  id: '/mazes/$mazeId/',
+  path: '/mazes/$mazeId/',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentMazesMazeIdEditRoute = StudentMazesMazeIdEditRouteImport.update({
+  id: '/mazes/$mazeId/edit',
+  path: '/mazes/$mazeId/edit',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentMazesMazeIdPlayRoute = StudentMazesMazeIdPlayRouteImport.update({
+  id: '/mazes/$mazeId/play',
+  path: '/mazes/$mazeId/play',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentTutorialsNoIndexRoute = StudentTutorialsNoIndexRouteImport.update({
+  id: '/tutorials/$no/',
+  path: '/tutorials/$no/',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentTutorialsNoPlayRoute = StudentTutorialsNoPlayRouteImport.update({
+  id: '/tutorials/$no/play',
+  path: '/tutorials/$no/play',
+  getParentRoute: () => StudentRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof StudentIndexRoute
+  '/ended': typeof EndedRoute
+  '/join': typeof JoinRoute
+  '/mazes/new': typeof StudentMazesNewRoute
+  '/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
+  '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
+  '/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
+  '/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
+  '/tutorials/$no/': typeof StudentTutorialsNoIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/ended': typeof EndedRoute
+  '/join': typeof JoinRoute
+  '/': typeof StudentIndexRoute
+  '/mazes/new': typeof StudentMazesNewRoute
+  '/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
+  '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
+  '/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
+  '/mazes/$mazeId': typeof StudentMazesMazeIdIndexRoute
+  '/tutorials/$no': typeof StudentTutorialsNoIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_student': typeof StudentRouteWithChildren
+  '/ended': typeof EndedRoute
+  '/join': typeof JoinRoute
+  '/_student/': typeof StudentIndexRoute
+  '/_student/mazes/new': typeof StudentMazesNewRoute
+  '/_student/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
+  '/_student/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
+  '/_student/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
+  '/_student/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
+  '/_student/tutorials/$no/': typeof StudentTutorialsNoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/ended'
+    | '/join'
+    | '/mazes/new'
+    | '/mazes/$mazeId/edit'
+    | '/mazes/$mazeId/play'
+    | '/tutorials/$no/play'
+    | '/mazes/$mazeId/'
+    | '/tutorials/$no/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/ended'
+    | '/join'
+    | '/'
+    | '/mazes/new'
+    | '/mazes/$mazeId/edit'
+    | '/mazes/$mazeId/play'
+    | '/tutorials/$no/play'
+    | '/mazes/$mazeId'
+    | '/tutorials/$no'
+  id:
+    | '__root__'
+    | '/_student'
+    | '/ended'
+    | '/join'
+    | '/_student/'
+    | '/_student/mazes/new'
+    | '/_student/mazes/$mazeId/edit'
+    | '/_student/mazes/$mazeId/play'
+    | '/_student/tutorials/$no/play'
+    | '/_student/mazes/$mazeId/'
+    | '/_student/tutorials/$no/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  StudentRoute: typeof StudentRouteWithChildren
+  EndedRoute: typeof EndedRoute
+  JoinRoute: typeof JoinRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_student': {
+      id: '/_student'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof StudentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ended': {
+      id: '/ended'
+      path: '/ended'
+      fullPath: '/ended'
+      preLoaderRoute: typeof EndedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_student/': {
+      id: '/_student/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof StudentIndexRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/_student/mazes/new': {
+      id: '/_student/mazes/new'
+      path: '/mazes/new'
+      fullPath: '/mazes/new'
+      preLoaderRoute: typeof StudentMazesNewRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/_student/mazes/$mazeId/': {
+      id: '/_student/mazes/$mazeId/'
+      path: '/mazes/$mazeId'
+      fullPath: '/mazes/$mazeId/'
+      preLoaderRoute: typeof StudentMazesMazeIdIndexRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/_student/mazes/$mazeId/edit': {
+      id: '/_student/mazes/$mazeId/edit'
+      path: '/mazes/$mazeId/edit'
+      fullPath: '/mazes/$mazeId/edit'
+      preLoaderRoute: typeof StudentMazesMazeIdEditRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/_student/mazes/$mazeId/play': {
+      id: '/_student/mazes/$mazeId/play'
+      path: '/mazes/$mazeId/play'
+      fullPath: '/mazes/$mazeId/play'
+      preLoaderRoute: typeof StudentMazesMazeIdPlayRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/_student/tutorials/$no/': {
+      id: '/_student/tutorials/$no/'
+      path: '/tutorials/$no'
+      fullPath: '/tutorials/$no/'
+      preLoaderRoute: typeof StudentTutorialsNoIndexRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/_student/tutorials/$no/play': {
+      id: '/_student/tutorials/$no/play'
+      path: '/tutorials/$no/play'
+      fullPath: '/tutorials/$no/play'
+      preLoaderRoute: typeof StudentTutorialsNoPlayRouteImport
+      parentRoute: typeof StudentRoute
     }
   }
 }
 
+interface StudentRouteChildren {
+  StudentIndexRoute: typeof StudentIndexRoute
+  StudentMazesNewRoute: typeof StudentMazesNewRoute
+  StudentMazesMazeIdEditRoute: typeof StudentMazesMazeIdEditRoute
+  StudentMazesMazeIdPlayRoute: typeof StudentMazesMazeIdPlayRoute
+  StudentTutorialsNoPlayRoute: typeof StudentTutorialsNoPlayRoute
+  StudentMazesMazeIdIndexRoute: typeof StudentMazesMazeIdIndexRoute
+  StudentTutorialsNoIndexRoute: typeof StudentTutorialsNoIndexRoute
+}
+
+const StudentRouteChildren: StudentRouteChildren = {
+  StudentIndexRoute: StudentIndexRoute,
+  StudentMazesNewRoute: StudentMazesNewRoute,
+  StudentMazesMazeIdEditRoute: StudentMazesMazeIdEditRoute,
+  StudentMazesMazeIdPlayRoute: StudentMazesMazeIdPlayRoute,
+  StudentTutorialsNoPlayRoute: StudentTutorialsNoPlayRoute,
+  StudentMazesMazeIdIndexRoute: StudentMazesMazeIdIndexRoute,
+  StudentTutorialsNoIndexRoute: StudentTutorialsNoIndexRoute,
+}
+
+const StudentRouteWithChildren =
+  StudentRoute._addFileChildren(StudentRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  StudentRoute: StudentRouteWithChildren,
+  EndedRoute: EndedRoute,
+  JoinRoute: JoinRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

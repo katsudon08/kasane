@@ -1,0 +1,21 @@
+{
+	"$schema": "https://railway.com/railway.schema.json",
+	"build": {
+		"builder": "DOCKERFILE",
+		"dockerfilePath": "apps/api/Dockerfile",
+		"watchPatterns": [
+			"/apps/api/**",
+			"/packages/core/**",
+			"/package.json",
+			"/pnpm-lock.yaml",
+			"/pnpm-workspace.yaml",
+			"/.dockerignore"
+		]
+	},
+	"deploy": {
+		"preDeployCommand": ["bun run src/infrastructure/database/migrate-database.ts"],
+		"numReplicas": 1,
+		"healthcheckPath": "/health",
+		"restartPolicyType": "ON_FAILURE"
+	}
+}

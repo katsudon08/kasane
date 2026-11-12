@@ -7,9 +7,10 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 
 [tasks]
 dev = "pnpm exec turbo run dev"
-typecheck = "pnpm exec turbo run typecheck"
+typecheck = "pnpm exec turbo run typecheck //#typecheck"
 build = "pnpm exec turbo run build"
 test = "pnpm exec turbo run test"
+e2e = "pnpm exec turbo run //#e2e --"
 lint = "pnpm exec turbo run //#lint --"
 "lint:fix" = "pnpm exec turbo run //#lint:fix --"
 "lint:fsd" = "pnpm exec turbo run lint:fsd"

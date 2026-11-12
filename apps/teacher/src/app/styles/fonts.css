@@ -1,0 +1,20 @@
+/*
+ * 教師画面のフォント（BIZ UDPGothic、SIL OFL。ライセンスはfonts/OFL.txt）
+ * 学校のネットワークは外部に出られない前提なので、ファイルをビルドに含めて配る
+ * 元のTTF（github.com/google/fontsのofl/bizudpgothic）をwoff2に変えただけで、字の範囲は削っていない（児童の名前に何の字が来るか分からないため）
+ */
+@font-face {
+	font-family: "BIZ UDPGothic";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("./fonts/BIZUDPGothic-Regular.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "BIZ UDPGothic";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("./fonts/BIZUDPGothic-Bold.woff2") format("woff2");
+}

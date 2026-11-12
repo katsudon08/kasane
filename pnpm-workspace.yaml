@@ -8,6 +8,8 @@ catalog:
   "@mantine/core": ^9.7.0
   "@mantine/hooks": ^9.7.0
   "@neon/config": ^1.9.2
+  # 迷路の3Dのカメラ操作（OrbitControls）・カメラを向く文字と図形（Billboard）・ロボットのモデルの読み込み（useGLTF）に使う（児童用）
+  "@react-three/drei": ^10.7.9
   "@react-three/fiber": ^9.8.1
   "@storybook/react-vite": ^10.6.5
   "@tanstack/react-query": ^5.105.2
@@ -27,11 +29,14 @@ catalog:
   dotenv: ^18.0.9
   elysia: ^1.4.30
   lefthook: ^2.2.2
+  lucide-react: ^1.63.0
   neon: ^8.8.0
   oxfmt: ^0.72.0
   oxlint: ^1.90.0
   oxlint-tsgolint: ^7.0.2005
   pg: ^8.23.1
+  # E2Eの偽カメラに映すQRの白黒の並びを作る（e2e/support/fake-camera.ts）
+  qrcode-generator: ^2.0.4
   qrcode.react: ^4.2.0
   react: ^19.3.0
   react-dom: ^19.3.0
@@ -43,9 +48,11 @@ catalog:
   vite: ^8.3.3
   vitest: ^5.0.4
   wait-on: ^9.5.1
-  wscat: ^6.1.0
   zod: ^4.6.5
+  # QR読み取りのWASMを自前で配信する（児童用）。@yudiel/react-qr-scannerが使うbarcode-detectorが固定している版と同じにする
+  zxing-wasm: 3.1.6
   "@elysia/cors": ^1.4.2
+  "@playwright/test": ^1.65.0
 
 catalogMode: strict
 

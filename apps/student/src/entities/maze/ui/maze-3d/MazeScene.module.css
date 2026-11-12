@@ -1,0 +1,29 @@
+/*
+ * 迷路の3Dを描く場所（仕様書README.mdの「もんだいのしょうさい / じぶんのめいろのしょうさい」）
+ * 画面の大部分に描く。基調の青と白に合わせ、背景は明るい青のグラデーションにする
+ */
+.stage {
+	position: relative;
+	height: min(68dvh, 760px);
+	min-height: 360px;
+	overflow: hidden;
+	border-radius: var(--mantine-radius-lg);
+	background: linear-gradient(
+		180deg,
+		var(--mantine-color-blue-1) 0%,
+		var(--mantine-color-blue-0) 100%
+	);
+	/* 指で回す操作を、ページのスクロールに取られないようにする */
+	touch-action: none;
+}
+
+/*
+ * プレイ画面の迷路の3D（仕様書README.mdの「プレイ」）
+ * カメラ映像の上に重ねるので、背景を付けずに、置かれた場所いっぱいに描く
+ */
+.overlay {
+	position: absolute;
+	inset: 0;
+	/* 指で回す操作を、ページのスクロールに取られないようにする */
+	touch-action: none;
+}

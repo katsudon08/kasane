@@ -1,0 +1,2 @@
+ALTER TABLE "students" ADD COLUMN "skipped_count" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "students" ADD CONSTRAINT "students_skipped_count_check" CHECK ("students"."skipped_count" >= 0);

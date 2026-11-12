@@ -1,0 +1,10 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		// 純粋関数と型だけなので、ブラウザ（DOM）にもサーバーにも依存しない。bunの型はテストのためだけに含める
+		"target": "ESNext",
+		"lib": ["ESNext"],
+		"types": ["bun"]
+	},
+	"include": ["src"]
+}

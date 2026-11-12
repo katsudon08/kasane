@@ -1,0 +1,189 @@
+/*
+ * カードの並び（仕様書README.mdの「プログラムをつくる」「見た目と操作のルール」）
+ * - タップできる部分は64px四方以上、文字は20px以上。ルビのぶん行が高くなるので、高さはルビ込みで決める
+ * - 差し込み位置は、カードの間の太い青の線と「ここに入る」の印で示す
+ * - 状態は色だけで伝えず、枠の形とアイコンも添える
+ */
+.list {
+	--card-bg: var(--mantine-color-blue-0);
+	--card-border: var(--mantine-color-blue-4);
+	--repeat-bg: var(--mantine-color-yellow-0);
+	--repeat-border: var(--mantine-color-yellow-6);
+	--indent: 36px;
+	/* カードとカードの間。差し込み位置の線の上下も同じにする */
+	--row-gap: 6px;
+
+	display: flex;
+	flex-direction: column;
+	gap: var(--row-gap);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-xs) var(--mantine-spacing-xl);
+}
+
+.row,
+.lineRow {
+	display: flex;
+	align-items: stretch;
+}
+
+/*
+ * 差し込み位置の線は、上のカードと同じまとまりの中に置くので、上にだけカードの間と同じ隙間を足す
+ * 下は、次のまとまりとの間の隙間（gap）がそのまま入る
+ */
+.lineRow {
+	margin-top: var(--row-gap);
+}
+
+/* 字下げの縦線（エディタのインデントの線） */
+.guide {
+	flex: 0 0 var(--indent);
+	margin-left: calc(var(--indent) / 2 - 2px);
+	margin-right: calc(-1 * (var(--indent) / 2 - 2px));
+	border-left: 4px solid var(--repeat-border);
+}
+
+.card {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: 4px;
+	min-width: 0;
+	min-height: 84px;
+	padding: 8px 6px 8px 0;
+	border: 3px solid var(--card-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--card-bg);
+}
+
+.card[data-type="repeat"],
+.card[data-type="end"] {
+	--card-bg: var(--repeat-bg);
+	--card-border: var(--repeat-border);
+}
+
+/* 「くりかえし終わり」は命令ではないので、低く控えめにする */
+.card[data-type="end"] {
+	min-height: 64px;
+	border-style: dashed;
+}
+
+/* 動かしている間の今のカード: 太い枠と光る縁 */
+.card[data-highlight="current"] {
+	--card-border: var(--mantine-color-orange-6);
+
+	background: var(--mantine-color-orange-0);
+	box-shadow: 0 0 0 4px var(--mantine-color-orange-3);
+}
+
+/* 止まったカード（ぶつかった・落ちた）: 赤 */
+.card[data-highlight="failed"] {
+	--card-border: var(--mantine-color-red-7);
+
+	background: var(--mantine-color-red-0);
+	box-shadow: 0 0 0 4px var(--mantine-color-red-3);
+}
+
+/* 読み取ったカードが、差し込み位置に飛び込む */
+.card[data-arrived="true"] {
+	animation: fly-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+@keyframes fly-in {
+	from {
+		opacity: 0;
+		transform: translateX(-48px) scale(0.6);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card[data-arrived="true"] {
+		animation: none;
+	}
+}
+
+/* カードの本体。押すとその直後が差し込み位置になる */
+.body {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	align-self: stretch;
+	gap: 8px;
+	min-width: 0;
+	min-height: 64px;
+	padding: 0 8px 0 12px;
+	border-radius: var(--mantine-radius-md);
+}
+
+.body:not(:disabled):active {
+	background: rgb(0 0 0 / 0.06);
+}
+
+.body:disabled {
+	cursor: default;
+}
+
+.number {
+	flex: 0 0 auto;
+	min-width: 36px;
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 700;
+	text-align: center;
+}
+
+.mark {
+	flex: 0 0 auto;
+}
+
+.name {
+	min-width: 0;
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+.times {
+	flex: 0 0 auto;
+	min-width: 72px;
+	min-height: 64px;
+	padding: 0 12px;
+	border: 3px solid var(--repeat-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 700;
+	line-height: 1.2;
+	text-align: center;
+}
+
+.times:disabled {
+	cursor: default;
+}
+
+/* ゴミ箱は、カーソルを当てると背景を赤くして、消すボタンだと分かるようにする */
+.trash:not(:disabled):hover {
+	background: var(--mantine-color-red-6);
+	color: var(--mantine-color-white);
+}
+
+/* 差し込み位置: 太い青の線と、左端の「ここに入る」の印 */
+.line {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	min-width: 0;
+	height: 48px;
+	background: linear-gradient(var(--mantine-color-blue-6), var(--mantine-color-blue-6)) center /
+		100% 6px no-repeat;
+}
+
+.lineLabel {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 18px 6px 12px;
+	border-radius: 999px;
+	background: var(--mantine-color-blue-6);
+	color: var(--mantine-color-white);
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 700;
+	line-height: 1.3;
+}

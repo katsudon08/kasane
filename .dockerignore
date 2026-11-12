@@ -1,0 +1,13 @@
+# APIのイメージ（apps/api/Dockerfile）に入れるものだけを許す。環境変数のファイルやトークンを誤って入れないため
+*
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!apps/api
+!packages/core
+**/node_modules
+**/.turbo
+**/.env*
+**/*.local
+**/.neon
+**/*.test.ts

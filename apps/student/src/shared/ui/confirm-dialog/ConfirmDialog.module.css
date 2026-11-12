@@ -1,0 +1,5 @@
+/* 確認の文。中央にそろえ、行の長さをそろえて読みやすくする */
+.message {
+	text-align: center;
+	text-wrap: balance;
+}

@@ -6,3 +6,6 @@ storybook-static/
 .env
 *.local
 .neon
+test-results/
+playwright-report/
+.wrangler/

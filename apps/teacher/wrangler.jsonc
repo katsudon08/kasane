@@ -1,0 +1,10 @@
+// 教師用アプリの配信（Cloudflare Workersの静的アセット。docs/deploy.md）
+{
+	"name": "kasane-teacher",
+	"compatibility_date": "2026-11-01",
+	"assets": {
+		"directory": "./dist",
+		// /lessons/…などの画面のURLを直接開いても、index.htmlを返して画面側のルーティングに任せる
+		"not_found_handling": "single-page-application",
+	},
+}

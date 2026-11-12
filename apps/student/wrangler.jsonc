@@ -1,0 +1,10 @@
+// 児童用アプリの配信（Cloudflare Workersの静的アセット。docs/deploy.md）
+{
+	"name": "kasane-student",
+	"compatibility_date": "2026-11-01",
+	"assets": {
+		"directory": "./dist",
+		// /tutorials/1などの画面のURLを直接開いても、index.htmlを返して画面側のルーティングに任せる
+		"not_found_handling": "single-page-application",
+	},
+}

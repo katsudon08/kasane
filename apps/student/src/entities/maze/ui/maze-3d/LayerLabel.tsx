@@ -11,6 +11,8 @@ import { layerLabelPosition } from "../../lib/scene-layout";
 import { LABEL_GEOMETRY } from "./parts";
 
 const FONT = '700 120px "BIZ UDPGothic", sans-serif';
+const LABEL_FILL = "#a5d8ff";
+const LABEL_OUTLINE = "#1864ab";
 
 async function createLabelMaterial(text: string): Promise<MeshStandardMaterial> {
 	// 読み込めなくても解決するので、そのときは代わりのフォントで描く
@@ -21,19 +23,27 @@ async function createLabelMaterial(text: string): Promise<MeshStandardMaterial> 
 	const context = canvas.getContext("2d");
 	if (context === null) throw new Error("2Dの描画ができない");
 	context.font = FONT;
-	context.fillStyle = "#ffffff";
 	context.textAlign = "center";
 	context.textBaseline = "middle";
-	context.fillText(text, canvas.width / 2, canvas.height / 2 + 8);
+	const x = canvas.width / 2;
+	const y = canvas.height / 2 + 8;
+	// 背景（明るい青）との差をはっきりさせるため、薄い青の字に濃い青の縁を付ける
+	context.lineJoin = "round";
+	context.lineWidth = 24;
+	context.strokeStyle = LABEL_OUTLINE;
+	context.strokeText(text, x, y);
+	context.fillStyle = LABEL_FILL;
+	context.fillText(text, x, y);
 
+	// 色は絵に描いた色のまま使い、その色で弱く光らせる（光るのは主に明るい字の部分）
 	const texture = new CanvasTexture(canvas);
 	texture.colorSpace = SRGBColorSpace;
 	return new MeshStandardMaterial({
 		map: texture,
-		color: "#74c0fc",
-		emissive: "#339af0",
+		color: "#ffffff",
+		emissive: "#ffffff",
 		emissiveMap: texture,
-		emissiveIntensity: 0.5,
+		emissiveIntensity: 0.25,
 		transparent: true,
 		side: DoubleSide,
 		depthWrite: false,

@@ -66,6 +66,56 @@
 	cursor: not-allowed;
 }
 
+/* 飛ばす先の問題。番号と名前のカードを並べ、選んでいるものは枠と色で示す */
+.skipTargets {
+	display: grid;
+	/* 問題の名前を改行させずに収めるため、2列にする */
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm);
+}
+
+.skipTarget {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
+	min-height: 96px;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 3px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-white);
+	text-align: center;
+}
+
+.skipTarget[data-selected] {
+	border-color: var(--mantine-color-blue-6);
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-9);
+}
+
+/* 全部飛ばすは、列の幅いっぱいにして問題と見分ける */
+.skipTarget:last-child {
+	grid-column: 1 / -1;
+	min-height: 72px;
+}
+
+.skipTargetNumber {
+	font-size: 40px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.skipTargetName {
+	font-size: var(--mantine-font-size-sm);
+	white-space: nowrap;
+}
+
+.skipTargetAll {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+}
+
 /* 自分の迷路のエリア。全部クリアするまでは灰色＋鍵のアイコン */
 .mazesLocked {
 	display: flex;

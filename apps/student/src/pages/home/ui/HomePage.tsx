@@ -1,6 +1,6 @@
 /*
  * ホーム（仕様書README.mdの「ホーム」）
- * 上部に名前、「問題」にチュートリアルのカード、「自分の迷路」に自分が作った迷路を出す
+ * 上部に名前、「問題」にチュートリアルのカードと「問題を飛ばす」、「自分の迷路」に自分が作った迷路を出す
  * チュートリアルはpackages/coreの定数なので通信せず、クリア数だけをGET /meから取る
  */
 import { TUTORIALS, canCreateMaze } from "@kasane/core";
@@ -12,6 +12,7 @@ import { StudentAccessLost } from "../../../shared/api";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { tutorialCardState } from "../lib/tutorial-card-state";
 import { MyMazes } from "./MyMazes";
+import { SkipTutorials } from "./SkipTutorials";
 import { TutorialCard } from "./TutorialCard";
 
 import classes from "./HomePage.module.css";
@@ -52,6 +53,8 @@ export function HomePage() {
 							/>
 						))}
 					</div>
+					{/* 全部クリアしたら出さない */}
+					{clearedCount < TUTORIALS.length && <SkipTutorials clearedCount={clearedCount} />}
 				</Stack>
 
 				<Stack gap="sm" component="section">

@@ -8,6 +8,8 @@ catalog:
   "@mantine/core": ^9.7.0
   "@mantine/hooks": ^9.7.0
   "@neon/config": ^1.9.2
+  # 迷路の3Dのカメラ操作（OrbitControls）・カメラを向く文字と図形（Billboard）・ロボットのモデルの読み込み（useGLTF）に使う（児童用）
+  "@react-three/drei": ^10.7.9
   "@react-three/fiber": ^9.8.1
   "@storybook/react-vite": ^10.6.5
   "@tanstack/react-query": ^5.105.2

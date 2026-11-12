@@ -25,15 +25,7 @@ type Props = {
 };
 
 // 開いている間だけ描く
-export function ConfirmDialog({
-	message,
-	actionLabel,
-	onAction,
-	safeLabel,
-	onSafe,
-	acting = false,
-	children,
-}: Props) {
+export function ConfirmDialog({ onSafe, ...rest }: Props) {
 	return (
 		<Modal
 			opened
@@ -44,20 +36,35 @@ export function ConfirmDialog({
 			radius="lg"
 			withCloseButton={false}
 		>
-			<Stack gap="xl" py="md">
-				<Text fw={700} size="lg" className={classes.message}>
-					{message}
-				</Text>
-				{children}
-				<Group grow gap="md" wrap="nowrap">
-					<Button variant="outline" size="lg" onClick={onAction} loading={acting}>
-						{actionLabel}
-					</Button>
-					<Button size="lg" onClick={onSafe}>
-						{safeLabel}
-					</Button>
-				</Group>
-			</Stack>
+			<ConfirmContent onSafe={onSafe} {...rest} />
 		</Modal>
+	);
+}
+
+// 確認の中身（文とボタン）。他のモーダルの中で、確認から次の手順へ切り替えるときにも使う
+export function ConfirmContent({
+	message,
+	actionLabel,
+	onAction,
+	safeLabel,
+	onSafe,
+	acting = false,
+	children,
+}: Props) {
+	return (
+		<Stack gap="xl" py="md">
+			<Text fw={700} size="lg" className={classes.message}>
+				{message}
+			</Text>
+			{children}
+			<Group grow gap="md" wrap="nowrap">
+				<Button variant="outline" size="lg" onClick={onAction} loading={acting}>
+					{actionLabel}
+				</Button>
+				<Button size="lg" onClick={onSafe}>
+					{safeLabel}
+				</Button>
+			</Group>
+		</Stack>
 	);
 }

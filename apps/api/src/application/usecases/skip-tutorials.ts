@@ -35,7 +35,7 @@ export const skipTutorialsUseCase =
 		}
 
 		await tutorialSkipRepository.skipThrough(studentId, to - 1);
-		// 行を変えたことを確かめてから送る
+		// 保存してから送る（教師に届く状態がDBと一致するように）
 		await notifyStudentStatus({ lessonId, studentId });
 
 		return { ok: true };

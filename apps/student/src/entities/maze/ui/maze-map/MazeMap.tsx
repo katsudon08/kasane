@@ -22,21 +22,27 @@ const COLORS = {
 	teleportUp: "#e03131",
 	teleportDown: "#1971c2",
 	key: "#e8a800",
+	robot: "#f76707",
+	robotEdge: "#ffffff",
 } as const;
 
 // アイコンを置く余白（1マスに対する割合）
 const ICON_INSET = 0.1;
 const ICON_SIZE = 1 - ICON_INSET * 2;
 
+// プレイ画面で、ロボットの位置と向きを重ねて描く
+export type MapRobot = { x: number; y: number; direction: Direction };
+
 type Props = {
 	maze: Maze;
 	// 描く階（0が1階）
 	layer: number;
+	robot?: MapRobot;
 	className?: string;
 };
 
 // ホームでは迷路の数だけ並ぶので、迷路が変わらなければ描き直さない
-export const MazeMap = memo(function MazeMap({ maze, layer, className }: Props) {
+export const MazeMap = memo(function MazeMap({ maze, layer, robot, className }: Props) {
 	// 一つの画面に複数のミニマップが並ぶので、光らせる効果の名前を部品ごとに分ける
 	const glowId = `glow-${useId().replace(/[^a-zA-Z0-9-]/g, "")}`;
 	const rows = maze.layers[layer] ?? [];
@@ -61,9 +67,37 @@ export const MazeMap = memo(function MazeMap({ maze, layer, className }: Props) 
 					</g>
 				)),
 			)}
+			{robot !== undefined && <RobotMark robot={robot} />}
 		</svg>
 	);
 });
+
+// 向きを、右（east）を0度とした時計回りの角度に直す表（SVGはyが下向き）
+const ROBOT_ANGLES: Readonly<Record<Direction, number>> = {
+	east: 0,
+	south: 90,
+	west: 180,
+	north: 270,
+};
+
+// ロボットの位置と向き。マスの印と見分けがつくよう、白い縁のオレンジの丸に、向きを示す三角を載せる
+function RobotMark({ robot }: { robot: MapRobot }) {
+	return (
+		<g
+			transform={`translate(${robot.x} ${robot.y}) rotate(${ROBOT_ANGLES[robot.direction]} 0.5 0.5)`}
+		>
+			<circle
+				cx={0.5}
+				cy={0.5}
+				r={0.34}
+				fill={COLORS.robot}
+				stroke={COLORS.robotEdge}
+				strokeWidth={0.08}
+			/>
+			<path d="M0.74 0.5 L0.4 0.3 L0.4 0.7 Z" fill={COLORS.robotEdge} />
+		</g>
+	);
+}
 
 type MapCellProps = { cell: Cell; startDirection: Direction; glow: string };
 

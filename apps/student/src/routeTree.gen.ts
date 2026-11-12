@@ -14,7 +14,9 @@ import { Route as EndedRouteImport } from './app/routes/ended'
 import { Route as JoinRouteImport } from './app/routes/join'
 import { Route as StudentIndexRouteImport } from './app/routes/_student/index'
 import { Route as StudentMazesMazeIdIndexRouteImport } from './app/routes/_student/mazes/$mazeId/index'
+import { Route as StudentMazesMazeIdPlayRouteImport } from './app/routes/_student/mazes/$mazeId/play'
 import { Route as StudentTutorialsNoIndexRouteImport } from './app/routes/_student/tutorials/$no/index'
+import { Route as StudentTutorialsNoPlayRouteImport } from './app/routes/_student/tutorials/$no/play'
 
 const StudentRoute = StudentRouteImport.update({
   id: '/_student',
@@ -40,9 +42,19 @@ const StudentMazesMazeIdIndexRoute = StudentMazesMazeIdIndexRouteImport.update({
   path: '/mazes/$mazeId/',
   getParentRoute: () => StudentRoute,
 } as any)
+const StudentMazesMazeIdPlayRoute = StudentMazesMazeIdPlayRouteImport.update({
+  id: '/mazes/$mazeId/play',
+  path: '/mazes/$mazeId/play',
+  getParentRoute: () => StudentRoute,
+} as any)
 const StudentTutorialsNoIndexRoute = StudentTutorialsNoIndexRouteImport.update({
   id: '/tutorials/$no/',
   path: '/tutorials/$no/',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentTutorialsNoPlayRoute = StudentTutorialsNoPlayRouteImport.update({
+  id: '/tutorials/$no/play',
+  path: '/tutorials/$no/play',
   getParentRoute: () => StudentRoute,
 } as any)
 
@@ -50,6 +62,8 @@ export interface FileRoutesByFullPath {
   '/': typeof StudentIndexRoute
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
+  '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
+  '/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
   '/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
   '/tutorials/$no/': typeof StudentTutorialsNoIndexRoute
 }
@@ -57,6 +71,8 @@ export interface FileRoutesByTo {
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
   '/': typeof StudentIndexRoute
+  '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
+  '/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
   '/mazes/$mazeId': typeof StudentMazesMazeIdIndexRoute
   '/tutorials/$no': typeof StudentTutorialsNoIndexRoute
 }
@@ -66,20 +82,38 @@ export interface FileRoutesById {
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
   '/_student/': typeof StudentIndexRoute
+  '/_student/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
+  '/_student/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
   '/_student/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
   '/_student/tutorials/$no/': typeof StudentTutorialsNoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ended' | '/join' | '/mazes/$mazeId/' | '/tutorials/$no/'
+  fullPaths:
+    | '/'
+    | '/ended'
+    | '/join'
+    | '/mazes/$mazeId/play'
+    | '/tutorials/$no/play'
+    | '/mazes/$mazeId/'
+    | '/tutorials/$no/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/ended' | '/join' | '/' | '/mazes/$mazeId' | '/tutorials/$no'
+  to:
+    | '/ended'
+    | '/join'
+    | '/'
+    | '/mazes/$mazeId/play'
+    | '/tutorials/$no/play'
+    | '/mazes/$mazeId'
+    | '/tutorials/$no'
   id:
     | '__root__'
     | '/_student'
     | '/ended'
     | '/join'
     | '/_student/'
+    | '/_student/mazes/$mazeId/play'
+    | '/_student/tutorials/$no/play'
     | '/_student/mazes/$mazeId/'
     | '/_student/tutorials/$no/'
   fileRoutesById: FileRoutesById
@@ -127,6 +161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentMazesMazeIdIndexRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/_student/mazes/$mazeId/play': {
+      id: '/_student/mazes/$mazeId/play'
+      path: '/mazes/$mazeId/play'
+      fullPath: '/mazes/$mazeId/play'
+      preLoaderRoute: typeof StudentMazesMazeIdPlayRouteImport
+      parentRoute: typeof StudentRoute
+    }
     '/_student/tutorials/$no/': {
       id: '/_student/tutorials/$no/'
       path: '/tutorials/$no'
@@ -134,17 +175,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentTutorialsNoIndexRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/_student/tutorials/$no/play': {
+      id: '/_student/tutorials/$no/play'
+      path: '/tutorials/$no/play'
+      fullPath: '/tutorials/$no/play'
+      preLoaderRoute: typeof StudentTutorialsNoPlayRouteImport
+      parentRoute: typeof StudentRoute
+    }
   }
 }
 
 interface StudentRouteChildren {
   StudentIndexRoute: typeof StudentIndexRoute
+  StudentMazesMazeIdPlayRoute: typeof StudentMazesMazeIdPlayRoute
+  StudentTutorialsNoPlayRoute: typeof StudentTutorialsNoPlayRoute
   StudentMazesMazeIdIndexRoute: typeof StudentMazesMazeIdIndexRoute
   StudentTutorialsNoIndexRoute: typeof StudentTutorialsNoIndexRoute
 }
 
 const StudentRouteChildren: StudentRouteChildren = {
   StudentIndexRoute: StudentIndexRoute,
+  StudentMazesMazeIdPlayRoute: StudentMazesMazeIdPlayRoute,
+  StudentTutorialsNoPlayRoute: StudentTutorialsNoPlayRoute,
   StudentMazesMazeIdIndexRoute: StudentMazesMazeIdIndexRoute,
   StudentTutorialsNoIndexRoute: StudentTutorialsNoIndexRoute,
 }

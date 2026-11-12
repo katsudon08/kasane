@@ -1,0 +1,109 @@
+/*
+ * プレイ（仕様書README.mdの「プレイ」）
+ * 横長のタブレットで、左半分にカメラ映像と迷路の3D、右半分にカードの並びとボタンを、画面の高さに収めて並べる
+ * 縦長の狭い画面では、上下に並べる
+ */
+.screen {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	height: 100dvh;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md) var(--mantine-spacing-md);
+}
+
+.main {
+	display: grid;
+	flex: 1;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: var(--mantine-spacing-md);
+	min-height: 0;
+}
+
+.stage {
+	position: relative;
+	min-height: 0;
+	overflow: hidden;
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-dark-7);
+}
+
+/* 右上のミニマップ。3Dを回す指の操作を邪魔しない */
+.minimap {
+	position: absolute;
+	top: var(--mantine-spacing-sm);
+	right: var(--mantine-spacing-sm);
+	width: min(30%, 180px);
+	padding: 4px;
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+	box-shadow: var(--mantine-shadow-md);
+	pointer-events: none;
+}
+
+.cameraNotice {
+	position: absolute;
+	right: var(--mantine-spacing-sm);
+	bottom: var(--mantine-spacing-sm);
+	left: var(--mantine-spacing-sm);
+	z-index: 1;
+	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+}
+
+.side {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	min-height: 0;
+}
+
+.cards {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	border: 2px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+}
+
+/* 結果。状態は色だけでなく、アイコンも添える */
+.goal {
+	color: var(--mantine-color-green-8);
+}
+
+.failure {
+	color: var(--mantine-color-red-8);
+}
+
+/* 次に押すボタン。ゆっくり拡大縮小して目立たせる（児童画面で動かす3か所の一つ） */
+.next {
+	animation: breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+	50% {
+		transform: scale(1.04);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.next {
+		animation: none;
+	}
+}
+
+@media (max-width: 767px) {
+	.screen {
+		height: auto;
+		min-height: 100dvh;
+	}
+
+	.main {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: 50dvh auto;
+	}
+
+	.cards {
+		max-height: 50dvh;
+	}
+}

@@ -4,7 +4,8 @@
  */
 import type { Direction, Position } from "@kasane/core";
 import { Billboard } from "@react-three/drei";
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
+import type { MeshStandardMaterial } from "three";
 
 import { DIRECTION_ANGLES, cellCenter } from "../../lib/scene-layout";
 import type { CellPositions } from "../../lib/scene-layout";
@@ -29,7 +30,7 @@ import {
 import type { PartMaterials } from "./parts";
 
 // 鍵の傾き。横に約35度傾けて（z軸）、斜め45度に向ける（y軸）
-const KEY_ROTATION: [number, number, number] = [0, Math.PI / 4, -Math.PI / 5];
+export const KEY_ROTATION: [number, number, number] = [0, Math.PI / 4, -Math.PI / 5];
 
 type Props = {
 	size: number;
@@ -40,7 +41,14 @@ type Props = {
 	materials: PartMaterials;
 };
 
-export function LayerModel({ size, layer, positions, startDirection, materials }: Props) {
+// プレイ画面ではターンごとに描き直すので、この階のマスと材質が変わらなければたどらない
+export const LayerModel = memo(function LayerModel({
+	size,
+	layer,
+	positions,
+	startDirection,
+	materials,
+}: Props) {
 	const { tiles, byCell } = positions;
 	const keyOf = ({ y, x }: Position) => `${y}-${x}`;
 
@@ -105,9 +113,7 @@ export function LayerModel({ size, layer, positions, startDirection, materials }
 			{byCell.key.map((position) => (
 				// 鍵の形が分かるよう、横に傾けてから斜めに向ける
 				<group key={keyOf(position)} position={keyPosition(size, position)} rotation={KEY_ROTATION}>
-					<mesh geometry={KEY_RING_GEOMETRY} material={materials.key} />
-					<mesh geometry={KEY_SHAFT_GEOMETRY} material={materials.key} />
-					<mesh geometry={KEY_TEETH_GEOMETRY} material={materials.key} />
+					<KeyModel material={materials.key} />
 				</group>
 			))}
 
@@ -116,6 +122,17 @@ export function LayerModel({ size, layer, positions, startDirection, materials }
 				<LayerLabel size={size} layer={layer} />
 			</Suspense>
 		</group>
+	);
+});
+
+// 金色のウォード錠の鍵。置く場所と傾きは、包むgroupで決める
+export function KeyModel({ material }: { material: MeshStandardMaterial }) {
+	return (
+		<>
+			<mesh geometry={KEY_RING_GEOMETRY} material={material} />
+			<mesh geometry={KEY_SHAFT_GEOMETRY} material={material} />
+			<mesh geometry={KEY_TEETH_GEOMETRY} material={material} />
+		</>
 	);
 }
 

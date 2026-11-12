@@ -274,7 +274,8 @@ export type PartMaterials = {
 const TILE_TEXTURE = tileTexture();
 const WALL_TEXTURE = wallTexture();
 const HOLE_GLOW_TEXTURE = holeGlowTexture();
-const SOFT_GLOW_TEXTURE = softGlowTexture();
+// 穴をうめる光る球（orb-parts.ts）でも使う
+export const SOFT_GLOW_TEXTURE = softGlowTexture();
 
 /*
  * 光の板の材質。色は付けず（黒）、模様の色と明るさをそのまま発光にする
@@ -339,3 +340,5 @@ function createMaterials(opacity: number): PartMaterials {
 // いちばん下の階と、その上に重ねて少し透かす階（下の階が透けて見える程度）
 export const SOLID_MATERIALS = createMaterials(1);
 export const SEE_THROUGH_MATERIALS = createMaterials(0.6);
+// プレイ画面で、ロボットがいない階（透明に近づける）
+export const FADED_MATERIALS = createMaterials(0.15);

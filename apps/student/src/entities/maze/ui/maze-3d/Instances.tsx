@@ -36,8 +36,18 @@ export function Instances({ size, positions, geometry, material }: Props) {
 	}, [size, positions, invalidate]);
 
 	if (positions.length === 0) return null;
-	// 数が変わると作り直す必要があるので、数をkeyにする
+	/*
+	 * 数が変わると作り直す必要があるので、数をkeyにする
+	 * 形と材質は、作るときの引数（args）ではなく属性で渡す。argsが変わると作り直されて各マスの位置が原点に戻るが、
+	 * プレイ画面ではロボットが階を移るたびに材質（透かし方）が変わるため
+	 */
 	return (
-		<instancedMesh key={positions.length} ref={ref} args={[geometry, material, positions.length]} />
+		<instancedMesh
+			key={positions.length}
+			ref={ref}
+			args={[undefined, undefined, positions.length]}
+			geometry={geometry}
+			material={material}
+		/>
 	);
 }

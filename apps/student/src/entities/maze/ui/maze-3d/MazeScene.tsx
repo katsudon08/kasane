@@ -11,16 +11,13 @@ import { OrbitControls } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Suspense, useLayoutEffect, useMemo, useRef } from "react";
 
-import { cameraRange, initialCameraPosition, mazeBounds } from "../../lib/camera";
+import { CAMERA_FOV, cameraRange, initialCameraPosition, mazeBounds } from "../../lib/camera";
 import { cellPositionsByLayer } from "../../lib/layers";
 import { LayerModel } from "./LayerModel";
 import { SEE_THROUGH_MATERIALS, SOLID_MATERIALS } from "./parts";
 import { Robot } from "./Robot";
 
 import classes from "./MazeScene.module.css";
-
-// カメラの縦の視野角（度）
-const FOV = 40;
 
 type Props = { maze: Maze };
 
@@ -30,7 +27,7 @@ export function MazeScene({ maze }: Props) {
 			<Canvas
 				frameloop="demand"
 				dpr={[1, 1.5]}
-				camera={{ fov: FOV, near: 0.1, far: 500 }}
+				camera={{ fov: CAMERA_FOV, near: 0.1, far: 500 }}
 				aria-label="迷路の3D"
 			>
 				<MazeModel maze={maze} />
@@ -82,7 +79,7 @@ function CameraRig({ size, layerCount }: CameraRigProps) {
 	const width = useThree((state) => state.size.width);
 	const height = useThree((state) => state.size.height);
 	const { center, radius } = useMemo(() => mazeBounds(size, layerCount), [size, layerCount]);
-	const { minDistance, maxDistance } = cameraRange(radius, FOV, width / height);
+	const { minDistance, maxDistance } = cameraRange(radius, CAMERA_FOV, width / height);
 	const placed = useRef(false);
 
 	// 最初の一回だけ置く（画面の大きさが変わっても、児童が回した向きは戻さない）

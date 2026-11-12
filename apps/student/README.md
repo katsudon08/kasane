@@ -16,7 +16,7 @@ src/
 
 各レイヤーの役割は[公式ドキュメント](https://feature-sliced.design/docs/reference/layers)に基づく。
 
-ルートは`pages`の公開APIから画面を読み込む。現在は`app`・`pages`・`entities`・`shared`を使い、ほかのレイヤーは必要になってから追加する。同じレイヤーの別スライスを参照する場合は`@x`を経由する。
+ルートは`pages`の公開APIから画面を読み込む。現在は`app`・`pages`・`widgets`・`features`・`entities`・`shared`を使う。同じレイヤーの別スライスを参照する場合は`@x`を経由する。
 
 メリット
 

@@ -16,24 +16,29 @@ import robotUrl from "./robot.glb?url";
 // ProgPathの1マス（10）に対して、ロボットが1マスの7割ほどの幅になる大きさ
 const ROBOT_SCALE = 0.14;
 
-type Props = { size: number; position: Position; direction: Direction };
-
-export function Robot({ size, position, direction }: Props) {
+// 足元を原点に、真ん中を原点の真上に合わせたモデル。置く場所と向きは、包むgroupで決める
+export function RobotModel() {
 	// dracoの展開処理は外部（gstatic）から取りに行くので使わない。meshoptの展開処理はライブラリに入っている
 	const { scene } = useGLTF(robotUrl, false, true);
 	const model = useMemo(() => {
 		const clone = scene.clone(true);
 		clone.scale.setScalar(ROBOT_SCALE);
-		// 足元をマスの床に、真ん中をマスの中心に合わせる
 		const box = new Box3().setFromObject(clone);
 		const center = box.getCenter(new Vector3());
 		clone.position.set(-center.x, -box.min.y, -center.z);
 		return clone;
 	}, [scene]);
 
+	return <primitive object={model} />;
+}
+
+type Props = { size: number; position: Position; direction: Direction };
+
+// しょうさい画面の、スタートのマスに立って動かないロボット
+export function Robot({ size, position, direction }: Props) {
 	return (
 		<group position={cellCenter(size, position)} rotation-y={DIRECTION_ANGLES[direction]}>
-			<primitive object={model} />
+			<RobotModel />
 		</group>
 	);
 }

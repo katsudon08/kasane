@@ -33,8 +33,7 @@
 | `DATABASE_URL`   | Neonの本番用プロジェクトの接続文字列                                          |
 | `TEACHER_ORIGIN` | 教師用アプリのオリジン（`https://kasane-teacher.{サブドメイン}.workers.dev`） |
 | `STUDENT_ORIGIN` | 児童用アプリのオリジン（`https://kasane-student.{サブドメイン}.workers.dev`） |
-
-`PORT`はRailwayが渡すので設定しません。
+| `PORT`           | `8080`（ドメインの向き先のポートとそろえる）                                  |
 
 ### GitHub（Actions）
 
@@ -57,13 +56,16 @@
    - カスタムトークンで、対象のアカウントの「Workers Scripts:Edit」だけを許したAPIトークンを作る
 3. **RailwayでAPIのサービスを作る**
    - GitHubのこのリポジトリからサービスを作る
-   - Settingsで次のようにする
+     - Railwayが`apps/`の下を見てサービスを3つ作るので、`@kasane/teacher`と`@kasane/student`は消す
+   - `@kasane/api`のSettingsで次のようにする
      - Root Directoryは空（リポジトリのルート）にする
-     - Config-as-codeのパスを`/apps/api/railway.json`にする
      - デプロイするブランチを`main`にする
-     - Replicasは1にする（`railway.json`の`numReplicas`でも1にしている）
+     - Custom Start Commandは空にする（`railway.json`とDockerfileの起動より優先されるため）
+     - Config-as-codeのパスを`/apps/api/railway.json`にする
+     - Regionは`Southeast Asia (Singapore)`にし、Replicasは1にする（`railway.json`の`numReplicas`でも1にしている）
+     - EdgeのCDN Cachingはオフのままにする
    - Networkingでドメインを作ってAPIのオリジンを控える
-   - Variablesに`DATABASE_URL`・`TEACHER_ORIGIN`・`STUDENT_ORIGIN`を入れる
+   - Variablesに上の表の4つを入れる
 4. **GitHubのEnvironmentを作り、SecretとVariableを入れる**
    - リポジトリのSettings → EnvironmentsでEnvironment`production`を作る
      - Deployment branchesを`main`だけにする

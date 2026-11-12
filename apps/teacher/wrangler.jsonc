@@ -2,9 +2,10 @@
 {
 	"name": "kasane-teacher",
 	"compatibility_date": "2026-11-01",
+	// アセットに無いURLだけを受け持つ
+	"main": "./worker.js",
 	"assets": {
 		"directory": "./dist",
-		// /lessons/…などの画面のURLを直接開いても、index.htmlを返して画面側のルーティングに任せる
-		"not_found_handling": "single-page-application",
+		"binding": "ASSETS",
 	},
 }

@@ -3,22 +3,36 @@ import react from "@vitejs/plugin-react";
 import { loadEnv, type Plugin } from "vite";
 import { defineConfig } from "vitest/config";
 
+// 環境変数の値がオリジン（https://example.comのように末尾の/なし）か。画面はこの値にパスをつなげて使う
+function isOrigin(value: string | undefined): value is string {
+	return value !== undefined && URL.canParse(value) && new URL(value).origin === value;
+}
+
 /*
  * Cloudflareが応答に付けるヘッダー（_headers）を、ビルドの出力に書き出す（仕様書backend.mdの「そのほかのセキュリティ設定」と「性能」）
  * CSPのconnect-srcに入れるAPIのオリジンは環境ごとに違うので、ビルド時の環境変数VITE_API_ORIGINから作る
  */
-function cloudflareHeaders(apiOrigin: string | undefined): Plugin {
+function cloudflareHeaders(env: Record<string, string>): Plugin {
 	return {
 		name: "kasane:cloudflare-headers",
 		apply: "build",
 		generateBundle() {
-			if (apiOrigin === undefined || apiOrigin === "") {
-				this.error("VITE_API_ORIGINがないため、CSPのconnect-srcを作れません");
+			const apiOrigin = env.VITE_API_ORIGIN;
+			if (!isOrigin(apiOrigin)) {
+				this.error(
+					"VITE_API_ORIGINを、https://example.comのような末尾に/のないオリジンにしてください",
+				);
+			}
+			// 授業QRの中身（{VITE_STUDENT_ORIGIN}/join?lesson=…）になるので、ここで一緒に確かめる
+			if (!isOrigin(env.VITE_STUDENT_ORIGIN)) {
+				this.error(
+					"VITE_STUDENT_ORIGINを、https://example.comのような末尾に/のないオリジンにしてください",
+				);
 			}
 			const contentSecurityPolicy = [
 				"default-src 'self'",
 				"script-src 'self'",
-				`connect-src 'self' ${new URL(apiOrigin).origin}`,
+				`connect-src 'self' ${apiOrigin}`,
 				"img-src 'self' blob: data:",
 				"font-src 'self'",
 				// MantineとReact Three Fiberがstyle属性を使うので、インラインを許すのはスタイルだけにする
@@ -47,7 +61,7 @@ function cloudflareHeaders(apiOrigin: string | undefined): Plugin {
 }
 
 export default defineConfig(({ mode }) => {
-	const { VITE_API_ORIGIN } = loadEnv(mode, import.meta.dirname, "VITE_");
+	const env = loadEnv(mode, import.meta.dirname, "VITE_");
 	return {
 		plugins: [
 			tanstackRouter({
@@ -58,7 +72,7 @@ export default defineConfig(({ mode }) => {
 				autoCodeSplitting: true,
 			}),
 			react(),
-			cloudflareHeaders(VITE_API_ORIGIN),
+			cloudflareHeaders(env),
 		],
 		server: {
 			port: 5174,

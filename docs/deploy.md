@@ -4,18 +4,20 @@
 
 ## 配信先
 
-| 対象         | 配信先                                               | 設定                                           |
-| ------------ | ---------------------------------------------------- | ---------------------------------------------- |
-| 教師用アプリ | Cloudflare Workersの静的アセット（`kasane-teacher`） | `apps/teacher/wrangler.jsonc`                  |
-| 児童用アプリ | Cloudflare Workersの静的アセット（`kasane-student`） | `apps/student/wrangler.jsonc`                  |
-| API          | Railway（1台）                                       | `apps/api/Dockerfile`・`apps/api/railway.json` |
-| データベース | Neonの本番用プロジェクト                             | Railwayの環境変数`DATABASE_URL`                |
+| 対象         | 配信先                                               | 設定                                                    |
+| ------------ | ---------------------------------------------------- | ------------------------------------------------------- |
+| 教師用アプリ | Cloudflare Workersの静的アセット（`kasane-teacher`） | `apps/teacher/wrangler.jsonc`・`apps/teacher/worker.js` |
+| 児童用アプリ | Cloudflare Workersの静的アセット（`kasane-student`） | `apps/student/wrangler.jsonc`・`apps/student/worker.js` |
+| API          | Railway（1台）                                       | `apps/api/Dockerfile`・`apps/api/railway.json`          |
+| データベース | Neonの本番用プロジェクト                             | Railwayの環境変数`DATABASE_URL`                         |
 
 - **`main`にマージすると出る**
   - 教師用・児童用アプリは、GitHub Actions（`.github/workflows/deploy.yml`）がビルドしてCloudflareへ出す
   - APIは、Railwayが`main`を見て`apps/api/Dockerfile`でビルドして出す
 - **APIは、出す前に本番のDBへマイグレーションを当てる**
   - `railway.json`の`preDeployCommand`で`migrate-database.ts`を動かす
+- **教師用・児童用アプリは、アセットに無いURLだけを`worker.js`が受け持つ**
+  - 画面のURLには`index.html`を返し、`/assets/`の下は404を返す
 - **教師用・児童用アプリの応答ヘッダーは、ビルド時に`dist/_headers`へ書き出す**
   - 中身は各アプリの`vite.config.ts`にある（[backend.md「そのほかのセキュリティ設定」](specs/single/backend.md#そのほかのセキュリティ設定)）
   - CSPの`connect-src`は`VITE_API_ORIGIN`から作る
@@ -59,7 +61,7 @@
      - Root Directoryは空（リポジトリのルート）にする
      - Config-as-codeのパスを`/apps/api/railway.json`にする
      - デプロイするブランチを`main`にする
-     - Replicasは1のままにする
+     - Replicasは1にする（`railway.json`の`numReplicas`でも1にしている）
    - Networkingでドメインを作ってAPIのオリジンを控える
    - Variablesに`DATABASE_URL`・`TEACHER_ORIGIN`・`STUDENT_ORIGIN`を入れる
 4. **GitHubのEnvironmentを作り、SecretとVariableを入れる**
@@ -76,6 +78,8 @@
   - 教師用アプリからAPIへHTTP（CORS）で届いている
 - **児童用アプリで授業QRを読み取って参加すると、教師の進み具合にその児童が出る**
   - 教師用アプリがAPIのSSEを受け取れている
+- **教師の進み具合を30分ほど開いたままにしても、「つながっていません」の帯が出たままにならない**
+  - Railwayが長い接続を切っても、つなぎ直せている
 - **児童のプレイ画面で命令カードを読み取れ、ロボットが動く**
   - CSPでQRの読み取りとロボットのモデルの展開（WebAssembly）が止められていない
 - **教師用・児童用アプリのどちらでも、ブラウザーのコンソールにCSPの違反が出ていない**

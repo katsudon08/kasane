@@ -1,6 +1,6 @@
 /*
  * ロボットの1ターンの動き（仕様書README.mdの「ロボットを動かす」の「1ターンの動き」の表）
- * stepsを1ターン0.6秒でなぞる。テレポート・鍵・ゴール・落ちるは、進んだ後に続けてその動きをする
+ * stepsを1ターン1秒でなぞる。テレポート・鍵・ゴール・落ちるは、進んだ後に続けてその動きをする
  * 3Dは、ここで求めた各時刻の姿（位置・向き・大きさ・高さ）をuseFrameの中でrefに書き込む
  */
 import { FLOOR, GOAL, HOLE, KEY, START, TUTORIALS, WALL, compile } from "@kasane/core";
@@ -66,10 +66,10 @@ function endsAt(maze: Maze, steps: Step[], index: number, celebrate = false): [F
 }
 
 describe("stepMotion", () => {
-	it("move・turn・fillは、1ターン0.6秒", () => {
+	it("move・turn・fillは、1ターン1秒", () => {
 		const { steps } = compile(MAZE, [fill, forward, right]);
 
-		expect(TURN_SECONDS).toBe(0.6);
+		expect(TURN_SECONDS).toBe(1);
 		expect(phaseKinds(stepOf(steps, 0))).toEqual(["fill"]);
 		expect(phaseKinds(stepOf(steps, 1))).toEqual(["move"]);
 		expect(phaseKinds(stepOf(steps, 2))).toEqual(["turn"]);

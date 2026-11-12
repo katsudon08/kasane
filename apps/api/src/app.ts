@@ -21,6 +21,7 @@ import { listOpenLessonsUseCase } from "./application/usecases/list-open-lessons
 import { notifyStudentStatusUseCase } from "./application/usecases/notify-student-status";
 import { registerTeacherUseCase } from "./application/usecases/register-teacher";
 import { replaceMazeUseCase } from "./application/usecases/replace-maze";
+import { skipTutorialsUseCase } from "./application/usecases/skip-tutorials";
 import { watchLessonAsStudentUseCase } from "./application/usecases/watch-lesson-as-student";
 import { watchLessonAsTeacherUseCase } from "./application/usecases/watch-lesson-as-teacher";
 import { env } from "./config/env";
@@ -31,6 +32,7 @@ import { lessonRepository as createLessonRepository } from "./infrastructure/rep
 import { mazeRepository as createMazeRepository } from "./infrastructure/repositories/maze-repository";
 import { studentRepository as createStudentRepository } from "./infrastructure/repositories/student-repository";
 import { teacherRepository as createTeacherRepository } from "./infrastructure/repositories/teacher-repository";
+import { tutorialSkipRepository as createTutorialSkipRepository } from "./infrastructure/repositories/tutorial-skip-repository";
 import { studentController } from "./presentation/controllers/student";
 import { teacherController } from "./presentation/controllers/teacher";
 import { auth as createAuth } from "./presentation/middlewares/auth";
@@ -108,6 +110,10 @@ export const createApp = ({
 					}),
 					getMe: getMeUseCase({ studentRepository, attemptRepository }),
 					attemptTutorial: attemptTutorialUseCase({ attemptRepository, notifyStudentStatus }),
+					skipTutorials: skipTutorialsUseCase({
+						tutorialSkipRepository: createTutorialSkipRepository(db),
+						notifyStudentStatus,
+					}),
 					attemptMaze: attemptMazeUseCase({
 						mazeRepository,
 						attemptRepository,

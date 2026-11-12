@@ -61,8 +61,9 @@ lessons {
 students {
   id          uuid pk default random
   lessonId    uuid not null → lessons.id      // 児童のトークンから授業を引くために、トークンのハッシュと同じ行に持つ
-  name        text not null                 // 1〜20文字
+  name        text not null                 // 1〜20文字。check (char_length(name) between 1 and 20)
   tokenHash   text unique not null          // 児童のトークンのSHA-256
+  skippedCount integer not null default 0   // 飛ばした問題の数。1〜skippedCount問目をクリアしたことにする（README.mdの「問題を飛ばす」）。check (skippedCount >= 0)
   createdAt   timestamptz not null default now
   index (lessonId, createdAt)
 }
@@ -70,7 +71,7 @@ students {
 mazes {
   id          uuid pk default random
   studentId   uuid not null → students.id
-  name        text not null                 // 1〜20文字
+  name        text not null                 // 1〜20文字。check (char_length(name) between 1 and 20)
   data        jsonb not null                // domain.mdのMazeをそのまま入れる（layers: Cell[][][]とstartDirection）
   createdAt   timestamptz not null default now
   updatedAt   timestamptz not null default now
@@ -100,11 +101,11 @@ attempts {                                   // 1回の挑戦（プログラム�
 
 ## 教師に見せる状態の求め方
 
-児童ごとに、`attempts`から次のように求めます。教師がつないだときは全児童分を1回の集計クエリで、児童が送ったときはその児童の分だけを求めます。
+児童ごとに、`attempts`と`students.skippedCount`から次のように求めます。教師がつないだときは全児童分を1回の集計クエリで、児童が送ったときはその児童の分だけを求めます。
 
 | 状態           | 求め方                                                                                                                                                |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| クリア数       | `succeeded = true`の記録にある`tutorialNo`の種類の数                                                                                                  |
+| クリア数       | `skippedCount`に、`succeeded = true`の記録にある`tutorialNo`のうち`skippedCount`より大きいものの種類の数を足した数                                    |
 | 今の問題       | クリア数がチュートリアルの数より少なければ「チュートリアル（クリア数＋1）」。全部クリアしていれば、最後に送った自分の迷路（まだ送っていなければなし） |
 | 今の問題の結果 | 今の問題で最後に送った記録の`succeeded`。今の問題で一度も送っていなければ「まだ送っていない」                                                         |
 
@@ -118,6 +119,8 @@ type StudentStatus = {
 ```
 
 - チュートリアルを順番に解く前提なので、プログラムを受け付けるときに`isTutorialUnlocked`で解放済みかを確かめ、解放前の問題は受け付けない
+- 飛ばした問題は、送った記録がなくてもクリアしたものとして数える。飛ばした後に解いた問題は、飛ばした数の続きとして数える（1〜3問目を飛ばして4問目をクリアしたら4）
+- 飛ばしたことは`attempts`に入れない（`attempts`は送ったプログラムの記録だけにする）
 
 ## トークン
 
@@ -188,6 +191,7 @@ type StudentStatus = {
 | `POST /students`                  | `{ lessonId, name }` | `201` `{ token }`                     | 児童の行を作り、トークンを発行する。授業がなければ`404`、終わっていれば`410`、その授業の`students`の行が300以上なら`403 lessonFull`（行は作らない）。作った後、その授業の教師のSSEに`student`を送る。同じ授業に同じ`name`の行があっても新しく作る（名前にユニーク制約を付けない。名前で引き継ぐと、QRと名前を知るだけで他の児童の記録を乗っ取れるため）                                                                        |
 | `GET /me`                         | なし                 | `{ name, clearedCount }`              |                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `POST /me/tutorials/:no/attempts` | `{ program }`        | `201` `CompileResult`                 | チュートリアル`no`（1から始まる番号。`TUTORIALS[no - 1]`）に挑戦する。`compile`して記録を保存し、教師にその児童の`StudentStatus`を送る。解放前のチュートリアルは`403 tutorialLocked`、`no`が範囲外なら`422`                                                                                                                                                                                                                    |
+| `POST /me/tutorials/skip`         | `{ to }`             | `204`                                 | `to`問目から始められるよう、1〜`to - 1`問目をクリアしたことにする（`skippedCount`を「今の値」と「`to - 1`」の大きいほうにする）。`to`は2〜チュートリアルの数＋1（＋1は全部飛ばす）で、外れていれば`422`。減らすことはないので、何度送っても同じ結果になり、今のクリア数より前の問題を選んでもクリア数は減らない。保存後、教師にその児童の`StudentStatus`を送る                                                                 |
 | `POST /me/mazes/:mazeId/attempts` | `{ program }`        | `201` `CompileResult`                 | 自分の迷路に挑戦する。処理は上と同じで、迷路を`mazes`から`id = :mazeId AND studentId = 本人`で読む。なければ`404`。対象をパスに置き本文を`{ program }`だけにするのは、一つの口で本文を和にすると検証の失敗が分かりにくく、処理も本文で分岐するため                                                                                                                                                                             |
 | `GET /me/mazes`                   | なし                 | `{ mazeId, name, data, updatedAt }[]` | `updatedAt`が新しい順、同じなら`mazeId`順（並びを決定的にする）。`data`はホームのミニマップに使う。画面は`canCreateMaze(clearedCount)`が真になるまで呼ばない                                                                                                                                                                                                                                                                   |
 | `POST /me/mazes`                  | `{ name, data }`     | `201` `{ mazeId }`                    | `canCreateMaze(clearedCount)`が偽なら`403 mazeLocked`。`data`はTypeBoxと`validateMaze`で見て、だめなら`422`。保存後、端末は`GET /me/mazes`を無効化してしょうさい画面へ                                                                                                                                                                                                                                                         |
@@ -250,6 +254,7 @@ type ServerEvent =
 | 迷路の名前                   | 1〜20文字（前後の空白は削る）。改行と制御文字は`pattern`で弾く                                                                                                                                                                                                                                                                                                                                 |
 | 迷路の`data`                 | `layers`は1〜3階、各階は5〜7行、各行は5〜7マス、マスは8種類の列挙値、`startDirection`は4方向。ここまでをTypeBoxで見て、正方形かどうかと迷路のルールは`validateMaze`で見る                                                                                                                                                                                                                      |
 | `program`                    | 形と`times`（2〜10）はTypeBoxの再帰型で見る。命令の数（100まで）・問題の枚数上限・入れ子の深さ（3まで）は`validateProgram`（[domain.md](domain.md#プログラムの正しさvalidateprogram)）で見て、だめなら`422`                                                                                                                                                                                    |
+| `to`（問題を飛ばす先）       | 2〜チュートリアルの数＋1の整数。外れていれば`422`                                                                                                                                                                                                                                                                                                                                              |
 | `no`（チュートリアルの番号） | 1〜チュートリアルの数。外れていれば`422`                                                                                                                                                                                                                                                                                                                                                       |
 | 1授業の児童の数              | 300人まで。つないでいる台数ではなく、その授業の`students`の行の数で数える。参加し直した児童の前の行も数に入るので、40人が7回ずつ参加しても収まる数にした。達したら行は消さず（使われていない行と、まだ送っていない児童の行を見分けられないため）、教師が新しい授業を始める。数えてから行を入れるまでに参加が重なると数人超えることがあるが、際限なく増やさないことが目的なので厳密には数えない |
 | 本文全体（`body`のこと）     | 16KBまで。正しい本文は最大でも約4KB（命令100個のプログラム）なので、その4倍。超えた本文は、サーバーが読み込む前に`413`を返す（本人の特定や検証より先）                                                                                                                                                                                                                                         |
@@ -265,11 +270,11 @@ type ServerEvent =
 - 児童のトークンで教師用APIは使えず、教師のトークンで児童用APIは使えない（`teachers`と`students`のトークンは別テーブル）
 - 授業QRに出るのは`lessons.id`で、参加コードは別に持たない。教師用APIはすべて教師のトークンが必須なので、授業のIDを知っているだけでは教師用APIは使えない
 
-| 誰が             | できること                                                                 |
-| ---------------- | -------------------------------------------------------------------------- |
-| 教師             | 自分が作った授業の作成・閲覧・終了、その授業の児童の進み具合の受け取り     |
-| 児童             | プログラムを送ってコンパイルの結果を受け取る、自分の迷路の作成・閲覧・編集 |
-| 授業のIDを知る人 | その授業に児童として参加すること（授業が開いている間だけ）                 |
+| 誰が             | できること                                                                               |
+| ---------------- | ---------------------------------------------------------------------------------------- |
+| 教師             | 自分が作った授業の作成・閲覧・終了、その授業の児童の進み具合の受け取り                   |
+| 児童             | プログラムを送ってコンパイルの結果を受け取る、自分の迷路の作成・閲覧・編集、問題を飛ばす |
+| 授業のIDを知る人 | その授業に児童として参加すること（授業が開いている間だけ）                               |
 
 ### そのほかのセキュリティ設定
 
@@ -294,7 +299,7 @@ type ServerEvent =
   - `GET /lessons/:lessonId`: `staleTime: Infinity`（`createdAt`は変わらない）
   - `GET /me/mazes`: `staleTime: Infinity`、`POST /me/mazes`・`PUT /me/mazes/:mazeId`が成功したら`invalidateQueries`
   - じぶんのめいろのしょうさい・プレイ・変える画面の迷路は、`GET /me/mazes`のキャッシュから`mazeId`で探す（迷路を1件読むAPIは置かない。一覧が`data`まで持ち、書き換えるのは本人だけなので、無効化する口を一覧の一つに絞れる）。キャッシュがなければ一覧を取ってから探し、見つからなければホームへ移動する
-  - `GET /me`: `staleTime: Infinity`、`POST /me/tutorials/:no/attempts`が成功したら`invalidateQueries`（クリア数が変わるのはそのときだけ。自分の迷路への挑戦ではクリア数は変わらない）
+  - `GET /me`: `staleTime: Infinity`、`POST /me/tutorials/:no/attempts`・`POST /me/tutorials/skip`が成功したら`invalidateQueries`（クリア数が変わるのはそのときだけ。自分の迷路への挑戦ではクリア数は変わらない）
 - SSEで受け取る教師の進み具合は、児童のIDをキーにした`Map`で持ち、届いた児童の分だけを差し替える
 - チュートリアルは`packages/core`の定数なので通信しない
 - 再レンダリングを抑える

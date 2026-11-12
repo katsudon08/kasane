@@ -1,0 +1,222 @@
+/*
+ * めいろをつくる / 変える（仕様書README.mdの「めいろをつくる / 変える」）
+ * 横長のタブレットで、左半分に迷路、右半分に名前・大きさ・道具と「できあがり」を、画面の高さに収めて並べる
+ * 縦長の狭い画面では、上下に並べる
+ */
+.screen {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	height: 100dvh;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-lg) var(--mantine-spacing-lg);
+}
+
+.main {
+	display: grid;
+	flex: 1;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: var(--mantine-spacing-xl);
+	min-height: 0;
+}
+
+/* 左半分。階の切り替え・マス目・理由を、中央にそろえて縦に並べる。収まらないときは左半分だけを縦に送る */
+.board {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--mantine-spacing-md);
+	min-height: 0;
+	overflow-y: auto;
+}
+
+/* 減らす（左）・階の切り替え・足す（右）を一列に並べる。高さをそろえる */
+.layerControls {
+	display: flex;
+	flex-shrink: 0;
+	align-items: stretch;
+	justify-content: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+/* 階を足す・減らす。アイコンだけの正方形のボタン */
+.stepButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 70px;
+	min-height: 70px;
+	border: 3px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-white);
+	color: var(--mantine-color-dark-7);
+}
+
+.stepButton:active {
+	background: var(--mantine-color-gray-0);
+}
+
+/* いくつかの中から一つを選ぶ並び（階と大きさで同じ形）。つながった一つの枠にする */
+.segmented {
+	display: flex;
+	overflow: hidden;
+	border: 3px solid var(--mantine-color-blue-6);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-white);
+}
+
+.segment {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	min-width: 80px;
+	min-height: 64px;
+	padding: 4px var(--mantine-spacing-sm);
+	color: var(--mantine-color-blue-7);
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	line-height: 1.2;
+	white-space: nowrap;
+}
+
+.segment + .segment {
+	border-left: 3px solid var(--mantine-color-blue-6);
+}
+
+/* 選んでいるものは青の塗りつぶし */
+.segment[data-selected] {
+	background: var(--mantine-color-blue-6);
+	color: var(--mantine-color-white);
+}
+
+/* 選べないもの（まだない階・形を変えた後の大きさ）は灰色 */
+.segment:disabled {
+	background: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-5);
+	cursor: not-allowed;
+}
+
+/*
+ * マス目は枠で囲んだ正方形。ふつうは残りの高さに収め、低い画面でも1マスが64px四方より小さくならないようにする
+ * 300pxは、見出し・階の切り替え・理由のカード（2行ほど）・余白の高さの見積もり
+ */
+.grid {
+	position: relative;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	width: min(100%, max(calc(var(--cells) * 66px + 8px), calc(100dvh - 300px)));
+	aspect-ratio: 1;
+	overflow: hidden;
+	border: 4px solid var(--mantine-color-gray-7);
+	border-radius: var(--mantine-radius-sm);
+}
+
+.gridMap {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.gridCells {
+	position: absolute;
+	inset: 0;
+	display: grid;
+}
+
+.gridCell {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+}
+
+.gridCell:focus-visible {
+	outline: 4px solid var(--mantine-color-blue-6);
+	outline-offset: -4px;
+}
+
+/* 理由のカードを置く場所。左半分を縦に送っているときも、見えている範囲の下に出す。下のマスのタップは邪魔しない */
+.notice {
+	position: sticky;
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	pointer-events: none;
+}
+
+.errorCard {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	max-width: 100%;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border: 3px solid var(--mantine-color-red-6);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-red-0);
+	box-shadow: var(--mantine-shadow-md);
+	color: var(--mantine-color-red-9);
+}
+
+.errorIcon {
+	flex-shrink: 0;
+	color: var(--mantine-color-red-7);
+}
+
+.errorText {
+	margin: 0;
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	line-height: 1.5;
+}
+
+/* 右半分。見出しを上に置いた区切りを、幅いっぱいに縦に並べる */
+.side {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	min-height: 0;
+	overflow-y: auto;
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.sectionLabel {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+/* 主ボタン。右半分の高さが足りず縦に送るときも、いちばん下に見えたままにする */
+.save {
+	position: sticky;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	margin-top: auto;
+	background: var(--mantine-color-white);
+}
+
+@media (max-width: 767px) {
+	.screen {
+		height: auto;
+		min-height: 100dvh;
+	}
+
+	.main {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.board {
+		overflow-y: visible;
+	}
+
+	.grid {
+		width: 100%;
+	}
+}

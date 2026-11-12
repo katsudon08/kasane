@@ -7,6 +7,7 @@ import type { LastResult, StudentStatus } from "../../domain/entities/student-st
 import type { StudentRepository } from "../../domain/repositories/student-repository";
 import { isLessonFull } from "../../domain/services/lesson-capacity";
 import { attempts, lessons, students } from "../database/schema";
+import { clearedCountOf } from "./attempt-repository";
 
 const toLastResult = (succeeded: boolean | null): LastResult => {
 	if (succeeded === null) return "notSent";
@@ -15,7 +16,7 @@ const toLastResult = (succeeded: boolean | null): LastResult => {
 
 /*
  * 教師に見せる状態（仕様書backend.mdの「教師に見せる状態の求め方」）を、1回のクエリで求める
- * - クリア数: 成功した記録にあるチュートリアルの種類の数（自分の迷路への記録はtutorialNoがnullなので入らない）
+ * - クリア数: 飛ばした問題の数に、それより後で成功した記録にあるチュートリアルの種類の数を足したもの（自分の迷路への記録はtutorialNoがnullなので入らない）
  * - 今の問題: クリア数がチュートリアルの数より少なければチュートリアル（クリア数＋1）、全部クリアしていれば最後に送った自分の迷路
  * - 今の問題の結果: 今の問題で最後に送った記録のsucceeded。一度も送っていなければnull
  * 全部クリアした後は、自分の迷路への最後の記録が「最後に送った迷路で最後に送った記録」になる
@@ -31,10 +32,7 @@ const findStatuses = async (
 				studentId: sql<string>`${students.id}`.as("progress_student_id"),
 				name: sql<string>`${students.name}`.as("progress_name"),
 				joinedAt: sql<Date>`${students.createdAt}`.as("progress_joined_at"),
-				clearedCount:
-					sql<number>`count(distinct ${attempts.tutorialNo}) filter (where ${attempts.succeeded})`
-						.mapWith(Number)
-						.as("progress_cleared_count"),
+				clearedCount: clearedCountOf.as("progress_cleared_count"),
 			})
 			.from(students)
 			.innerJoin(lessons, eq(lessons.id, students.lessonId))

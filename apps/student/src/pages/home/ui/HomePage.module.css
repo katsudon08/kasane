@@ -3,12 +3,20 @@
  * 児童画面で動かすのは「次に押すボタン」などに絞る（README.mdの「見た目と操作のルール」）。動きを減らす設定の端末では止める
  */
 
+/* 横に送れる問題の並び。送れる範囲が分かるよう、枠で囲む */
 .tutorials {
 	display: flex;
 	gap: var(--mantine-spacing-sm);
 	overflow-x: auto;
 	/* 拡大した次の問題のカードが、並びの端で切れないようにする */
-	padding: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-md);
+	border: 3px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+}
+
+/* 問題の名前は改行しない。並びは横に送れるので、カードを名前の長さに合わせて広げる */
+.name {
+	white-space: nowrap;
 }
 
 .card {
@@ -56,6 +64,56 @@
 	background: var(--mantine-color-gray-2);
 	color: var(--mantine-color-gray-6);
 	cursor: not-allowed;
+}
+
+/* 飛ばす先の問題。番号と名前のカードを並べ、選んでいるものは枠と色で示す */
+.skipTargets {
+	display: grid;
+	/* 問題の名前を改行させずに収めるため、2列にする */
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm);
+}
+
+.skipTarget {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
+	min-height: 96px;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 3px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-white);
+	text-align: center;
+}
+
+.skipTarget[data-selected] {
+	border-color: var(--mantine-color-blue-6);
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-9);
+}
+
+/* 全部飛ばすは、列の幅いっぱいにして問題と見分ける */
+.skipTarget:last-child {
+	grid-column: 1 / -1;
+	min-height: 72px;
+}
+
+.skipTargetNumber {
+	font-size: 40px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.skipTargetName {
+	font-size: var(--mantine-font-size-sm);
+	white-space: nowrap;
+}
+
+.skipTargetAll {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
 }
 
 /* 自分の迷路のエリア。全部クリアするまでは灰色＋鍵のアイコン */

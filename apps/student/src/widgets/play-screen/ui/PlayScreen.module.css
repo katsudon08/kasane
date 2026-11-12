@@ -11,6 +11,38 @@
 	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md) var(--mantine-spacing-md);
 }
 
+/* 見出し（左）とカードの枚数（右端）を一列に並べる */
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-md);
+}
+
+/* カードの枚数の上限 */
+.cardLimit {
+	display: flex;
+	flex-shrink: 0;
+	align-items: baseline;
+	gap: 4px;
+	padding: 6px var(--mantine-spacing-md);
+	border: 3px solid var(--mantine-color-blue-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-9);
+}
+
+.cardLimitLabel {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 700;
+}
+
+.cardLimitCount {
+	font-size: 34px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
 .main {
 	display: grid;
 	flex: 1;

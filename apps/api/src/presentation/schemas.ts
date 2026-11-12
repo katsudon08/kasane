@@ -80,6 +80,11 @@ export const tutorialParams = t.Object({
 
 export const joinLessonInput = t.Object({ lessonId: idInput, name: nameInput }, STRICT);
 export const attemptInput = t.Object({ program: t.Array(command, COMMANDS) }, STRICT);
+// 問題を飛ばす先。to問目から始める（2〜チュートリアルの数＋1。＋1は全部飛ばす）
+export const skipInput = t.Object(
+	{ to: t.Integer({ minimum: 2, maximum: TUTORIALS.length + 1 }) },
+	STRICT,
+);
 export const mazeInput = t.Object({ name: nameInput, data: mazeData }, STRICT);
 
 /*

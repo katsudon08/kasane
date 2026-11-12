@@ -1,6 +1,6 @@
 /*
  * 進み具合のルール（仕様書domain.mdの「進み具合のルール」）
- * クリア数（clearedCount）は保存せず、送った記録から数える
+ * クリア数（clearedCount）は保存せず、送った記録と飛ばした問題の数から数える（求めるのはAPIのDBのクエリ）
  */
 
 import { TUTORIALS } from "./tutorials";

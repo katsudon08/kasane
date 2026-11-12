@@ -13,7 +13,9 @@ import { Route as StudentRouteImport } from './app/routes/_student'
 import { Route as EndedRouteImport } from './app/routes/ended'
 import { Route as JoinRouteImport } from './app/routes/join'
 import { Route as StudentIndexRouteImport } from './app/routes/_student/index'
+import { Route as StudentMazesNewRouteImport } from './app/routes/_student/mazes/new'
 import { Route as StudentMazesMazeIdIndexRouteImport } from './app/routes/_student/mazes/$mazeId/index'
+import { Route as StudentMazesMazeIdEditRouteImport } from './app/routes/_student/mazes/$mazeId/edit'
 import { Route as StudentMazesMazeIdPlayRouteImport } from './app/routes/_student/mazes/$mazeId/play'
 import { Route as StudentTutorialsNoIndexRouteImport } from './app/routes/_student/tutorials/$no/index'
 import { Route as StudentTutorialsNoPlayRouteImport } from './app/routes/_student/tutorials/$no/play'
@@ -37,9 +39,19 @@ const StudentIndexRoute = StudentIndexRouteImport.update({
   path: '/',
   getParentRoute: () => StudentRoute,
 } as any)
+const StudentMazesNewRoute = StudentMazesNewRouteImport.update({
+  id: '/mazes/new',
+  path: '/mazes/new',
+  getParentRoute: () => StudentRoute,
+} as any)
 const StudentMazesMazeIdIndexRoute = StudentMazesMazeIdIndexRouteImport.update({
   id: '/mazes/$mazeId/',
   path: '/mazes/$mazeId/',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentMazesMazeIdEditRoute = StudentMazesMazeIdEditRouteImport.update({
+  id: '/mazes/$mazeId/edit',
+  path: '/mazes/$mazeId/edit',
   getParentRoute: () => StudentRoute,
 } as any)
 const StudentMazesMazeIdPlayRoute = StudentMazesMazeIdPlayRouteImport.update({
@@ -62,6 +74,8 @@ export interface FileRoutesByFullPath {
   '/': typeof StudentIndexRoute
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
+  '/mazes/new': typeof StudentMazesNewRoute
+  '/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
   '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
   '/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
   '/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
@@ -71,6 +85,8 @@ export interface FileRoutesByTo {
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
   '/': typeof StudentIndexRoute
+  '/mazes/new': typeof StudentMazesNewRoute
+  '/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
   '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
   '/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
   '/mazes/$mazeId': typeof StudentMazesMazeIdIndexRoute
@@ -82,6 +98,8 @@ export interface FileRoutesById {
   '/ended': typeof EndedRoute
   '/join': typeof JoinRoute
   '/_student/': typeof StudentIndexRoute
+  '/_student/mazes/new': typeof StudentMazesNewRoute
+  '/_student/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
   '/_student/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
   '/_student/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
   '/_student/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
@@ -93,6 +111,8 @@ export interface FileRouteTypes {
     | '/'
     | '/ended'
     | '/join'
+    | '/mazes/new'
+    | '/mazes/$mazeId/edit'
     | '/mazes/$mazeId/play'
     | '/tutorials/$no/play'
     | '/mazes/$mazeId/'
@@ -102,6 +122,8 @@ export interface FileRouteTypes {
     | '/ended'
     | '/join'
     | '/'
+    | '/mazes/new'
+    | '/mazes/$mazeId/edit'
     | '/mazes/$mazeId/play'
     | '/tutorials/$no/play'
     | '/mazes/$mazeId'
@@ -112,6 +134,8 @@ export interface FileRouteTypes {
     | '/ended'
     | '/join'
     | '/_student/'
+    | '/_student/mazes/new'
+    | '/_student/mazes/$mazeId/edit'
     | '/_student/mazes/$mazeId/play'
     | '/_student/tutorials/$no/play'
     | '/_student/mazes/$mazeId/'
@@ -154,11 +178,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentIndexRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/_student/mazes/new': {
+      id: '/_student/mazes/new'
+      path: '/mazes/new'
+      fullPath: '/mazes/new'
+      preLoaderRoute: typeof StudentMazesNewRouteImport
+      parentRoute: typeof StudentRoute
+    }
     '/_student/mazes/$mazeId/': {
       id: '/_student/mazes/$mazeId/'
       path: '/mazes/$mazeId'
       fullPath: '/mazes/$mazeId/'
       preLoaderRoute: typeof StudentMazesMazeIdIndexRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/_student/mazes/$mazeId/edit': {
+      id: '/_student/mazes/$mazeId/edit'
+      path: '/mazes/$mazeId/edit'
+      fullPath: '/mazes/$mazeId/edit'
+      preLoaderRoute: typeof StudentMazesMazeIdEditRouteImport
       parentRoute: typeof StudentRoute
     }
     '/_student/mazes/$mazeId/play': {
@@ -187,6 +225,8 @@ declare module '@tanstack/react-router' {
 
 interface StudentRouteChildren {
   StudentIndexRoute: typeof StudentIndexRoute
+  StudentMazesNewRoute: typeof StudentMazesNewRoute
+  StudentMazesMazeIdEditRoute: typeof StudentMazesMazeIdEditRoute
   StudentMazesMazeIdPlayRoute: typeof StudentMazesMazeIdPlayRoute
   StudentTutorialsNoPlayRoute: typeof StudentTutorialsNoPlayRoute
   StudentMazesMazeIdIndexRoute: typeof StudentMazesMazeIdIndexRoute
@@ -195,6 +235,8 @@ interface StudentRouteChildren {
 
 const StudentRouteChildren: StudentRouteChildren = {
   StudentIndexRoute: StudentIndexRoute,
+  StudentMazesNewRoute: StudentMazesNewRoute,
+  StudentMazesMazeIdEditRoute: StudentMazesMazeIdEditRoute,
   StudentMazesMazeIdPlayRoute: StudentMazesMazeIdPlayRoute,
   StudentTutorialsNoPlayRoute: StudentTutorialsNoPlayRoute,
   StudentMazesMazeIdIndexRoute: StudentMazesMazeIdIndexRoute,

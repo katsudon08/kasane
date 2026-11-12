@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
 import "./app/styles/fonts.css";
+import "./app/styles/text.css";
 import { MantineProvider } from "@mantine/core";
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
@@ -27,7 +28,12 @@ const router = createRouter({ routeTree, defaultErrorComponent: ErrorPage });
  */
 function leaveLessonOn(error: unknown): void {
 	if (!(error instanceof StudentAccessLost)) return;
-	void router.navigate({ to: error.reason === "lessonEnded" ? "/ended" : "/join", replace: true });
+	// 作っている途中の迷路があっても、確認を出さずに移る（授業を続けられないので）
+	void router.navigate({
+		to: error.reason === "lessonEnded" ? "/ended" : "/join",
+		replace: true,
+		ignoreBlocker: true,
+	});
 }
 
 const MAX_RETRIES = 3;

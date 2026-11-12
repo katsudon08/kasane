@@ -2,15 +2,16 @@
  * ニックネームを入れて授業に参加する（仕様書README.mdの「授業に参加する」の2・3と失敗時の表示）
  * 参加できたら、前の授業で読み込んだ値を捨ててからホームへ移る
  */
-import { Button, Container, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Container, Stack, Text } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 
 import { FailureMessage, OfflineNotice } from "../../../shared/ui/failure-message";
+import { NameInput } from "../../../shared/ui/name-input";
 import { joinLesson } from "../api/join-lesson";
-import { NICKNAME_MAX_LENGTH, nicknameOf } from "../lib/nickname";
+import { nicknameOf } from "../lib/nickname";
 
 type Props = {
 	lessonId: string;
@@ -53,7 +54,7 @@ export function NicknameForm({ lessonId, onInvalidLesson }: Props) {
 			<form onSubmit={handleSubmit}>
 				<Stack gap="lg">
 					<Stack gap="xs">
-						<TextInput
+						<NameInput
 							label={
 								<>
 									ニックネームを
@@ -64,9 +65,7 @@ export function NicknameForm({ lessonId, onInvalidLesson }: Props) {
 								</>
 							}
 							value={input}
-							onChange={(event) => setInput(event.currentTarget.value)}
-							maxLength={NICKNAME_MAX_LENGTH}
-							autoComplete="off"
+							onChange={setInput}
 						/>
 						<Text size="xs" c="dimmed">
 							<ruby>

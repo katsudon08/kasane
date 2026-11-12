@@ -48,7 +48,7 @@ export function TutorialDetailPage({ noParam }: Props) {
 					</Title>
 				</Group>
 				<MazeScene maze={tutorial.maze} />
-				<Group>
+				<Group justify="center">
 					<Button
 						renderRoot={(props) => (
 							<Link to="/tutorials/$no/play" params={{ no: String(tutorial.no) }} {...props} />

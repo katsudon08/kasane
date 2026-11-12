@@ -6,7 +6,7 @@
  * 先生の画面には操作を足さない（先生は口頭で許可するだけ）
  */
 import { TUTORIALS } from "@kasane/core";
-import { Button, Group, Modal, Stack, Text, UnstyledButton } from "@mantine/core";
+import { Button, Modal, Stack, Text, UnstyledButton } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SkipForward } from "lucide-react";
 import { useState } from "react";
@@ -31,15 +31,13 @@ export function SkipTutorials({ clearedCount }: Props) {
 
 	return (
 		<>
-			<Group justify="center">
-				<Button
-					variant="default"
-					leftSection={<SkipForward aria-hidden size={28} />}
-					onClick={() => setStep("ask")}
-				>
-					<SkipLabel />
-				</Button>
-			</Group>
+			<Button
+				variant="default"
+				leftSection={<SkipForward aria-hidden size={28} />}
+				onClick={() => setStep("ask")}
+			>
+				<SkipLabel />
+			</Button>
 			{/* 確認から選ぶまでを、一つのモーダルの中で切り替える */}
 			<Modal
 				opened={step !== "closed"}

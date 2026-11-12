@@ -4,7 +4,7 @@
  * チュートリアルはpackages/coreの定数なので通信せず、クリア数だけをGET /meから取る
  */
 import { TUTORIALS, canCreateMaze } from "@kasane/core";
-import { Container, Stack, Title } from "@mantine/core";
+import { Container, Group, Stack, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 
 import { meQueries } from "../../../entities/student";
@@ -39,11 +39,15 @@ export function HomePage() {
 				<Title order={1}>{name}</Title>
 
 				<Stack gap="sm" component="section">
-					<Title order={2}>
-						<ruby>
-							問題<rt>もんだい</rt>
-						</ruby>
-					</Title>
+					{/* 見出しの行の右端に「問題を飛ばす」を置く。全部クリアしたら出さない */}
+					<Group justify="space-between" wrap="nowrap">
+						<Title order={2}>
+							<ruby>
+								問題<rt>もんだい</rt>
+							</ruby>
+						</Title>
+						{clearedCount < TUTORIALS.length && <SkipTutorials clearedCount={clearedCount} />}
+					</Group>
 					<div className={classes.tutorials}>
 						{TUTORIALS.map((tutorial) => (
 							<TutorialCard
@@ -53,8 +57,6 @@ export function HomePage() {
 							/>
 						))}
 					</div>
-					{/* 全部クリアしたら出さない */}
-					{clearedCount < TUTORIALS.length && <SkipTutorials clearedCount={clearedCount} />}
 				</Stack>
 
 				<Stack gap="sm" component="section">

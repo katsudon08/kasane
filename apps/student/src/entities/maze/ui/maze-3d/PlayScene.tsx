@@ -18,11 +18,14 @@ import { frameAt, preparingFrame, restFrame, stepMotion } from "../../lib/robot-
 import type { Frame } from "../../lib/robot-motion";
 import { boardAt, robotAt } from "../../lib/run-playback";
 import { LAYER_GAP, WALL_HEIGHT, cellCenter } from "../../lib/scene-layout";
+import { warpAt } from "../../lib/warp";
 import { KEY_ROTATION, KeyModel, LayerModel } from "./LayerModel";
 import { OrbEffect } from "./OrbEffect";
 import type { OrbHandle } from "./OrbEffect";
 import { FADED_MATERIALS, KEY_HEIGHT, SOLID_MATERIALS } from "./parts";
 import { RobotModel } from "./Robot";
+import { WarpEffect } from "./WarpEffect";
+import type { WarpHandle } from "./WarpEffect";
 
 import classes from "./MazeScene.module.css";
 
@@ -154,6 +157,7 @@ function RunActors({
 	const robotRef = useRef<Group>(null);
 	const keyRef = useRef<Group>(null);
 	const orbRef = useRef<OrbHandle>(null);
+	const warpRef = useRef<WarpHandle>(null);
 	const invalidate = useThree((state) => state.invalidate);
 	const from = useMemo(() => robotAt(maze, steps, turn), [maze, steps, turn]);
 	const step = animating ? steps[turn] : undefined;
@@ -216,6 +220,21 @@ function RunActors({
 		else frame = restFrame(from);
 		apply(frame);
 
+		// テレポートの光の柱
+		const warp =
+			step !== undefined && motion !== null ? warpAt(from, step, motion, time.elapsed) : null;
+		warpRef.current?.update(
+			warp === null
+				? null
+				: {
+						from: cellCenter(size, warp.from),
+						to: cellCenter(size, warp.to),
+						up: warp.up,
+						stage: warp.stage,
+						progress: warp.progress,
+					},
+		);
+
 		if (frame.robot.layer !== lastLayer.current) {
 			lastLayer.current = frame.robot.layer;
 			callbacks.current.onLayer(frame.robot.layer);
@@ -244,6 +263,7 @@ function RunActors({
 				<KeyModel material={SOLID_MATERIALS.key} />
 			</group>
 			<OrbEffect ref={orbRef} />
+			<WarpEffect ref={warpRef} />
 		</>
 	);
 }

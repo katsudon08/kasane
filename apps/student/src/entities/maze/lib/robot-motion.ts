@@ -30,8 +30,8 @@ const PHASE_SECONDS: Readonly<Record<PhaseKind, number>> = {
 	turn: TURN_SECONDS,
 	stay: TURN_SECONDS,
 	fill: TURN_SECONDS,
-	vanish: 0.3,
-	appear: 0.3,
+	vanish: 0.6,
+	appear: 0.6,
 	key: 0.9,
 	spin: 0.6,
 	jump: 0.6,
@@ -111,6 +111,9 @@ const FALL_DEPTH = 0.3;
 const JUMP_UP_RATIO = 0.4;
 // 落ちるときに回る回数
 const FALL_TURNS = 4;
+// テレポートで、消える間と現れる間にそれぞれ回る回数と、浮く高さ
+const WARP_TURNS = 2;
+const WARP_LIFT = 0.4;
 
 const FULL_TURN = Math.PI * 2;
 
@@ -183,11 +186,17 @@ export function frameAt(from: RobotState, step: Step, motion: Motion, elapsed: n
 				orb = done || step.filled === undefined ? null : { ...step.filled, scale: p };
 				break;
 			case "vanish":
+				// だんだん速く回りながら縮み、少し浮いて消える
 				robot.scale = 1 - p;
+				robot.angle = startAngle + FULL_TURN * WARP_TURNS * p ** 2;
+				robot.lift = WARP_LIFT * p;
 				break;
 			case "appear":
+				// 隣の階の少し上に現れ、だんだん遅く回りながら大きくなって降りる（回る回数は合わせて整数なので向きは戻る）
 				robot.layer = step.layer;
 				robot.scale = p;
+				robot.angle = startAngle + FULL_TURN * WARP_TURNS * (1 + 1 - (1 - p) ** 2);
+				robot.lift = done ? 0 : WARP_LIFT * (1 - p);
 				break;
 			case "key":
 				if (key !== null) {

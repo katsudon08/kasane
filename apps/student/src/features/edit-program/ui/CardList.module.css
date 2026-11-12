@@ -10,10 +10,12 @@
 	--repeat-bg: var(--mantine-color-yellow-0);
 	--repeat-border: var(--mantine-color-yellow-6);
 	--indent: 36px;
+	/* カードとカードの間。差し込み位置の線の上下も同じにする */
+	--row-gap: 6px;
 
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: var(--row-gap);
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-xs) var(--mantine-spacing-xl);
 }
 
@@ -23,9 +25,12 @@
 	align-items: stretch;
 }
 
-/* 差し込み位置の線は、上下のカードとの間を空ける */
+/*
+ * 差し込み位置の線は、上のカードと同じまとまりの中に置くので、上にだけカードの間と同じ隙間を足す
+ * 下は、次のまとまりとの間の隙間（gap）がそのまま入る
+ */
 .lineRow {
-	margin-block: 4px;
+	margin-top: var(--row-gap);
 }
 
 /* 字下げの縦線（エディタのインデントの線） */

@@ -10,7 +10,7 @@ import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ComponentRef } from "react";
-import type { Group, Mesh } from "three";
+import type { Group } from "three";
 
 import { CAMERA_FOV, cameraRange, initialCameraPosition, mazeBounds } from "../../lib/camera";
 import { cellPositionsByLayer } from "../../lib/layers";
@@ -19,14 +19,9 @@ import type { Frame } from "../../lib/robot-motion";
 import { boardAt, robotAt } from "../../lib/run-playback";
 import { LAYER_GAP, WALL_HEIGHT, cellCenter } from "../../lib/scene-layout";
 import { KEY_ROTATION, KeyModel, LayerModel } from "./LayerModel";
-import {
-	FADED_MATERIALS,
-	KEY_HEIGHT,
-	ORB_GEOMETRY,
-	ORB_HEIGHT,
-	ORB_MATERIAL,
-	SOLID_MATERIALS,
-} from "./parts";
+import { OrbEffect } from "./OrbEffect";
+import type { OrbHandle } from "./OrbEffect";
+import { FADED_MATERIALS, KEY_HEIGHT, SOLID_MATERIALS } from "./parts";
 import { RobotModel } from "./Robot";
 
 import classes from "./MazeScene.module.css";
@@ -158,7 +153,7 @@ function RunActors({
 }: RunActorsProps) {
 	const robotRef = useRef<Group>(null);
 	const keyRef = useRef<Group>(null);
-	const orbRef = useRef<Mesh>(null);
+	const orbRef = useRef<OrbHandle>(null);
 	const invalidate = useThree((state) => state.invalidate);
 	const from = useMemo(() => robotAt(maze, steps, turn), [maze, steps, turn]);
 	const step = animating ? steps[turn] : undefined;
@@ -201,15 +196,11 @@ function RunActors({
 					key.scale.setScalar(Math.max(frame.key.scale, 0));
 				}
 			}
-			const orb = orbRef.current;
-			if (orb !== null) {
-				orb.visible = frame.orb !== null && frame.orb.scale > 0;
-				if (frame.orb !== null) {
-					const [x, y, z] = cellCenter(size, frame.orb);
-					orb.position.set(x, y + ORB_HEIGHT, z);
-					orb.scale.setScalar(frame.orb.scale);
-				}
-			}
+			// orbのscaleは、うめる区切りの進み具合（0〜1）
+			orbRef.current?.update(
+				frame.orb === null ? null : cellCenter(size, frame.orb),
+				frame.orb?.scale ?? 0,
+			);
 		},
 		[size],
 	);
@@ -252,7 +243,7 @@ function RunActors({
 			<group ref={keyRef} visible={false}>
 				<KeyModel material={SOLID_MATERIALS.key} />
 			</group>
-			<mesh ref={orbRef} geometry={ORB_GEOMETRY} material={ORB_MATERIAL} visible={false} />
+			<OrbEffect ref={orbRef} />
 		</>
 	);
 }

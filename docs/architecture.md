@@ -131,21 +131,21 @@ Neonのプロジェクトは本番と開発の二つに分けます。ローカ�
 
 ### apps/student・apps/teacher
 
-| 領域             | 採用                                                                                                                                                           |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| フレームワーク   | React                                                                                                                                                          |
-| ビルド           | Vite                                                                                                                                                           |
-| ルーティング     | TanStack Router                                                                                                                                                |
-| サーバーの状態   | TanStack Query                                                                                                                                                 |
-| UIコンポーネント | Mantine                                                                                                                                                        |
-| アイコン         | Lucide React（SVG。足りない形は自前のSVG）                                                                                                                     |
-| 3D               | React Three Fiber＋@react-three/drei（児童用のみ。dreiはカメラ操作・カメラを向く文字と図形に使う。後処理のブルームなどは入れない）                             |
-| フォント         | 児童用はKlee One、教師用はBIZ UDPGothic（どちらもSIL OFL。学校のネットワークは外部に出られない前提で、フォントファイルをリポジトリに置いてビルドに含めて配る） |
-| QRの読み取り     | @yudiel/react-qr-scanner（児童用のみ）                                                                                                                         |
-| QRの表示         | qrcode.react（教師用のみ）                                                                                                                                     |
-| 設計             | Feature-Sliced Design（steigerで検査）                                                                                                                         |
-| テスト           | Vitest（単体）、Playwright（E2E。偽のカメラ映像でQRを読ませる）                                                                                                |
-| デプロイ         | Cloudflare                                                                                                                                                     |
+| 領域             | 採用                                                                                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| フレームワーク   | React                                                                                                                                            |
+| ビルド           | Vite                                                                                                                                             |
+| ルーティング     | TanStack Router                                                                                                                                  |
+| サーバーの状態   | TanStack Query                                                                                                                                   |
+| UIコンポーネント | Mantine                                                                                                                                          |
+| アイコン         | Lucide React（SVG。足りない形は自前のSVG）                                                                                                       |
+| 3D               | React Three Fiber＋@react-three/drei（児童用のみ。dreiはカメラ操作・カメラを向く文字と図形に使う。後処理のブルームなどは入れない）               |
+| フォント         | 児童用・教師用ともにBIZ UDPGothic（SIL OFL。学校のネットワークは外部に出られない前提で、フォントファイルをリポジトリに置いてビルドに含めて配る） |
+| QRの読み取り     | @yudiel/react-qr-scanner（児童用のみ）                                                                                                           |
+| QRの表示         | qrcode.react（教師用のみ）                                                                                                                       |
+| 設計             | Feature-Sliced Design（steigerで検査）                                                                                                           |
+| テスト           | Vitest（単体）、Playwright（E2E。偽のカメラ映像でQRを読ませる）                                                                                  |
+| デプロイ         | Cloudflare                                                                                                                                       |
 
 APIとは同一オリジンのプロキシではなくCORSでつなぎます。
 

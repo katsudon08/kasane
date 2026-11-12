@@ -267,7 +267,7 @@ declare function compile(maze: Maze, program: Program): CompileResult;
 
 - `isTutorialUnlocked(no, clearedCount)`: `no <= clearedCount + 1`
 - `canCreateMaze(clearedCount)`: `clearedCount >= TUTORIALS.length`
-- クリア数（`clearedCount`）は保存せず、送った記録から数える（[backend.md](backend.md#教師に見せる状態の求め方)）
+- クリア数（`clearedCount`）は保存せず、送った記録と飛ばした問題の数から数える（[backend.md](backend.md#教師に見せる状態の求め方)、[README.md](README.md#問題を飛ばす)）
 
 ## 授業の終わり
 

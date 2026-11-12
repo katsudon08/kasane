@@ -1,7 +1,7 @@
 /*
  * 児童画面の見た目の基準（仕様書README.mdの「見た目と操作のルール」「文言のルール」）
  * - 基調は青と白
- * - フォントは教科書体に近いKlee One（app/styles/fonts.css）
+ * - フォントは教師画面と同じBIZ UDPGothic（app/styles/fonts.css）
  * - 文字は最低20px、タップできる部分は最低64px四方
  * - ルビのぶん行が高くなるので、ボタンや入力欄の高さはルビ込みで決める（部品の既定の高さに任せない）
  */
@@ -16,7 +16,7 @@ const LINE_HEIGHT = "1.4";
 const BUTTON_LINE_HEIGHT = "1.1";
 const MIN_TAP_SIZE = rem(64);
 
-const FONT_FAMILY = '"Klee One", sans-serif';
+const FONT_FAMILY = '"BIZ UDPGothic", sans-serif';
 
 export const theme = createTheme({
 	primaryColor: "blue",

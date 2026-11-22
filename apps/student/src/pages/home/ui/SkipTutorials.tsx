@@ -4,6 +4,7 @@
  * 2. 「先生に確認した」を押すと、同じモーダルの中で、どの問題から始めるかを選ぶ
  * 3. 選んで「問題を飛ばす」を押すと、選んだ問題の一つ前までをクリアしたことにする
  * 先生の画面には操作を足さない（先生は口頭で許可するだけ）
+ * 自由モードは1を飛ばし、押すとすぐに2を出す（free-mode.mdの「問題を飛ばす」）
  */
 import { TUTORIALS } from "@kasane/core";
 import { Button, Modal, Stack, Text, UnstyledButton } from "@mantine/core";
@@ -29,13 +30,15 @@ type Step = "closed" | "ask" | "choose";
 export function SkipTutorials({ clearedCount }: Props) {
 	const [step, setStep] = useState<Step>("closed");
 	const close = () => setStep("closed");
+	// 自由モードは先生に確認する段を出さず、すぐに始める問題を選ぶ（仕様書free-mode.mdの「問題を飛ばす」）
+	const firstStep: Step = useStudentMode() === "free" ? "choose" : "ask";
 
 	return (
 		<>
 			<Button
 				variant="default"
 				leftSection={<SkipForward aria-hidden size={28} />}
-				onClick={() => setStep("ask")}
+				onClick={() => setStep(firstStep)}
 			>
 				<SkipLabel />
 			</Button>

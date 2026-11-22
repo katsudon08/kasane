@@ -1,0 +1,20 @@
+/*
+ * 入口（仕様書free-mode.mdの「入口（/start）」）
+ * 背景の画像はplan.mdのタスク23で足す。それまでは無地の青にする
+ */
+.page {
+	display: grid;
+	place-items: center;
+	min-height: 100dvh;
+	padding: var(--mantine-spacing-xl);
+	background: var(--mantine-color-blue-1);
+}
+
+/* 画像の上でも文字が読めるよう、ボタンは白い面に載せる */
+.panel {
+	width: min(100%, 32rem);
+	padding: var(--mantine-spacing-xl);
+	background: var(--mantine-color-white);
+	border-radius: var(--mantine-radius-lg);
+	box-shadow: var(--mantine-shadow-md);
+}

@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './app/routes/__root'
 import { Route as StudentRouteImport } from './app/routes/_student'
 import { Route as EndedRouteImport } from './app/routes/ended'
+import { Route as FreeRouteImport } from './app/routes/free'
 import { Route as JoinRouteImport } from './app/routes/join'
+import { Route as StartRouteImport } from './app/routes/start'
 import { Route as StudentIndexRouteImport } from './app/routes/_student/index'
 import { Route as StudentMazesImportRouteImport } from './app/routes/_student/mazes/import'
 import { Route as StudentMazesNewRouteImport } from './app/routes/_student/mazes/new'
@@ -30,9 +32,19 @@ const EndedRoute = EndedRouteImport.update({
   path: '/ended',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FreeRoute = FreeRouteImport.update({
+  id: '/free',
+  path: '/free',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JoinRoute = JoinRouteImport.update({
   id: '/join',
   path: '/join',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StartRoute = StartRouteImport.update({
+  id: '/start',
+  path: '/start',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudentIndexRoute = StudentIndexRouteImport.update({
@@ -79,7 +91,9 @@ const StudentTutorialsNoPlayRoute = StudentTutorialsNoPlayRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof StudentIndexRoute
   '/ended': typeof EndedRoute
+  '/free': typeof FreeRoute
   '/join': typeof JoinRoute
+  '/start': typeof StartRoute
   '/mazes/import': typeof StudentMazesImportRoute
   '/mazes/new': typeof StudentMazesNewRoute
   '/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
@@ -90,7 +104,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/ended': typeof EndedRoute
+  '/free': typeof FreeRoute
   '/join': typeof JoinRoute
+  '/start': typeof StartRoute
   '/': typeof StudentIndexRoute
   '/mazes/import': typeof StudentMazesImportRoute
   '/mazes/new': typeof StudentMazesNewRoute
@@ -104,7 +120,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_student': typeof StudentRouteWithChildren
   '/ended': typeof EndedRoute
+  '/free': typeof FreeRoute
   '/join': typeof JoinRoute
+  '/start': typeof StartRoute
   '/_student/': typeof StudentIndexRoute
   '/_student/mazes/import': typeof StudentMazesImportRoute
   '/_student/mazes/new': typeof StudentMazesNewRoute
@@ -119,7 +137,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ended'
+    | '/free'
     | '/join'
+    | '/start'
     | '/mazes/import'
     | '/mazes/new'
     | '/mazes/$mazeId/edit'
@@ -130,7 +150,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/ended'
+    | '/free'
     | '/join'
+    | '/start'
     | '/'
     | '/mazes/import'
     | '/mazes/new'
@@ -143,7 +165,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_student'
     | '/ended'
+    | '/free'
     | '/join'
+    | '/start'
     | '/_student/'
     | '/_student/mazes/import'
     | '/_student/mazes/new'
@@ -157,7 +181,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   StudentRoute: typeof StudentRouteWithChildren
   EndedRoute: typeof EndedRoute
+  FreeRoute: typeof FreeRoute
   JoinRoute: typeof JoinRoute
+  StartRoute: typeof StartRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -176,11 +202,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EndedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/free': {
+      id: '/free'
+      path: '/free'
+      fullPath: '/free'
+      preLoaderRoute: typeof FreeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/join': {
       id: '/join'
       path: '/join'
       fullPath: '/join'
       preLoaderRoute: typeof JoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/start': {
+      id: '/start'
+      path: '/start'
+      fullPath: '/start'
+      preLoaderRoute: typeof StartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_student/': {
@@ -270,7 +310,9 @@ const StudentRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   StudentRoute: StudentRouteWithChildren,
   EndedRoute: EndedRoute,
+  FreeRoute: FreeRoute,
   JoinRoute: JoinRoute,
+  StartRoute: StartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

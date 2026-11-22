@@ -1,10 +1,12 @@
 /*
  * 入口（仕様書free-mode.mdの「入口（/start）」）
- * - 「授業に参加する」と「自由に遊ぶ」を同じ大きさ・同じ色で並べ、どちらも主ボタンにしない
- * - WindowsかMacで開いたときだけ、デスクトップアプリのダウンロードのボタン（副。二つより小さく）を出す
+ * - 背景は動かない1枚の画像（scripts/start-background/で書き出す）。「KASANE」の文字は画像の上のほうにある
+ * - 画面の下のほうに、白い面に載せた「授業に参加する」と「自由に遊ぶ」を横に並べる
+ *   同じ大きさ・同じ色にし、どちらも主ボタンにしない
+ * - WindowsかMacで開いたときだけ、画面の右上にデスクトップアプリのダウンロードのボタン（副。二つより小さく）を出す
  * - 見出し「KASANE」は読み上げ用にだけ置く（文字は背景の画像に描く）
  */
-import { Button, Stack, VisuallyHidden } from "@mantine/core";
+import { Button, SimpleGrid, VisuallyHidden } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { Download } from "lucide-react";
 
@@ -30,8 +32,25 @@ export function StartPage() {
 	return (
 		<main className={classes.page}>
 			<VisuallyHidden component="h1">KASANE</VisuallyHidden>
+			{downloadUrl !== null && (
+				<Button
+					component="a"
+					href={downloadUrl}
+					variant="default"
+					size="md"
+					className={classes.download}
+					leftSection={<Download aria-hidden size={24} />}
+				>
+					パソコン
+					<ruby>
+						用<rt>よう</rt>
+					</ruby>
+					のKASANEをダウンロードする
+				</Button>
+			)}
 			<div className={classes.panel}>
-				<Stack gap="lg">
+				{/* 幅が足りない画面では縦に並べる */}
+				<SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
 					<Button
 						variant="outline"
 						fullWidth
@@ -62,24 +81,7 @@ export function StartPage() {
 						</ruby>
 						ぶ
 					</Button>
-					{downloadUrl !== null && (
-						<Button
-							component="a"
-							href={downloadUrl}
-							variant="subtle"
-							size="md"
-							// 二つのボタンより小さく見せるため、全幅に伸ばさず文言の幅にする
-							style={{ alignSelf: "center" }}
-							leftSection={<Download aria-hidden size={24} />}
-						>
-							パソコン
-							<ruby>
-								用<rt>よう</rt>
-							</ruby>
-							のKASANEをダウンロードする
-						</Button>
-					)}
-				</Stack>
+				</SimpleGrid>
 			</div>
 		</main>
 	);

@@ -1,6 +1,7 @@
 /*
- * /joinと/ended以外の児童の画面を包む、パスなしのレイアウト（仕様書README.mdの「画面遷移」の児童）
- * - 児童のトークンが端末になければ/joinへ移る
+ * 授業で使うモードの児童の画面を包む、パスなしのレイアウト（仕様書README.mdの「画面遷移」の児童）
+ * /join・/endedと、自由モードの画面（/start・/freeの下。free-mode.md）は、このレイアウトの外に置く
+ * - 児童のトークンが端末になければ入口（/start。free-mode.mdの「入口」）へ移る
  * - 児童用のSSE（GET /me/events）に一つだけつなぎ、画面を移っても接続を持ち越す
  * - つなげない（401）なら/joinへ、授業が終わった（410・ended）なら/endedへ移る
  * - 描画中の例外は、ここで受け止める（README.mdの「うまく動かなかったときの受け止め」）
@@ -15,7 +16,7 @@ import type { StudentAccessLostReason } from "../../shared/api";
 
 export const Route = createFileRoute("/_student")({
 	beforeLoad: () => {
-		if (!hasStudentToken()) throw redirect({ to: "/join", replace: true });
+		if (!hasStudentToken()) throw redirect({ to: "/start", replace: true });
 	},
 	component: StudentLayout,
 	errorComponent: ErrorPage,

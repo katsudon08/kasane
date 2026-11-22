@@ -17,8 +17,9 @@ import { serveQrWasmFromSelf } from "./shared/lib/qr-wasm";
 serveQrWasmFromSelf();
 
 /*
- * 描画中の例外は、パスなしレイアウト（/joinと/ended以外）で受け止める（仕様書README.mdの「うまく動かなかったときの受け止め」）
- * /joinと/endedで起きたときも、ライブラリの既定の英語の画面ではなく、同じ受け止めの画面を出す
+ * 描画中の例外は、授業で使うモードのパスなしレイアウトと、自由モードの/freeのレイアウトで受け止める
+ * （仕様書README.mdの「うまく動かなかったときの受け止め」）
+ * /join・/ended・/startで起きたときも、ライブラリの既定の英語の画面ではなく、同じ受け止めの画面を出す
  */
 const router = createRouter({ routeTree, defaultErrorComponent: ErrorPage });
 

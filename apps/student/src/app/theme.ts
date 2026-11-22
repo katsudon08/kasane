@@ -41,7 +41,18 @@ export const theme = createTheme({
 		Button: Button.extend({
 			defaultProps: { size: "xl" },
 			styles: {
-				root: { height: "auto", minHeight: MIN_TAP_SIZE, paddingBlock: rem(10) },
+				/*
+				 * ルビ込みの文言が最低の高さ（64px）より低い小さめのボタンでも、文言を上下の真ん中に置く
+				 * 部品の既定（inline-block）のままだと、余った高さがすべて文言の下に付き、文言が上に寄る
+				 */
+				root: {
+					height: "auto",
+					minHeight: MIN_TAP_SIZE,
+					paddingBlock: rem(10),
+					display: "inline-flex",
+					flexDirection: "column",
+					justifyContent: "center",
+				},
 				/*
 				 * 部品の既定は、文言の箱を本文の字の上端（cap）と下端（baseline）で切り詰める（text-box-trim）
 				 * それだとルビの読みが箱の外に出て、ボタンの高さに入らないので、切り詰めない

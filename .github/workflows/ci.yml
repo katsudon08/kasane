@@ -74,7 +74,8 @@ jobs:
         run: pnpm exec playwright install-deps chromium
         timeout-minutes: 3
         continue-on-error: true
-      - run: mise run e2e
+      # デスクトップアプリ（Electron）のE2Eは窓を開くので、画面のないランナーでは仮の画面（Xvfb）の上で動かす
+      - run: xvfb-run --auto-servernum mise run e2e
       # 失敗した画面を確かめられるように、レポートとスクリーンショットを残す
       - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}

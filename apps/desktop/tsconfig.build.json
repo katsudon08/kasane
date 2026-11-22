@@ -1,0 +1,12 @@
+{
+	// Electronが読むJavaScriptをdist/に書き出す。テストは書き出さない
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"noEmit": false,
+		"outDir": "dist",
+		"rootDir": "src",
+		// import先の.tsを、書き出すときに.jsへ書き換える
+		"rewriteRelativeImportExtensions": true
+	},
+	"exclude": ["src/**/*.test.ts"]
+}

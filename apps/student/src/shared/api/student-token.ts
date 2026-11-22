@@ -3,6 +3,7 @@
  * 授業に参加したときに受け取り、localStorageに保存する。再読み込みしても同じ児童として続けられる
  * 本人を特定できない（401）ときは、保存したトークンを消して参加し直してもらう
  * 授業が終わっている（410）ときは、どの操作でも「授業がおわりました」へ移る
+ * 授業が終わったと分かったら（410・SSEのended）、トークンを消す。次に開いたときは入口（/start）へ移る
  */
 const STORAGE_KEY = "kasane.studentToken";
 
@@ -36,22 +37,30 @@ export class StudentAccessLost extends Error {
 
 export type AuthHeaders = { authorization: string };
 
+// 呼んだときに使ったトークンを消す。応答の後で授業の終わりを知ったとき（SSEのended）に、呼び出し側が使う
+export type ForgetToken = () => void;
+
 /*
  * 児童のトークンを付けてAPIを呼ぶ
  * トークンがない・断られた（401）・授業が終わっている（410）ときは、StudentAccessLostを投げる
+ * 断られた・授業が終わっているときは、使ったトークンを消す
  */
 export async function withStudentToken<Result extends { status: number }>(
-	call: (headers: AuthHeaders) => Promise<Result>,
+	call: (headers: AuthHeaders, forgetToken: ForgetToken) => Promise<Result>,
 ): Promise<Result> {
 	const token = localStorage.getItem(STORAGE_KEY);
 	if (token === null) throw new StudentAccessLost("unauthorized");
+	const forgetToken = () => forgetStudentToken(token);
 
-	const result = await call({ authorization: `Bearer ${token}` });
+	const result = await call({ authorization: `Bearer ${token}` }, forgetToken);
 	if (result.status === 401) {
-		forgetStudentToken(token);
+		forgetToken();
 		throw new StudentAccessLost("unauthorized");
 	}
-	if (result.status === 410) throw new StudentAccessLost("lessonEnded");
+	if (result.status === 410) {
+		forgetToken();
+		throw new StudentAccessLost("lessonEnded");
+	}
 
 	return result;
 }

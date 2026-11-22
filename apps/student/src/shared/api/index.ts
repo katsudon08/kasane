@@ -5,4 +5,4 @@ export {
 	saveStudentToken,
 	withStudentToken,
 } from "./student-token";
-export type { AuthHeaders, StudentAccessLostReason } from "./student-token";
+export type { AuthHeaders, ForgetToken, StudentAccessLostReason } from "./student-token";

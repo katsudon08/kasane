@@ -94,6 +94,11 @@ export async function skipTutorials(to: number): Promise<void> {
 	changeClearedCount({ kind: "skip", to });
 }
 
+// 問題の進み具合を消し、1問目からやり直しにする。自分の迷路は消さない（free-mode.mdの「問題をリセットする」）
+export async function resetTutorials(): Promise<void> {
+	changeClearedCount({ kind: "reset" });
+}
+
 // 新しく作った迷路と、QRでもらった迷路を足す。作った迷路のmazeIdを返す
 export async function createMaze(content: MazeContent): Promise<string> {
 	if (!canCreateMaze(storedClearedCount())) throw new Error("まだ迷路を作れない");

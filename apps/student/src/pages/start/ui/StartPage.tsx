@@ -12,6 +12,17 @@ import { desktopDownloadUrl } from "../lib/desktop-download";
 
 import classes from "./StartPage.module.css";
 
+/*
+ * 二つの選択肢は塗らずに、太い青の枠と濃い青の文字にする（どちらも主ボタンにしない）
+ * 部品は枠の色をstyle属性に書くので、CSSのクラスではなくstylesで上書きする
+ */
+const CHOICE_STYLES = {
+	root: {
+		border: "3px solid var(--mantine-color-blue-7)",
+		color: "var(--mantine-color-blue-8)",
+	},
+};
+
 export function StartPage() {
 	// 端末の名乗りは画面を開いている間に変わらないので、描くたびに求めてよい（軽い）
 	const downloadUrl = desktopDownloadUrl(navigator);
@@ -21,7 +32,12 @@ export function StartPage() {
 			<VisuallyHidden component="h1">KASANE</VisuallyHidden>
 			<div className={classes.panel}>
 				<Stack gap="lg">
-					<Button variant="light" fullWidth renderRoot={(props) => <Link to="/join" {...props} />}>
+					<Button
+						variant="outline"
+						fullWidth
+						styles={CHOICE_STYLES}
+						renderRoot={(props) => <Link to="/join" {...props} />}
+					>
 						<ruby>
 							授業<rt>じゅぎょう</rt>
 						</ruby>
@@ -31,7 +47,12 @@ export function StartPage() {
 						</ruby>
 						する
 					</Button>
-					<Button variant="light" fullWidth renderRoot={(props) => <Link to="/free" {...props} />}>
+					<Button
+						variant="outline"
+						fullWidth
+						styles={CHOICE_STYLES}
+						renderRoot={(props) => <Link to="/free" {...props} />}
+					>
 						<ruby>
 							自由<rt>じゆう</rt>
 						</ruby>

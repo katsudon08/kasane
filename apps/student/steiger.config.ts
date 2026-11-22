@@ -15,13 +15,4 @@ export default defineConfig([
 		files: ["./src/features/edit-program/**"],
 		rules: { "fsd/insignificant-slice": "off" },
 	},
-	{
-		/*
-		 * 自由モードの記録（仕様書free-mode.mdの「記録」）は、plan.mdのタスク18で純粋関数だけを先に置き、
-		 * 画面から使うのはタスク21から。それまでは参照がないので、このスライスにだけ決まりを当てない
-		 * タスク21で画面から参照するようになったら、この設定を消す
-		 */
-		files: ["./src/entities/free-record/**"],
-		rules: { "fsd/insignificant-slice": "off" },
-	},
 ]);

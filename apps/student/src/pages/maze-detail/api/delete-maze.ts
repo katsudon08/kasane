@@ -4,14 +4,22 @@
  * 通信できないときは値で返し、もう一度押してもらう。それ以外の失敗は想定外として投げる
  * 授業を続けられないとき（401・410）は、StudentAccessLostが投げられる
  */
+import { freeRecords } from "../../../entities/free-record";
 import { api, withStudentToken } from "../../../shared/api";
+import type { StudentMode } from "../../../shared/lib/student-mode";
 
 export type DeleteResult = { ok: true } | { ok: false; reason: "offline" };
 
 // 通信できない（Edenは通信の失敗を503で返す）
 const SERVER_ERROR = 500;
 
-export async function deleteMaze(mazeId: string): Promise<DeleteResult> {
+export async function deleteMaze(mode: StudentMode, mazeId: string): Promise<DeleteResult> {
+	// 自由モードはlocalStorageから除く（仕様書free-mode.mdの「記録」）
+	if (mode === "free") {
+		await freeRecords.deleteMaze(mazeId);
+		return { ok: true };
+	}
+
 	const { status } = await withStudentToken((headers) =>
 		api.me.mazes({ mazeId }).delete(undefined, { headers }),
 	);

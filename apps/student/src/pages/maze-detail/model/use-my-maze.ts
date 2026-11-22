@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { mazeQueries } from "../../../entities/maze";
 import { meQueries } from "../../../entities/student";
 import { StudentAccessLost } from "../../../shared/api";
+import { useStudentMode } from "../../../shared/lib/student-mode";
 
 export type MyMaze = { mazeId: string; name: string; data: Maze };
 
@@ -22,9 +23,10 @@ export type MyMazeAccess =
 	| { kind: "ready"; maze: MyMaze };
 
 export function useMyMaze(mazeId: string): MyMazeAccess {
-	const me = useQuery(meQueries.me());
+	const mode = useStudentMode();
+	const me = useQuery(meQueries.me(mode));
 	const unlocked = me.data !== undefined && canCreateMaze(me.data.clearedCount);
-	const mazes = useQuery({ ...mazeQueries.list(), enabled: unlocked });
+	const mazes = useQuery({ ...mazeQueries.list(mode), enabled: unlocked });
 
 	if (me.error instanceof StudentAccessLost) return { kind: "hidden" };
 	// 取り直しに失敗しても、前に読んだデータがあればそれで続ける

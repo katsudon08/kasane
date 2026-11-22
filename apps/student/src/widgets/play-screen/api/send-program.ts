@@ -4,10 +4,13 @@
  * 送る前にもう一度は確かめない（カードを入れるたびにvalidateProgramで確かめている。サーバーは必ず確かめる）
  * 通信できないときは値で返し、「つくる」へ戻して文言を出す。それ以外の失敗は想定外として投げる
  * 授業を続けられないとき（401・410）は、StudentAccessLostが投げられる
+ * 自由モードは送らずに端末でコンパイルし、チュートリアルでゴールしたらクリア数をlocalStorageに残す
  */
 import type { CompileResult, Program } from "@kasane/core";
 
+import { freeRecords } from "../../../entities/free-record";
 import { api, withStudentToken } from "../../../shared/api";
+import type { StudentMode } from "../../../shared/lib/student-mode";
 import type { PlayTarget } from "../lib/outcome";
 
 export type SendResult = { ok: true; result: CompileResult } | { ok: false; reason: "offline" };
@@ -35,7 +38,22 @@ function post(target: PlayTarget, program: Program) {
 	});
 }
 
-export async function sendProgram(target: PlayTarget, program: Program): Promise<SendResult> {
+// 自由モードは送らずに、端末でコンパイルする（仕様書free-mode.mdの「画面ごとの違い」）
+async function playFree(target: PlayTarget, program: Program): Promise<SendResult> {
+	const result =
+		target.kind === "tutorial"
+			? await freeRecords.playTutorial(target.no, program)
+			: await freeRecords.playMaze(target.mazeId, program);
+	return { ok: true, result };
+}
+
+export async function sendProgram(
+	mode: StudentMode,
+	target: PlayTarget,
+	program: Program,
+): Promise<SendResult> {
+	if (mode === "free") return playFree(target, program);
+
 	const { data, status } = await post(target, program);
 	if (data === null) {
 		if (status >= SERVER_ERROR) return { ok: false, reason: "offline" };

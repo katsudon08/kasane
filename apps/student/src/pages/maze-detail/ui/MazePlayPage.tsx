@@ -7,6 +7,7 @@ import { ActionIcon, Group, Title } from "@mantine/core";
 import { Link, Navigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
+import { usePaths } from "../../../shared/lib/student-mode";
 import { PlayScreen } from "../../../widgets/play-screen";
 import { useMyMaze } from "../model/use-my-maze";
 import { Offline } from "./MazeDetailPage";
@@ -18,8 +19,9 @@ type Props = {
 
 export function MazePlayPage({ mazeId }: Props) {
 	const access = useMyMaze(mazeId);
+	const paths = usePaths();
 
-	if (access.kind === "home") return <Navigate to="/" replace />;
+	if (access.kind === "home") return <Navigate {...paths.home()} replace />;
 	if (access.kind === "hidden") return null;
 	if (access.kind === "offline") return <Offline onRetry={access.retry} />;
 
@@ -32,9 +34,7 @@ export function MazePlayPage({ mazeId }: Props) {
 			header={
 				<Group gap="sm" wrap="nowrap">
 					<ActionIcon
-						renderRoot={(props) => (
-							<Link to="/mazes/$mazeId" params={{ mazeId: maze.mazeId }} {...props} />
-						)}
+						renderRoot={(props) => <Link {...paths.maze(maze.mazeId)} {...props} />}
 						variant="subtle"
 						aria-label="迷路のしょうさいにもどる"
 					>

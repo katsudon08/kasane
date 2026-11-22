@@ -13,6 +13,7 @@ import { useLessonEnd } from "../../entities/student";
 import { ErrorPage } from "../../pages/error";
 import { hasStudentToken } from "../../shared/api";
 import type { StudentAccessLostReason } from "../../shared/api";
+import { StudentModeProvider } from "../../shared/lib/student-mode";
 
 export const Route = createFileRoute("/_student")({
 	beforeLoad: () => {
@@ -37,5 +38,10 @@ function StudentLayout() {
 	);
 	useLessonEnd(leave);
 
-	return <Outlet />;
+	// 下の画面に授業で使うモードであることを伝える（記録はAPI、移り先は/の下）
+	return (
+		<StudentModeProvider mode="lesson">
+			<Outlet />
+		</StudentModeProvider>
+	);
 }

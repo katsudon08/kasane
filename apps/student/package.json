@@ -10,7 +10,8 @@
 		"lint:fsd": "steiger ./src",
 		"test": "vitest run --pass-with-no-tests",
 		"storybook": "storybook dev -p 6006 --no-open",
-		"build-storybook": "storybook build"
+		"build-storybook": "storybook build",
+		"render:start-background": "node scripts/start-background/render.ts"
 	},
 	"dependencies": {
 		"@kasane/core": "workspace:*",

@@ -7,5 +7,11 @@
 		"lib": ["ES2023"],
 		"types": ["node"]
 	},
-	"include": ["vite.config.ts", "steiger.config.ts", ".storybook/main.ts", "*.test.ts"]
+	"include": [
+		"vite.config.ts",
+		"steiger.config.ts",
+		".storybook/main.ts",
+		"*.test.ts",
+		"scripts/start-background/render.ts"
+	]
 }

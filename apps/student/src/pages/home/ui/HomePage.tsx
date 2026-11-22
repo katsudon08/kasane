@@ -5,6 +5,7 @@
  * 自由モードの違い（仕様書free-mode.mdの「画面ごとの違い」）
  * - クリア数をlocalStorageから読み、名前は出さない
  * - 「問題」の見出しの左に「もどる」（入口へ）、「問題を飛ばす」の右に「問題をリセットする」（クリア数が0のときは出さない）
+ * - デスクトップアプリには入口がないので、「もどる」を出さない（free-mode.mdの「デスクトップアプリ」）
  */
 import { TUTORIALS, canCreateMaze } from "@kasane/core";
 import { ActionIcon, Container, Group, Stack, Title } from "@mantine/core";
@@ -14,6 +15,7 @@ import { ChevronLeft } from "lucide-react";
 
 import { meQueries } from "../../../entities/student";
 import { StudentAccessLost } from "../../../shared/api";
+import { isDesktop } from "../../../shared/lib/desktop";
 import { useStudentMode } from "../../../shared/lib/student-mode";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { tutorialCardState } from "../lib/tutorial-card-state";
@@ -53,7 +55,7 @@ export function HomePage() {
 					 */}
 					<Group justify="space-between" gap="sm">
 						<Group gap="sm" wrap="nowrap">
-							{mode === "free" && (
+							{mode === "free" && !isDesktop() && (
 								<ActionIcon
 									renderRoot={(props) => <Link to="/start" {...props} />}
 									variant="subtle"

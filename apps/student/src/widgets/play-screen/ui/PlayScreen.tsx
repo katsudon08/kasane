@@ -16,6 +16,7 @@ import { meQueries } from "../../../entities/student";
 import { CardList, RepeatTimesModal, commandAt } from "../../../features/edit-program";
 import type { Cursor } from "../../../features/edit-program";
 import { StudentAccessLost } from "../../../shared/api";
+import { networkModeOf, useStudentMode } from "../../../shared/lib/student-mode";
 import { FailureMessage } from "../../../shared/ui/failure-message";
 import { sendProgram } from "../api/send-program";
 import { afterGoal, failedCardNumber } from "../lib/outcome";
@@ -69,16 +70,18 @@ export function PlayScreen({ target, maze, maxCards, header }: Props) {
 		if (scans > 0) playScanSound();
 	}, [scans]);
 
+	const mode = useStudentMode();
 	const queryClient = useQueryClient();
 	const send = useMutation({
 		mutationFn: async (sentProgram: Program) => {
-			const sent = await sendProgram(target, sentProgram);
+			const sent = await sendProgram(mode, target, sentProgram);
 			// クリア数が変わるのはチュートリアルに挑戦したときだけ。次の問題が解放されてから結果を出す
 			if (sent.ok && target.kind === "tutorial") {
-				await queryClient.invalidateQueries({ queryKey: meQueries.me().queryKey });
+				await queryClient.invalidateQueries({ queryKey: meQueries.me(mode).queryKey });
 			}
 			return sent;
 		},
+		networkMode: networkModeOf(mode),
 		onSuccess: (sent) => {
 			dispatch(sent.ok ? { type: "received", result: sent.result } : { type: "sendFailed" });
 		},
@@ -140,7 +143,8 @@ export function PlayScreen({ target, maze, maxCards, header }: Props) {
 					<PlayScene
 						maze={maze}
 						animation={animation}
-						preparing={run?.phase === "sending"}
+						// 自由モードは端末でコンパイルするので、準備の動きを挟まない（free-mode.mdの「画面ごとの違い」）
+						preparing={mode === "lesson" && run?.phase === "sending"}
 						onTurnEnd={onTurnEnd}
 					/>
 					<MazeMap maze={board} layer={robot.layer} robot={mapRobot} className={classes.minimap} />

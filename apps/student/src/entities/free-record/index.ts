@@ -1,4 +1,2 @@
-export { nextClearedCount, readClearedCount } from "./lib/cleared-count";
-export type { ClearedChange } from "./lib/cleared-count";
-export { readMazes, sortMazes } from "./lib/stored-mazes";
-export type { FreeMaze } from "./lib/stored-mazes";
+// 名前が授業で使うモードの関数（迷路を作る・消すなど）と重ならないよう、まとめて渡す
+export * as freeRecords from "./api/free-records";

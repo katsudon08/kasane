@@ -7,6 +7,7 @@ import { ActionIcon, Container, Group, Title } from "@mantine/core";
 import { Link, Navigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
+import { usePaths } from "../../../shared/lib/student-mode";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { RubyText } from "../../../shared/ui/ruby-text";
 import { PlayScreen } from "../../../widgets/play-screen";
@@ -19,8 +20,9 @@ type Props = {
 
 export function TutorialPlayPage({ noParam }: Props) {
 	const access = useTutorial(noParam);
+	const paths = usePaths();
 
-	if (access.kind === "home") return <Navigate to="/" replace />;
+	if (access.kind === "home") return <Navigate {...paths.home()} replace />;
 	if (access.kind === "hidden") return null;
 	if (access.kind === "offline") {
 		return (
@@ -39,9 +41,7 @@ export function TutorialPlayPage({ noParam }: Props) {
 			header={
 				<Group gap="sm" wrap="nowrap">
 					<ActionIcon
-						renderRoot={(props) => (
-							<Link to="/tutorials/$no" params={{ no: String(tutorial.no) }} {...props} />
-						)}
+						renderRoot={(props) => <Link {...paths.tutorial(tutorial.no)} {...props} />}
 						variant="subtle"
 						aria-label="問題のしょうさいにもどる"
 					>

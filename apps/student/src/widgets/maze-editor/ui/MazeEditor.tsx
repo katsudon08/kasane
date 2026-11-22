@@ -20,6 +20,7 @@ import { ToolPalette } from "../../../features/edit-maze";
 import type { MazeSize } from "../../../features/edit-maze";
 import { StudentAccessLost } from "../../../shared/api";
 import { nameOf } from "../../../shared/lib/name";
+import { networkModeOf, pathsOf, usePaths, useStudentMode } from "../../../shared/lib/student-mode";
 import { FailureMessage } from "../../../shared/ui/failure-message";
 import { NameInput } from "../../../shared/ui/name-input";
 import { saveMaze } from "../api/save-maze";
@@ -71,21 +72,19 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 		withResolver: true,
 	});
 
+	const mode = useStudentMode();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const save = useMutation({
-		mutationFn: (content: { name: string; data: Maze }) => saveMaze(target, content),
+		mutationFn: (content: { name: string; data: Maze }) => saveMaze(mode, target, content),
+		networkMode: networkModeOf(mode),
 		onSuccess: async (result) => {
 			if (!result.ok) return;
 			saved.current = true;
 			// しょうさい画面は一覧のキャッシュから迷路を探すので、取り直してから移る
-			await queryClient.invalidateQueries({ queryKey: mazeQueries.list().queryKey });
+			await queryClient.invalidateQueries({ queryKey: mazeQueries.list(mode).queryKey });
 			// 戻ったときに、作り終えたエディタではなくホームへ戻るよう、履歴を置き換える
-			await navigate({
-				to: "/mazes/$mazeId",
-				params: { mazeId: result.mazeId },
-				replace: true,
-			});
+			await navigate({ ...pathsOf(mode).maze(result.mazeId), replace: true });
 		},
 		// 授業を続けられないとき（401・410）は/joinか/endedへ移る。それ以外の想定外はエラーバウンダリーで受け止める
 		throwOnError: (failure) => !(failure instanceof StudentAccessLost),
@@ -226,10 +225,11 @@ export function MazeEditor({ target, initialName, initialMaze }: Props) {
 
 // 新しく作るときはホームへ、変えるときはじぶんのめいろのしょうさいへ戻る
 function BackLink({ target }: { target: SaveTarget }) {
+	const paths = usePaths();
 	if (target.kind === "new") {
 		return (
 			<ActionIcon
-				renderRoot={(props) => <Link to="/" {...props} />}
+				renderRoot={(props) => <Link {...paths.home()} {...props} />}
 				variant="subtle"
 				aria-label="ホームにもどる"
 			>
@@ -239,9 +239,7 @@ function BackLink({ target }: { target: SaveTarget }) {
 	}
 	return (
 		<ActionIcon
-			renderRoot={(props) => (
-				<Link to="/mazes/$mazeId" params={{ mazeId: target.mazeId }} {...props} />
-			)}
+			renderRoot={(props) => <Link {...paths.maze(target.mazeId)} {...props} />}
 			variant="subtle"
 			aria-label="迷路のしょうさいにもどる"
 		>

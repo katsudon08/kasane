@@ -14,6 +14,7 @@ import { useState } from "react";
 
 import { MazeScene, mazeQueries } from "../../../entities/maze";
 import { StudentAccessLost } from "../../../shared/api";
+import { networkModeOf, pathsOf, useStudentMode } from "../../../shared/lib/student-mode";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { deleteMaze } from "../api/delete-maze";
 import { useMyMaze } from "../model/use-my-maze";
@@ -39,21 +40,24 @@ export function MazeDetailPage({ mazeId }: Props) {
 	const [confirmingDelete, setConfirmingDelete] = useState(false);
 	const [showingQr, setShowingQr] = useState(false);
 
+	const mode = useStudentMode();
+	const paths = pathsOf(mode);
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const remove = useMutation({
-		mutationFn: () => deleteMaze(mazeId),
+		mutationFn: () => deleteMaze(mode, mazeId),
+		networkMode: networkModeOf(mode),
 		onSuccess: async (result) => {
 			if (!result.ok) return;
 			// 先にホームへ移ってから一覧を取り直す（この画面で、消えた迷路を探しに行かない）
-			await navigate({ to: "/", replace: true });
-			await queryClient.invalidateQueries({ queryKey: mazeQueries.list().queryKey });
+			await navigate({ ...paths.home(), replace: true });
+			await queryClient.invalidateQueries({ queryKey: mazeQueries.list(mode).queryKey });
 		},
 		// 授業を続けられないとき（401・410）は/joinか/endedへ移る。それ以外の想定外はエラーバウンダリーで受け止める
 		throwOnError: (error) => !(error instanceof StudentAccessLost),
 	});
 
-	if (access.kind === "home") return <Navigate to="/" replace />;
+	if (access.kind === "home") return <Navigate {...paths.home()} replace />;
 	if (access.kind === "hidden") return null;
 	if (access.kind === "offline") return <Offline onRetry={access.retry} />;
 
@@ -63,7 +67,7 @@ export function MazeDetailPage({ mazeId }: Props) {
 			<Stack gap="lg">
 				<Group gap="sm" wrap="nowrap">
 					<ActionIcon
-						renderRoot={(props) => <Link to="/" {...props} />}
+						renderRoot={(props) => <Link {...paths.home()} {...props} />}
 						variant="subtle"
 						aria-label="ホームにもどる"
 					>
@@ -76,9 +80,7 @@ export function MazeDetailPage({ mazeId }: Props) {
 				<Group justify="center" gap="xs">
 					<Button
 						size={PRIMARY_SIZE}
-						renderRoot={(props) => (
-							<Link to="/mazes/$mazeId/play" params={{ mazeId: maze.mazeId }} {...props} />
-						)}
+						renderRoot={(props) => <Link {...paths.mazePlay(maze.mazeId)} {...props} />}
 					>
 						この
 						<ruby>
@@ -94,9 +96,7 @@ export function MazeDetailPage({ mazeId }: Props) {
 						size={SECONDARY_SIZE}
 						px={SECONDARY_PADDING}
 						variant="default"
-						renderRoot={(props) => (
-							<Link to="/mazes/$mazeId/edit" params={{ mazeId: maze.mazeId }} {...props} />
-						)}
+						renderRoot={(props) => <Link {...paths.mazeEdit(maze.mazeId)} {...props} />}
 					>
 						この
 						<ruby>

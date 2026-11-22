@@ -4,6 +4,7 @@
  */
 import { Navigate } from "@tanstack/react-router";
 
+import { usePaths } from "../../../shared/lib/student-mode";
 import { MazeEditor } from "../../../widgets/maze-editor";
 import { useMyMaze } from "../model/use-my-maze";
 import { Offline } from "./MazeDetailPage";
@@ -15,8 +16,9 @@ type Props = {
 
 export function MazeEditPage({ mazeId }: Props) {
 	const access = useMyMaze(mazeId);
+	const paths = usePaths();
 
-	if (access.kind === "home") return <Navigate to="/" replace />;
+	if (access.kind === "home") return <Navigate {...paths.home()} replace />;
 	if (access.kind === "hidden") return null;
 	if (access.kind === "offline") return <Offline onRetry={access.retry} />;
 

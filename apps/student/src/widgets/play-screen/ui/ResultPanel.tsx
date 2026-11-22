@@ -9,6 +9,7 @@ import { Button, Group, Stack, Text } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { CircleAlert, PartyPopper } from "lucide-react";
 
+import { usePaths } from "../../../shared/lib/student-mode";
 import type { AfterGoal } from "../lib/outcome";
 import { OutcomeText } from "./Messages";
 
@@ -47,18 +48,20 @@ export function ResultPanel({ result, cardNumber, afterGoal, onFix }: Props) {
 }
 
 function GoalButton({ afterGoal }: { afterGoal: AfterGoal }) {
+	const paths = usePaths();
 	if (afterGoal.kind === "home") {
 		return (
-			<Button renderRoot={(props) => <Link to="/" {...props} />} className={classes.next}>
+			<Button
+				renderRoot={(props) => <Link {...paths.home()} {...props} />}
+				className={classes.next}
+			>
 				ホームにもどる
 			</Button>
 		);
 	}
 	return (
 		<Button
-			renderRoot={(props) => (
-				<Link to="/tutorials/$no" params={{ no: String(afterGoal.no) }} {...props} />
-			)}
+			renderRoot={(props) => <Link {...paths.tutorial(afterGoal.no)} {...props} />}
 			className={classes.next}
 		>
 			<ruby>

@@ -15,13 +15,21 @@ import { Route as FreeRouteImport } from './app/routes/free'
 import { Route as JoinRouteImport } from './app/routes/join'
 import { Route as StartRouteImport } from './app/routes/start'
 import { Route as StudentIndexRouteImport } from './app/routes/_student/index'
+import { Route as FreeIndexRouteImport } from './app/routes/free/index'
 import { Route as StudentMazesImportRouteImport } from './app/routes/_student/mazes/import'
 import { Route as StudentMazesNewRouteImport } from './app/routes/_student/mazes/new'
+import { Route as FreeMazesImportRouteImport } from './app/routes/free/mazes/import'
+import { Route as FreeMazesNewRouteImport } from './app/routes/free/mazes/new'
 import { Route as StudentMazesMazeIdIndexRouteImport } from './app/routes/_student/mazes/$mazeId/index'
 import { Route as StudentMazesMazeIdEditRouteImport } from './app/routes/_student/mazes/$mazeId/edit'
 import { Route as StudentMazesMazeIdPlayRouteImport } from './app/routes/_student/mazes/$mazeId/play'
 import { Route as StudentTutorialsNoIndexRouteImport } from './app/routes/_student/tutorials/$no/index'
 import { Route as StudentTutorialsNoPlayRouteImport } from './app/routes/_student/tutorials/$no/play'
+import { Route as FreeMazesMazeIdIndexRouteImport } from './app/routes/free/mazes/$mazeId/index'
+import { Route as FreeMazesMazeIdEditRouteImport } from './app/routes/free/mazes/$mazeId/edit'
+import { Route as FreeMazesMazeIdPlayRouteImport } from './app/routes/free/mazes/$mazeId/play'
+import { Route as FreeTutorialsNoIndexRouteImport } from './app/routes/free/tutorials/$no/index'
+import { Route as FreeTutorialsNoPlayRouteImport } from './app/routes/free/tutorials/$no/play'
 
 const StudentRoute = StudentRouteImport.update({
   id: '/_student',
@@ -52,6 +60,11 @@ const StudentIndexRoute = StudentIndexRouteImport.update({
   path: '/',
   getParentRoute: () => StudentRoute,
 } as any)
+const FreeIndexRoute = FreeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FreeRoute,
+} as any)
 const StudentMazesImportRoute = StudentMazesImportRouteImport.update({
   id: '/mazes/import',
   path: '/mazes/import',
@@ -61,6 +74,16 @@ const StudentMazesNewRoute = StudentMazesNewRouteImport.update({
   id: '/mazes/new',
   path: '/mazes/new',
   getParentRoute: () => StudentRoute,
+} as any)
+const FreeMazesImportRoute = FreeMazesImportRouteImport.update({
+  id: '/mazes/import',
+  path: '/mazes/import',
+  getParentRoute: () => FreeRoute,
+} as any)
+const FreeMazesNewRoute = FreeMazesNewRouteImport.update({
+  id: '/mazes/new',
+  path: '/mazes/new',
+  getParentRoute: () => FreeRoute,
 } as any)
 const StudentMazesMazeIdIndexRoute = StudentMazesMazeIdIndexRouteImport.update({
   id: '/mazes/$mazeId/',
@@ -87,50 +110,98 @@ const StudentTutorialsNoPlayRoute = StudentTutorialsNoPlayRouteImport.update({
   path: '/tutorials/$no/play',
   getParentRoute: () => StudentRoute,
 } as any)
+const FreeMazesMazeIdIndexRoute = FreeMazesMazeIdIndexRouteImport.update({
+  id: '/mazes/$mazeId/',
+  path: '/mazes/$mazeId/',
+  getParentRoute: () => FreeRoute,
+} as any)
+const FreeMazesMazeIdEditRoute = FreeMazesMazeIdEditRouteImport.update({
+  id: '/mazes/$mazeId/edit',
+  path: '/mazes/$mazeId/edit',
+  getParentRoute: () => FreeRoute,
+} as any)
+const FreeMazesMazeIdPlayRoute = FreeMazesMazeIdPlayRouteImport.update({
+  id: '/mazes/$mazeId/play',
+  path: '/mazes/$mazeId/play',
+  getParentRoute: () => FreeRoute,
+} as any)
+const FreeTutorialsNoIndexRoute = FreeTutorialsNoIndexRouteImport.update({
+  id: '/tutorials/$no/',
+  path: '/tutorials/$no/',
+  getParentRoute: () => FreeRoute,
+} as any)
+const FreeTutorialsNoPlayRoute = FreeTutorialsNoPlayRouteImport.update({
+  id: '/tutorials/$no/play',
+  path: '/tutorials/$no/play',
+  getParentRoute: () => FreeRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof StudentIndexRoute
   '/ended': typeof EndedRoute
-  '/free': typeof FreeRoute
+  '/free': typeof FreeRouteWithChildren
   '/join': typeof JoinRoute
   '/start': typeof StartRoute
+  '/free/': typeof FreeIndexRoute
   '/mazes/import': typeof StudentMazesImportRoute
   '/mazes/new': typeof StudentMazesNewRoute
+  '/free/mazes/import': typeof FreeMazesImportRoute
+  '/free/mazes/new': typeof FreeMazesNewRoute
   '/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
   '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
   '/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
+  '/free/mazes/$mazeId/edit': typeof FreeMazesMazeIdEditRoute
+  '/free/mazes/$mazeId/play': typeof FreeMazesMazeIdPlayRoute
+  '/free/tutorials/$no/play': typeof FreeTutorialsNoPlayRoute
   '/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
   '/tutorials/$no/': typeof StudentTutorialsNoIndexRoute
+  '/free/mazes/$mazeId/': typeof FreeMazesMazeIdIndexRoute
+  '/free/tutorials/$no/': typeof FreeTutorialsNoIndexRoute
 }
 export interface FileRoutesByTo {
   '/ended': typeof EndedRoute
-  '/free': typeof FreeRoute
   '/join': typeof JoinRoute
   '/start': typeof StartRoute
   '/': typeof StudentIndexRoute
+  '/free': typeof FreeIndexRoute
   '/mazes/import': typeof StudentMazesImportRoute
   '/mazes/new': typeof StudentMazesNewRoute
+  '/free/mazes/import': typeof FreeMazesImportRoute
+  '/free/mazes/new': typeof FreeMazesNewRoute
   '/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
   '/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
   '/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
+  '/free/mazes/$mazeId/edit': typeof FreeMazesMazeIdEditRoute
+  '/free/mazes/$mazeId/play': typeof FreeMazesMazeIdPlayRoute
+  '/free/tutorials/$no/play': typeof FreeTutorialsNoPlayRoute
   '/mazes/$mazeId': typeof StudentMazesMazeIdIndexRoute
   '/tutorials/$no': typeof StudentTutorialsNoIndexRoute
+  '/free/mazes/$mazeId': typeof FreeMazesMazeIdIndexRoute
+  '/free/tutorials/$no': typeof FreeTutorialsNoIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_student': typeof StudentRouteWithChildren
   '/ended': typeof EndedRoute
-  '/free': typeof FreeRoute
+  '/free': typeof FreeRouteWithChildren
   '/join': typeof JoinRoute
   '/start': typeof StartRoute
   '/_student/': typeof StudentIndexRoute
+  '/free/': typeof FreeIndexRoute
   '/_student/mazes/import': typeof StudentMazesImportRoute
   '/_student/mazes/new': typeof StudentMazesNewRoute
+  '/free/mazes/import': typeof FreeMazesImportRoute
+  '/free/mazes/new': typeof FreeMazesNewRoute
   '/_student/mazes/$mazeId/edit': typeof StudentMazesMazeIdEditRoute
   '/_student/mazes/$mazeId/play': typeof StudentMazesMazeIdPlayRoute
   '/_student/tutorials/$no/play': typeof StudentTutorialsNoPlayRoute
+  '/free/mazes/$mazeId/edit': typeof FreeMazesMazeIdEditRoute
+  '/free/mazes/$mazeId/play': typeof FreeMazesMazeIdPlayRoute
+  '/free/tutorials/$no/play': typeof FreeTutorialsNoPlayRoute
   '/_student/mazes/$mazeId/': typeof StudentMazesMazeIdIndexRoute
   '/_student/tutorials/$no/': typeof StudentTutorialsNoIndexRoute
+  '/free/mazes/$mazeId/': typeof FreeMazesMazeIdIndexRoute
+  '/free/tutorials/$no/': typeof FreeTutorialsNoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,27 +211,42 @@ export interface FileRouteTypes {
     | '/free'
     | '/join'
     | '/start'
+    | '/free/'
     | '/mazes/import'
     | '/mazes/new'
+    | '/free/mazes/import'
+    | '/free/mazes/new'
     | '/mazes/$mazeId/edit'
     | '/mazes/$mazeId/play'
     | '/tutorials/$no/play'
+    | '/free/mazes/$mazeId/edit'
+    | '/free/mazes/$mazeId/play'
+    | '/free/tutorials/$no/play'
     | '/mazes/$mazeId/'
     | '/tutorials/$no/'
+    | '/free/mazes/$mazeId/'
+    | '/free/tutorials/$no/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/ended'
-    | '/free'
     | '/join'
     | '/start'
     | '/'
+    | '/free'
     | '/mazes/import'
     | '/mazes/new'
+    | '/free/mazes/import'
+    | '/free/mazes/new'
     | '/mazes/$mazeId/edit'
     | '/mazes/$mazeId/play'
     | '/tutorials/$no/play'
+    | '/free/mazes/$mazeId/edit'
+    | '/free/mazes/$mazeId/play'
+    | '/free/tutorials/$no/play'
     | '/mazes/$mazeId'
     | '/tutorials/$no'
+    | '/free/mazes/$mazeId'
+    | '/free/tutorials/$no'
   id:
     | '__root__'
     | '/_student'
@@ -169,19 +255,27 @@ export interface FileRouteTypes {
     | '/join'
     | '/start'
     | '/_student/'
+    | '/free/'
     | '/_student/mazes/import'
     | '/_student/mazes/new'
+    | '/free/mazes/import'
+    | '/free/mazes/new'
     | '/_student/mazes/$mazeId/edit'
     | '/_student/mazes/$mazeId/play'
     | '/_student/tutorials/$no/play'
+    | '/free/mazes/$mazeId/edit'
+    | '/free/mazes/$mazeId/play'
+    | '/free/tutorials/$no/play'
     | '/_student/mazes/$mazeId/'
     | '/_student/tutorials/$no/'
+    | '/free/mazes/$mazeId/'
+    | '/free/tutorials/$no/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   StudentRoute: typeof StudentRouteWithChildren
   EndedRoute: typeof EndedRoute
-  FreeRoute: typeof FreeRoute
+  FreeRoute: typeof FreeRouteWithChildren
   JoinRoute: typeof JoinRoute
   StartRoute: typeof StartRoute
 }
@@ -230,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentIndexRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/free/': {
+      id: '/free/'
+      path: '/'
+      fullPath: '/free/'
+      preLoaderRoute: typeof FreeIndexRouteImport
+      parentRoute: typeof FreeRoute
+    }
     '/_student/mazes/import': {
       id: '/_student/mazes/import'
       path: '/mazes/import'
@@ -243,6 +344,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/mazes/new'
       preLoaderRoute: typeof StudentMazesNewRouteImport
       parentRoute: typeof StudentRoute
+    }
+    '/free/mazes/import': {
+      id: '/free/mazes/import'
+      path: '/mazes/import'
+      fullPath: '/free/mazes/import'
+      preLoaderRoute: typeof FreeMazesImportRouteImport
+      parentRoute: typeof FreeRoute
+    }
+    '/free/mazes/new': {
+      id: '/free/mazes/new'
+      path: '/mazes/new'
+      fullPath: '/free/mazes/new'
+      preLoaderRoute: typeof FreeMazesNewRouteImport
+      parentRoute: typeof FreeRoute
     }
     '/_student/mazes/$mazeId/': {
       id: '/_student/mazes/$mazeId/'
@@ -279,6 +394,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentTutorialsNoPlayRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/free/mazes/$mazeId/': {
+      id: '/free/mazes/$mazeId/'
+      path: '/mazes/$mazeId'
+      fullPath: '/free/mazes/$mazeId/'
+      preLoaderRoute: typeof FreeMazesMazeIdIndexRouteImport
+      parentRoute: typeof FreeRoute
+    }
+    '/free/mazes/$mazeId/edit': {
+      id: '/free/mazes/$mazeId/edit'
+      path: '/mazes/$mazeId/edit'
+      fullPath: '/free/mazes/$mazeId/edit'
+      preLoaderRoute: typeof FreeMazesMazeIdEditRouteImport
+      parentRoute: typeof FreeRoute
+    }
+    '/free/mazes/$mazeId/play': {
+      id: '/free/mazes/$mazeId/play'
+      path: '/mazes/$mazeId/play'
+      fullPath: '/free/mazes/$mazeId/play'
+      preLoaderRoute: typeof FreeMazesMazeIdPlayRouteImport
+      parentRoute: typeof FreeRoute
+    }
+    '/free/tutorials/$no/': {
+      id: '/free/tutorials/$no/'
+      path: '/tutorials/$no'
+      fullPath: '/free/tutorials/$no/'
+      preLoaderRoute: typeof FreeTutorialsNoIndexRouteImport
+      parentRoute: typeof FreeRoute
+    }
+    '/free/tutorials/$no/play': {
+      id: '/free/tutorials/$no/play'
+      path: '/tutorials/$no/play'
+      fullPath: '/free/tutorials/$no/play'
+      preLoaderRoute: typeof FreeTutorialsNoPlayRouteImport
+      parentRoute: typeof FreeRoute
+    }
   }
 }
 
@@ -307,10 +457,34 @@ const StudentRouteChildren: StudentRouteChildren = {
 const StudentRouteWithChildren =
   StudentRoute._addFileChildren(StudentRouteChildren)
 
+interface FreeRouteChildren {
+  FreeIndexRoute: typeof FreeIndexRoute
+  FreeMazesImportRoute: typeof FreeMazesImportRoute
+  FreeMazesNewRoute: typeof FreeMazesNewRoute
+  FreeMazesMazeIdEditRoute: typeof FreeMazesMazeIdEditRoute
+  FreeMazesMazeIdPlayRoute: typeof FreeMazesMazeIdPlayRoute
+  FreeTutorialsNoPlayRoute: typeof FreeTutorialsNoPlayRoute
+  FreeMazesMazeIdIndexRoute: typeof FreeMazesMazeIdIndexRoute
+  FreeTutorialsNoIndexRoute: typeof FreeTutorialsNoIndexRoute
+}
+
+const FreeRouteChildren: FreeRouteChildren = {
+  FreeIndexRoute: FreeIndexRoute,
+  FreeMazesImportRoute: FreeMazesImportRoute,
+  FreeMazesNewRoute: FreeMazesNewRoute,
+  FreeMazesMazeIdEditRoute: FreeMazesMazeIdEditRoute,
+  FreeMazesMazeIdPlayRoute: FreeMazesMazeIdPlayRoute,
+  FreeTutorialsNoPlayRoute: FreeTutorialsNoPlayRoute,
+  FreeMazesMazeIdIndexRoute: FreeMazesMazeIdIndexRoute,
+  FreeTutorialsNoIndexRoute: FreeTutorialsNoIndexRoute,
+}
+
+const FreeRouteWithChildren = FreeRoute._addFileChildren(FreeRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   StudentRoute: StudentRouteWithChildren,
   EndedRoute: EndedRoute,
-  FreeRoute: FreeRoute,
+  FreeRoute: FreeRouteWithChildren,
   JoinRoute: JoinRoute,
   StartRoute: StartRoute,
 }

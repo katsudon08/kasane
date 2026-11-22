@@ -13,6 +13,7 @@ import { Lock, Plus, QrCode } from "lucide-react";
 
 import { MazeMap, mazeQueries, startLayer } from "../../../entities/maze";
 import { StudentAccessLost } from "../../../shared/api";
+import { usePaths, useStudentMode } from "../../../shared/lib/student-mode";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 
 import classes from "./HomePage.module.css";
@@ -55,17 +56,18 @@ export function MyMazes({ unlocked }: Props) {
 }
 
 function NewMazeButton() {
+	const paths = usePaths();
 	return (
 		<Group>
 			<Button
-				renderRoot={(props) => <Link to="/mazes/new" {...props} />}
+				renderRoot={(props) => <Link {...paths.mazeNew()} {...props} />}
 				leftSection={<Plus aria-hidden size={28} />}
 			>
 				<NewMazeLabel />
 			</Button>
 			<Button
 				variant="default"
-				renderRoot={(props) => <Link to="/mazes/import" {...props} />}
+				renderRoot={(props) => <Link {...paths.mazeImport()} {...props} />}
 				leftSection={<QrCode aria-hidden size={28} />}
 			>
 				<ImportMazeLabel />
@@ -106,7 +108,8 @@ function NewMazeLabel() {
 }
 
 function MazeList() {
-	const mazes = useQuery(mazeQueries.list());
+	const mazes = useQuery(mazeQueries.list(useStudentMode()));
+	const paths = usePaths();
 
 	// 授業を続けられないとき（401・410）は、/joinか/endedへ移るので何も出さない
 	if (mazes.isPending || mazes.error instanceof StudentAccessLost) return null;
@@ -138,7 +141,7 @@ function MazeList() {
 				{mazes.data.map(({ mazeId, name, data }) => (
 					<Card
 						key={mazeId}
-						renderRoot={(props) => <Link to="/mazes/$mazeId" params={{ mazeId }} {...props} />}
+						renderRoot={(props) => <Link {...paths.maze(mazeId)} {...props} />}
 						withBorder
 						padding="md"
 						radius="lg"

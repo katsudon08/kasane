@@ -2,6 +2,7 @@
  * ホーム（仕様書README.mdの「ホーム」）
  * 上部に名前、「問題」にチュートリアルのカードと「問題を飛ばす」、「自分の迷路」に自分が作った迷路を出す
  * チュートリアルはpackages/coreの定数なので通信せず、クリア数だけをGET /meから取る
+ * 自由モードはクリア数をlocalStorageから読み、名前はない（仕様書free-mode.mdの「画面ごとの違い」）
  */
 import { TUTORIALS, canCreateMaze } from "@kasane/core";
 import { Container, Group, Stack, Title } from "@mantine/core";
@@ -9,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { meQueries } from "../../../entities/student";
 import { StudentAccessLost } from "../../../shared/api";
+import { useStudentMode } from "../../../shared/lib/student-mode";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { tutorialCardState } from "../lib/tutorial-card-state";
 import { MyMazes } from "./MyMazes";
@@ -18,7 +20,7 @@ import { TutorialCard } from "./TutorialCard";
 import classes from "./HomePage.module.css";
 
 export function HomePage() {
-	const me = useQuery(meQueries.me());
+	const me = useQuery(meQueries.me(useStudentMode()));
 
 	// 読み込み中は何も出さない（児童画面の動きを3か所に絞るため、回る印も出さない）
 	// 授業を続けられないとき（401・410）は、/joinか/endedへ移るので何も出さない
@@ -35,8 +37,8 @@ export function HomePage() {
 	return (
 		<Container size="lg" py="xl">
 			<Stack gap="xl">
-				{/* 児童が入れた名前は、テキストとして描く */}
-				<Title order={1}>{name}</Title>
+				{/* 児童が入れた名前は、テキストとして描く。自由モードは名前がないので出さない */}
+				{name !== null && <Title order={1}>{name}</Title>}
 
 				<Stack gap="sm" component="section">
 					{/* 見出しの行の右端に「問題を飛ばす」を置く。全部クリアしたら出さない */}

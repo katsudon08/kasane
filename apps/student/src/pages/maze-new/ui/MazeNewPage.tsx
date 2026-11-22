@@ -13,15 +13,17 @@ import { mazeQueries } from "../../../entities/maze";
 import { meQueries } from "../../../entities/student";
 import { createMaze, defaultMazeName } from "../../../features/edit-maze";
 import { StudentAccessLost } from "../../../shared/api";
+import { pathsOf, useStudentMode } from "../../../shared/lib/student-mode";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { MazeEditor } from "../../../widgets/maze-editor";
 
 const INITIAL_SIZE = 5;
 
 export function MazeNewPage() {
-	const me = useQuery(meQueries.me());
+	const mode = useStudentMode();
+	const me = useQuery(meQueries.me(mode));
 	const unlocked = me.data !== undefined && canCreateMaze(me.data.clearedCount);
-	const mazes = useQuery({ ...mazeQueries.list(), enabled: unlocked });
+	const mazes = useQuery({ ...mazeQueries.list(mode), enabled: unlocked });
 
 	// 読み込み中・授業を続けられないとき（/joinか/endedへ移る）は何も出さない
 	if (me.error instanceof StudentAccessLost || mazes.error instanceof StudentAccessLost) {
@@ -30,7 +32,7 @@ export function MazeNewPage() {
 	if (me.data === undefined) {
 		return me.isError ? <Offline onRetry={() => void me.refetch()} /> : null;
 	}
-	if (!unlocked) return <Navigate to="/" replace />;
+	if (!unlocked) return <Navigate {...pathsOf(mode).home()} replace />;
 	if (mazes.data === undefined) {
 		return mazes.isError ? <Offline onRetry={() => void mazes.refetch()} /> : null;
 	}

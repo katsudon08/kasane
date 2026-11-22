@@ -20,6 +20,7 @@ import { mazeQueries } from "../../../entities/maze";
 import { meQueries } from "../../../entities/student";
 import { decodeMazeQr } from "../../../features/share-maze";
 import { StudentAccessLost } from "../../../shared/api";
+import { networkModeOf, pathsOf, useStudentMode } from "../../../shared/lib/student-mode";
 import { FailureMessage, OfflineNotice } from "../../../shared/ui/failure-message";
 import { saveMaze } from "../../../widgets/maze-editor";
 import type { ImportFailure } from "./ImportFailureText";
@@ -50,7 +51,8 @@ const MIN_CAMERA_HEIGHT = 240;
 const FAILURE_DURATION_MS = 3000;
 
 export function MazeImportPage() {
-	const me = useQuery(meQueries.me());
+	const mode = useStudentMode();
+	const me = useQuery(meQueries.me(mode));
 
 	// 読み込み中・授業を続けられないとき（/joinか/endedへ移る）は何も出さない
 	if (me.error instanceof StudentAccessLost) return null;
@@ -61,7 +63,7 @@ export function MazeImportPage() {
 			</Container>
 		) : null;
 	}
-	if (!canCreateMaze(me.data.clearedCount)) return <Navigate to="/" replace />;
+	if (!canCreateMaze(me.data.clearedCount)) return <Navigate {...pathsOf(mode).home()} replace />;
 
 	return <MazeScanner />;
 }
@@ -77,10 +79,13 @@ function MazeScanner() {
 		return () => clearTimeout(timer);
 	}, [failure]);
 
+	const mode = useStudentMode();
+	const paths = pathsOf(mode);
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const save = useMutation({
-		mutationFn: (content: { name: string; data: Maze }) => saveMaze({ kind: "new" }, content),
+		mutationFn: (content: { name: string; data: Maze }) => saveMaze(mode, { kind: "new" }, content),
+		networkMode: networkModeOf(mode),
 		onSuccess: async (result) => {
 			if (!result.ok) {
 				setFailure(result.reason);
@@ -91,11 +96,11 @@ function MazeScanner() {
 			 * この画面は一覧を使っていないので、使われていないキャッシュも取り直す
 			 */
 			await queryClient.invalidateQueries({
-				queryKey: mazeQueries.list().queryKey,
+				queryKey: mazeQueries.list(mode).queryKey,
 				refetchType: "all",
 			});
 			// 戻ったときに、この画面ではなくホームへ戻るよう、履歴を置き換える
-			await navigate({ to: "/mazes/$mazeId", params: { mazeId: result.mazeId }, replace: true });
+			await navigate({ ...paths.maze(result.mazeId), replace: true });
 		},
 		// 授業を続けられないとき（401・410）は/joinか/endedへ移る。それ以外の想定外はエラーバウンダリーで受け止める
 		throwOnError: (error) => !(error instanceof StudentAccessLost),
@@ -120,7 +125,7 @@ function MazeScanner() {
 			<Stack gap="lg" h="100%">
 				<Group gap="sm" wrap="nowrap">
 					<ActionIcon
-						renderRoot={(props) => <Link to="/" {...props} />}
+						renderRoot={(props) => <Link {...paths.home()} {...props} />}
 						variant="subtle"
 						aria-label="ホームにもどる"
 					>

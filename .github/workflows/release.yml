@@ -1,0 +1,83 @@
+name: Release
+
+# デスクトップアプリのインストーラーを作り、GitHubのReleasesに置く（docs/deploy.mdの「配布」、free-mode.mdの「配布」）
+# - mainに付けたvで始まるタグを押したら、WindowsとMacのインストーラーを作ってReleasesに置く
+# - デスクトップアプリに関わるファイルを変えたPRでは、インストーラーを作るところまでを確かめる（Releasesには置かない）
+"on":
+  push:
+    tags: ["v*"]
+  pull_request:
+    paths:
+      - apps/desktop/**
+      - .github/workflows/release.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  installer:
+    strategy:
+      # 片方のOSで落ちても、もう片方は最後まで作る（どちらで何が起きたかを、それぞれ確かめられるように）
+      fail-fast: false
+      matrix:
+        include:
+          # インストーラーは、それぞれのOSのランナーでしか作れない
+          - os: windows-latest
+            file: KASANE-Setup.exe
+          - os: macos-latest
+            file: KASANE.dmg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      # 児童用アプリ→デスクトップアプリの順にビルドする
+      # デスクトップアプリは/freeの外へ移らずAPIを呼ばないので、APIのオリジンはCIのビルドと同じ仮の値にする
+      # （本番の値を持つEnvironment productionは、mainからしか使えない）
+      - run: pnpm exec turbo run build --filter=@kasane/desktop
+        env:
+          VITE_API_ORIGIN: http://localhost:3000
+      # 版はタグ（v1.0.0なら1.0.0）から付ける。PRではpackage.jsonの版のまま
+      - name: Build installer
+        shell: bash
+        working-directory: apps/desktop
+        run: |
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            pnpm installer --config.extraMetadata.version="${GITHUB_REF_NAME#v}"
+          else
+            pnpm installer
+          fi
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.file }}
+          path: apps/desktop/release/${{ matrix.file }}
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: installer
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      # mainに付けたタグだけを置く
+      - name: Check the tag is on main
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+      - uses: actions/download-artifact@v8
+        with:
+          path: installers
+          merge-multiple: true
+      # 入口のダウンロードのボタンは、いちばん新しいReleaseのこの名前のファイルを指す
+      - run: >-
+          gh release create "$GITHUB_REF_NAME"
+          installers/KASANE-Setup.exe installers/KASANE.dmg
+          --title "$GITHUB_REF_NAME" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}

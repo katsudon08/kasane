@@ -30,16 +30,24 @@ async function connectOnce(signal: AbortSignal): Promise<ConnectResult> {
 	};
 
 	try {
-		// 本人を特定できない（401）・授業が終わっている（410）ときは、つないでも始まらない（StudentAccessLostが投げられる）
-		const { data } = await withStudentToken((headers) =>
-			api.me.events.get({ headers, fetch: { signal: attempt.signal } }),
-		);
+		/*
+		 * 本人を特定できない（401）・授業が終わっている（410）ときは、つないでも始まらない（StudentAccessLostが投げられる）
+		 * 授業の終わり（ended）を受け取ったときに、この接続で使ったトークンを消せるよう、消す関数も受け取っておく
+		 */
+		const { data, forgetToken } = await withStudentToken(async (headers, forget) => ({
+			...(await api.me.events.get({ headers, fetch: { signal: attempt.signal } })),
+			forgetToken: forget,
+		}));
 		if (data === null) return "disconnected";
 
 		heard();
 		for await (const event of data) {
 			heard();
-			if (event.event === "ended") return "lessonEnded";
+			if (event.event === "ended") {
+				// 授業が終わったトークンは使い道がないので消す。次に開いたときは入口（/start）へ移る
+				forgetToken();
+				return "lessonEnded";
+			}
 		}
 		return "disconnected";
 	} catch (error) {

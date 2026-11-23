@@ -8,6 +8,7 @@ import { Text } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { Lock, Star } from "lucide-react";
 
+import { usePaths } from "../../../shared/lib/student-mode";
 import { RubyText } from "../../../shared/ui/ruby-text";
 import type { TutorialCardState } from "../lib/tutorial-card-state";
 
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export function TutorialCard({ tutorial, state }: Props) {
+	const paths = usePaths();
 	const content = (
 		<>
 			<span className={classes.icon}>
@@ -40,11 +42,7 @@ export function TutorialCard({ tutorial, state }: Props) {
 		);
 	}
 	return (
-		<Link
-			to="/tutorials/$no"
-			params={{ no: String(tutorial.no) }}
-			className={`${classes.card} ${classes[state]}`}
-		>
+		<Link {...paths.tutorial(tutorial.no)} className={`${classes.card} ${classes[state]}`}>
 			{content}
 		</Link>
 	);

@@ -6,7 +6,9 @@
  */
 import type { Maze } from "@kasane/core";
 
+import { freeRecords } from "../../../entities/free-record";
 import { api, withStudentToken } from "../../../shared/api";
+import type { StudentMode } from "../../../shared/lib/student-mode";
 
 // 保存する先。新しく作るか、どの迷路を変えるか
 export type SaveTarget = { kind: "new" } | { kind: "edit"; mazeId: string };
@@ -40,6 +42,18 @@ async function replace(mazeId: string, content: Content): Promise<SaveResult> {
 	return { ok: true, mazeId };
 }
 
-export function saveMaze(target: SaveTarget, content: Content): Promise<SaveResult> {
+// 自由モードはlocalStorageに保存する（仕様書free-mode.mdの「記録」）
+async function saveFree(target: SaveTarget, content: Content): Promise<SaveResult> {
+	if (target.kind === "new") return { ok: true, mazeId: await freeRecords.createMaze(content) };
+	await freeRecords.updateMaze(target.mazeId, content);
+	return { ok: true, mazeId: target.mazeId };
+}
+
+export function saveMaze(
+	mode: StudentMode,
+	target: SaveTarget,
+	content: Content,
+): Promise<SaveResult> {
+	if (mode === "free") return saveFree(target, content);
 	return target.kind === "new" ? create(content) : replace(target.mazeId, content);
 }

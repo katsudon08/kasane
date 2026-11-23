@@ -1,0 +1,13 @@
+{
+	// 型チェック用（テストを含む）。書き出しはtsconfig.build.jsonで行う
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"target": "ES2024",
+		"lib": ["ES2024"],
+		// Electronのメインプロセスは、Node.jsとして動く
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"types": ["node"]
+	},
+	"include": ["src"]
+}

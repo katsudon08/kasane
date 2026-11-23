@@ -4,6 +4,7 @@
  * 2. 「先生に確認した」を押すと、同じモーダルの中で、どの問題から始めるかを選ぶ
  * 3. 選んで「問題を飛ばす」を押すと、選んだ問題の一つ前までをクリアしたことにする
  * 先生の画面には操作を足さない（先生は口頭で許可するだけ）
+ * 自由モードは1を飛ばし、押すとすぐに2を出す（free-mode.mdの「問題を飛ばす」）
  */
 import { TUTORIALS } from "@kasane/core";
 import { Button, Modal, Stack, Text, UnstyledButton } from "@mantine/core";
@@ -13,6 +14,7 @@ import { useState } from "react";
 
 import { meQueries } from "../../../entities/student";
 import { StudentAccessLost } from "../../../shared/api";
+import { networkModeOf, useStudentMode } from "../../../shared/lib/student-mode";
 import { ConfirmContent } from "../../../shared/ui/confirm-dialog";
 import { FailureMessage } from "../../../shared/ui/failure-message";
 import { RubyText } from "../../../shared/ui/ruby-text";
@@ -28,13 +30,15 @@ type Step = "closed" | "ask" | "choose";
 export function SkipTutorials({ clearedCount }: Props) {
 	const [step, setStep] = useState<Step>("closed");
 	const close = () => setStep("closed");
+	// 自由モードは先生に確認する段を出さず、すぐに始める問題を選ぶ（仕様書free-mode.mdの「問題を飛ばす」）
+	const firstStep: Step = useStudentMode() === "free" ? "choose" : "ask";
 
 	return (
 		<>
 			<Button
 				variant="default"
 				leftSection={<SkipForward aria-hidden size={28} />}
-				onClick={() => setStep("ask")}
+				onClick={() => setStep(firstStep)}
 			>
 				<SkipLabel />
 			</Button>
@@ -148,13 +152,15 @@ type ChooseTargetProps = { clearedCount: number; onDone: () => void };
 // どの問題から始めるかを選び、飛ばす
 function ChooseTarget({ clearedCount, onDone }: ChooseTargetProps) {
 	const [to, setTo] = useState<number | null>(null);
+	const mode = useStudentMode();
 	const queryClient = useQueryClient();
 	const skip = useMutation({
-		mutationFn: skipTutorials,
+		mutationFn: (target: number) => skipTutorials(mode, target),
+		networkMode: networkModeOf(mode),
 		onSuccess: async (result) => {
 			if (!result.ok) return;
 			// クリア数が変わったので取り直してから閉じる（問題の並びと自分の迷路が描き直される）
-			await queryClient.invalidateQueries({ queryKey: meQueries.me().queryKey });
+			await queryClient.invalidateQueries({ queryKey: meQueries.me(mode).queryKey });
 			onDone();
 		},
 		// 授業を続けられないとき（401・410）は/joinか/endedへ移る。それ以外の想定外はエラーバウンダリーで受け止める

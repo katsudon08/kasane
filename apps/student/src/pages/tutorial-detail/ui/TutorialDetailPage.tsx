@@ -9,6 +9,7 @@ import { Link, Navigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
 import { MazeScene } from "../../../entities/maze";
+import { usePaths } from "../../../shared/lib/student-mode";
 import { OfflineNotice } from "../../../shared/ui/failure-message";
 import { RubyText } from "../../../shared/ui/ruby-text";
 import { useTutorial } from "../model/use-tutorial";
@@ -20,8 +21,9 @@ type Props = {
 
 export function TutorialDetailPage({ noParam }: Props) {
 	const access = useTutorial(noParam);
+	const paths = usePaths();
 
-	if (access.kind === "home") return <Navigate to="/" replace />;
+	if (access.kind === "home") return <Navigate {...paths.home()} replace />;
 	if (access.kind === "hidden") return null;
 	if (access.kind === "offline") {
 		return (
@@ -37,7 +39,7 @@ export function TutorialDetailPage({ noParam }: Props) {
 			<Stack gap="lg">
 				<Group gap="sm" wrap="nowrap">
 					<ActionIcon
-						renderRoot={(props) => <Link to="/" {...props} />}
+						renderRoot={(props) => <Link {...paths.home()} {...props} />}
 						variant="subtle"
 						aria-label="ホームにもどる"
 					>
@@ -49,11 +51,7 @@ export function TutorialDetailPage({ noParam }: Props) {
 				</Group>
 				<MazeScene maze={tutorial.maze} />
 				<Group justify="center">
-					<Button
-						renderRoot={(props) => (
-							<Link to="/tutorials/$no/play" params={{ no: String(tutorial.no) }} {...props} />
-						)}
-					>
+					<Button renderRoot={(props) => <Link {...paths.tutorialPlay(tutorial.no)} {...props} />}>
 						この
 						<ruby>
 							迷路<rt>めいろ</rt>

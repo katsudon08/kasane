@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { meQueries } from "../../../entities/student";
 import { StudentAccessLost } from "../../../shared/api";
+import { useStudentMode } from "../../../shared/lib/student-mode";
 import { tutorialOf } from "../lib/tutorial-of";
 
 export type TutorialAccess =
@@ -21,7 +22,7 @@ export type TutorialAccess =
 
 export function useTutorial(noParam: string): TutorialAccess {
 	const tutorial = tutorialOf(noParam);
-	const me = useQuery(meQueries.me());
+	const me = useQuery(meQueries.me(useStudentMode()));
 
 	if (tutorial === null) return { kind: "home" };
 	if (me.error instanceof StudentAccessLost) return { kind: "hidden" };

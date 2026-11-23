@@ -1,0 +1,40 @@
+/*
+ * 入口（仕様書free-mode.mdの「入口（/start）」）
+ * 背景の画像は16:9。画面いっぱいに広げ、4:3では左右が切り取られる（「KASANE」の文字は真ん中の4分の3に収めてある）
+ * ボタンは画面の下のほうに置く（画像の下のほうは物を少なくしてある）
+ */
+.page {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: center;
+	min-height: 100dvh;
+	padding: var(--mantine-spacing-xl);
+	padding-bottom: max(var(--mantine-spacing-xl), 6dvh);
+	background: var(--mantine-color-blue-0) url("./start-background.jpg") center / cover no-repeat;
+}
+
+/* 縦長の画面では、切り取ると文字が切れるので、横幅に合わせて上に置く */
+@media (max-aspect-ratio: 1 / 1) {
+	.page {
+		background-size: 100% auto;
+		background-position: center top;
+	}
+}
+
+/* 右上に、二つのボタンから離して置く。画像の上でも読めるよう、白い地のボタンにする */
+.download {
+	position: absolute;
+	top: var(--mantine-spacing-md);
+	right: var(--mantine-spacing-md);
+}
+
+/* 画像の上でも文字が読めるよう、ボタンは白い面に載せる */
+.panel {
+	width: min(100%, 48rem);
+	padding: var(--mantine-spacing-lg);
+	background: var(--mantine-color-white);
+	border-radius: var(--mantine-radius-lg);
+	box-shadow: var(--mantine-shadow-md);
+}

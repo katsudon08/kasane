@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# デスクトップアプリのインストーラー（apps/desktop/electron-builder.yml）
+release/
 .turbo/
 storybook-static/
 .vitest/

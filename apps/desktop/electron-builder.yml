@@ -1,0 +1,50 @@
+# デスクトップアプリのインストーラーを作る設定（仕様書free-mode.mdの「配布」、docs/deploy.mdの「配布」）
+# - Windows（x64）はKASANE-Setup.exe、Mac（Apple SiliconとIntelのどちらでも動く1つ）はKASANE.dmg。ファイル名に版を入れない
+# - 有料の証明書による署名はしない
+# 先に児童用アプリとデスクトップアプリをビルドしておく（turbo run build --filter=@kasane/desktop）
+appId: io.github.katsudon08.kasane
+productName: KASANE
+directories:
+  output: release
+# メインプロセスの書き出しだけを入れる（依存はない）
+files:
+  - dist/**
+  - package.json
+# 児童用アプリのビルドを、アプリの中のresources/studentに同梱する（main.tsのstudentRoot）
+# Cloudflareの応答ヘッダーの指示（_headers）は使わないので入れない（CSPはmain.tsが付ける）
+extraResources:
+  - from: ../student/dist
+    to: student
+    filter:
+      - "**/*"
+      - "!_headers"
+# 作り直すネイティブの依存はない
+npmRebuild: false
+publish: null
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+# 管理者の権限が要らない、押すだけで入るインストーラー。入れた人のアカウントに入り、デスクトップとスタートメニューに置く
+nsis:
+  oneClick: true
+  perMachine: false
+  artifactName: KASANE-Setup.exe
+
+mac:
+  target:
+    - target: dmg
+      arch: [universal]
+  category: public.app-category.education
+  # Apple Siliconは署名がまったくないアプリを動かさないので、証明書の要らない仮の署名（ad-hoc）だけを付ける
+  identity: "-"
+  # hardened runtimeは公証（notarization）に要るもの。公証しないので切る（仮の署名と一緒に使うと、起動できないことがある）
+  hardenedRuntime: false
+  # カメラを使う理由。Macは、これがないアプリにカメラを許さない
+  extendInfo:
+    NSCameraUsageDescription: 命令カードや迷路のQRコードを読み取るために、カメラを使います。
+dmg:
+  artifactName: KASANE.dmg
+  # 開いたときに出るディスクの名前（既定では版と種類が付く）
+  title: KASANE

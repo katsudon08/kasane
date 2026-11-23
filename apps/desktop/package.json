@@ -7,12 +7,14 @@
 	"scripts": {
 		"build": "tsc -p tsconfig.build.json",
 		"start": "electron .",
+		"installer": "electron-builder --publish never",
 		"typecheck": "tsc -p tsconfig.json",
 		"test": "vitest run --pass-with-no-tests"
 	},
 	"devDependencies": {
 		"@types/node": "catalog:",
 		"electron": "catalog:",
+		"electron-builder": "catalog:",
 		"typescript": "catalog:",
 		"vitest": "catalog:"
 	},

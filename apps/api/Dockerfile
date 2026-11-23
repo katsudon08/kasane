@@ -3,7 +3,7 @@
 # Node・pnpm・Bunの版は、mise.tomlとpackage.jsonのpackageManagerに合わせる
 
 # 依存を入れる。pnpmはNodeで動くので、Nodeのイメージで入れる
-FROM node:26.10.0-slim AS deps
+FROM node:26.13.1-slim AS deps
 WORKDIR /app
 RUN npm install --global pnpm@12.9.1
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./

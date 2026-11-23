@@ -21,6 +21,8 @@ concurrency:
 jobs:
   installer:
     strategy:
+      # 片方のOSで落ちても、もう片方は最後まで作る（どちらで何が起きたかを、それぞれ確かめられるように）
+      fail-fast: false
       matrix:
         include:
           # インストーラーは、それぞれのOSのランナーでしか作れない

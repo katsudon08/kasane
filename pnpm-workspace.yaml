@@ -27,6 +27,8 @@ catalog:
   drizzle-kit: ^0.31.11
   drizzle-orm: ^0.45.4
   dotenv: ^18.0.9
+  # デスクトップアプリ（apps/desktop）。児童用アプリのビルドを同梱して、自由モードだけで開く（free-mode.md）
+  electron: ^45.4.1
   elysia: ^1.4.30
   lefthook: ^2.2.2
   lucide-react: ^1.63.0

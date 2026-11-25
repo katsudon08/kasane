@@ -10,6 +10,7 @@
   - 「新しく読む行数」は、それより前の節で出てきたファイルを除いた行数（テストは含めない）
   - 1,000行を超える節は、手順の前半と後半の2日に分けて読む
   - テストは全部は読まず、仕様を確かめたいときに「E2E」のファイルを開く
+  - 仕様書はdevelopから消したので、「仕様」のリンクは`main`の仕様書を開く
   - 地図に載せていないのは、公開APIの`index.ts`・自由モードのルート（`routes/free/`。`_student/`の下と同じ形）・テーマ（`theme.ts`）・数行の共通UIなどで、合わせて約410行
 - **読む順番**
   - 全体の構成 → 共通の仕組み（C1〜C4）
@@ -165,7 +166,7 @@ sequenceDiagram
 
 ### C1：本人の特定（トークン）
 
-仕様: [backend.md](specs/single/backend.md)「トークン」「アクセス制御」
+仕様: [backend.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/backend.md)「トークン」「アクセス制御」
 
 #### 教師
 
@@ -190,7 +191,7 @@ sequenceDiagram
 
 ### C2：サーバーからの知らせ（SSE）と再接続
 
-仕様: [backend.md](specs/single/backend.md)「全体の流れ」「サーバーからの知らせ（SSE）」「再接続」
+仕様: [backend.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/backend.md)「全体の流れ」「サーバーからの知らせ（SSE）」「再接続」
 
 1. 画面が受け取り口（教師は`GET /lessons/:lessonId/events`、児童は`GET /me/events`）につなぐ
    - 画面側はT2とS12で、つなぐユースケースもT2とS12で読む
@@ -207,7 +208,7 @@ sequenceDiagram
 
 ### C3：APIの組み立てと、1回のリクエストの通り道
 
-仕様: [backend.md](specs/single/backend.md)「データモデル」「エラーの応答」「入力の上限」
+仕様: [backend.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/backend.md)「データモデル」「エラーの応答」「入力の上限」
 
 1. 起動すると環境変数を読み、DBにつなぎ、組み立てたアプリを立ち上げて`App`型を書き出す（[index.ts](../apps/api/src/index.ts)、[env.ts](../apps/api/src/config/env.ts)、[drizzle.ts](../apps/api/src/infrastructure/database/drizzle.ts)）
    - 表を作り変えるのは[migrate-database.ts](../apps/api/src/infrastructure/database/migrate-database.ts)
@@ -223,7 +224,7 @@ sequenceDiagram
 
 ### C4：児童アプリの二つのモードの切り替え
 
-仕様: [free-mode.md](specs/single/free-mode.md)「画面遷移」
+仕様: [free-mode.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/free-mode.md)「画面遷移」
 
 1. 起動するとRouterとQueryClientを用意する（C1の`main.tsx（児童）`）
 2. どの画面を開いても、デスクトップアプリなら`/free`の外へは行かせない（[\_\_root.tsx](../apps/student/src/app/routes/__root.tsx)）
@@ -240,7 +241,7 @@ sequenceDiagram
 
 ### T1：授業を始める
 
-仕様: [README.md](specs/single/README.md)「教師の画面」のホーム ／ E2E: [main-flow.spec.ts](../e2e/main-flow.spec.ts)
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「教師の画面」のホーム ／ E2E: [main-flow.spec.ts](../e2e/main-flow.spec.ts)
 
 1. 教師アプリが起動し、RouterとQueryClientを用意してホーム（`/`）を開く（[main.tsx（教師）](../apps/teacher/src/main.tsx)、[index.tsx](../apps/teacher/src/app/routes/index.tsx)、[ErrorPage.tsx（教師）](../apps/teacher/src/pages/error/ui/ErrorPage.tsx)）
 2. 教師がホームの「授業を始める」を押す（[HomePage.tsx（教師）](../apps/teacher/src/pages/home/ui/HomePage.tsx)）
@@ -255,7 +256,7 @@ sequenceDiagram
 
 ### T2：授業QRを見せて、参加した人数を数える
 
-仕様: [README.md](specs/single/README.md)「QRコードを見せる」
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「QRコードを見せる」
 
 1. `/lessons/$lessonId/invite`を開くと、URLの値が授業のIDの形かを確かめる（[invite.tsx](../apps/teacher/src/app/routes/lessons/$lessonId/invite.tsx)、[is-lesson-id.ts](../apps/teacher/src/entities/lesson/lib/is-lesson-id.ts)）
 2. 画面が`{児童用のオリジン}/join?lesson={授業のID}`のQRコードを画面いっぱいに出す（[LessonInvitePage.tsx](../apps/teacher/src/pages/lesson-invite/ui/LessonInvitePage.tsx)、[QRCode.tsx](../apps/teacher/src/shared/ui/qrcode/QRCode.tsx)）
@@ -270,7 +271,7 @@ sequenceDiagram
 
 ### T3：開いている授業を選ぶ
 
-仕様: [README.md](specs/single/README.md)「教師の画面」のホーム
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「教師の画面」のホーム
 
 1. ホームを開くと、開いている授業の一覧を取りに行く（[HomePage.tsx（教師）](../apps/teacher/src/pages/home/ui/HomePage.tsx)、[lesson-api.ts](../apps/teacher/src/entities/lesson/api/lesson-api.ts)の`lessonQueries.open`）
 2. APIが、その教師のまだ終わっていない授業を、参加した児童の数と一緒に新しい順で返す（[teacher.ts](../apps/api/src/presentation/controllers/teacher.ts)の`GET /lessons`、[list-open-lessons.ts](../apps/api/src/application/usecases/list-open-lessons.ts)、[lesson-repository.ts](../apps/api/src/infrastructure/repositories/lesson-repository.ts)の`findOpenByTeacher`）
@@ -280,7 +281,7 @@ sequenceDiagram
 
 ### T4：児童の進み具合を見る
 
-仕様: [README.md](specs/single/README.md)「進み具合」、[backend.md](specs/single/backend.md)「教師に見せる状態の求め方」
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「進み具合」、[backend.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/backend.md)「教師に見せる状態の求め方」
 
 1. `/lessons/$lessonId`を開くと、URLの値が授業のIDの形かを確かめて進み具合の画面を出す（[index.tsx](../apps/teacher/src/app/routes/lessons/$lessonId/index.tsx)、[LessonProgressPage.tsx](../apps/teacher/src/pages/lesson-progress/ui/LessonProgressPage.tsx)）
 2. 見出しのために授業を始めた時刻を取りに行き、他人の授業・終わった授業なら「この授業は終わっています」を出す（[lesson-api.ts](../apps/teacher/src/entities/lesson/api/lesson-api.ts)の`lessonQueries.detail`、[teacher.ts](../apps/api/src/presentation/controllers/teacher.ts)の`GET /lessons/:lessonId`、[get-lesson.ts](../apps/api/src/application/usecases/get-lesson.ts)）
@@ -296,7 +297,7 @@ sequenceDiagram
 
 ### T5：授業を終える
 
-仕様: [README.md](specs/single/README.md)「進み具合」、[domain.md](specs/single/domain.md)「授業の終わり」 ／ E2E: [ended-lesson.spec.ts](../e2e/ended-lesson.spec.ts)
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「進み具合」、[domain.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/domain.md)「授業の終わり」 ／ E2E: [ended-lesson.spec.ts](../e2e/ended-lesson.spec.ts)
 
 1. 進み具合の「授業を終える」を押すと、確認のモーダルを出す（[LessonProgressPage.tsx](../apps/teacher/src/pages/lesson-progress/ui/LessonProgressPage.tsx)、[Modal.tsx](../apps/teacher/src/shared/ui/modal/Modal.tsx)）
 2. モーダルの「授業を終える」を押すと`POST /lessons/:lessonId/close`を呼ぶ（[lesson-api.ts](../apps/teacher/src/entities/lesson/api/lesson-api.ts)の`closeLesson`）
@@ -314,7 +315,7 @@ sequenceDiagram
 
 ### S1：入口でモードを選ぶ
 
-仕様: [free-mode.md](specs/single/free-mode.md)「入口」
+仕様: [free-mode.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/free-mode.md)「入口」
 
 1. 児童用アプリを開くと、トークンがなければ入口（`/start`）へ移る（C4の`_student.tsx`、[start.tsx](../apps/student/src/app/routes/start.tsx)）
 2. 入口が「授業に参加する」（`/join`へ）と「自由に遊ぶ」（`/free`へ）を同じ重みで並べる（[StartPage.tsx](../apps/student/src/pages/start/ui/StartPage.tsx)）
@@ -326,7 +327,7 @@ sequenceDiagram
 
 ### S2：授業に参加する
 
-仕様: [README.md](specs/single/README.md)「授業に参加する」 ／ E2E: [main-flow.spec.ts](../e2e/main-flow.spec.ts)
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「授業に参加する」 ／ E2E: [main-flow.spec.ts](../e2e/main-flow.spec.ts)
 
 1. `/join`を開くと、URLに授業のIDがなければ、カメラで授業QRを読む画面を出す（[join.tsx](../apps/student/src/app/routes/join.tsx)、[JoinPage.tsx](../apps/student/src/pages/join/ui/JoinPage.tsx)、[LessonScanner.tsx](../apps/student/src/pages/join/ui/LessonScanner.tsx)）
 2. 読んだQRが児童用アプリの`/join?lesson={授業のID}`の形なら、そのURLへ移る（[join-url.ts](../apps/student/src/pages/join/lib/join-url.ts)）
@@ -343,7 +344,7 @@ sequenceDiagram
 
 ### S3：ホームで問題と自分の迷路を見る
 
-仕様: [README.md](specs/single/README.md)「ホーム」、[domain.md](specs/single/domain.md)「進み具合のルール」「チュートリアル」
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「ホーム」、[domain.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/domain.md)「進み具合のルール」「チュートリアル」
 
 1. ホーム（`/`）を開くと、`GET /me`で名前とクリア数を取る（[index.tsx](../apps/student/src/app/routes/_student/index.tsx)、[HomePage.tsx（児童）](../apps/student/src/pages/home/ui/HomePage.tsx)、[me-api.ts](../apps/student/src/entities/student/api/me-api.ts)）
    - クリア数が変わるのは問題に挑戦したときと飛ばしたときだけなので、自分からは取り直さない
@@ -360,7 +361,7 @@ sequenceDiagram
 
 ### S4：問題を飛ばす
 
-仕様: [README.md](specs/single/README.md)「問題を飛ばす」
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「問題を飛ばす」
 
 1. ホームの「問題を飛ばす」を押すと、先生に確認したかを聞く（[SkipTutorials.tsx](../apps/student/src/pages/home/ui/SkipTutorials.tsx)、[ConfirmDialog.tsx](../apps/student/src/shared/ui/confirm-dialog/ConfirmDialog.tsx)）
 2. 「先生に確認した」を押すと、今の問題より後の問題と「全部飛ばす」から、どこから始めるかを選ばせる（[skip-targets.ts](../apps/student/src/pages/home/lib/skip-targets.ts)）
@@ -374,7 +375,7 @@ sequenceDiagram
 
 ### S5：迷路の形を3Dで確かめる（しょうさい）
 
-仕様: [README.md](specs/single/README.md)「もんだいのしょうさい / じぶんのめいろのしょうさい」「迷路の3D」、[domain.md](specs/single/domain.md)「迷路」
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「もんだいのしょうさい / じぶんのめいろのしょうさい」「迷路の3D」、[domain.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/domain.md)「迷路」
 
 1. ホームで問題を押すと`/tutorials/$no`が開く（[index.tsx](../apps/student/src/app/routes/_student/tutorials/$no/index.tsx)、[TutorialDetailPage.tsx](../apps/student/src/pages/tutorial-detail/ui/TutorialDetailPage.tsx)）
 2. URLの番号から問題を引き、番号が正しくない・まだ解けない問題ならホームへ戻す（[use-tutorial.ts](../apps/student/src/pages/tutorial-detail/model/use-tutorial.ts)、[tutorial-of.ts](../apps/student/src/pages/tutorial-detail/lib/tutorial-of.ts)）
@@ -389,7 +390,7 @@ sequenceDiagram
 
 ### S6：プログラムをつくる（カードを読んで並べる）
 
-仕様: [README.md](specs/single/README.md)「プレイ」「プログラムをつくる」、[domain.md](specs/single/domain.md)「命令カード」「プログラム」「カードの並びの編集」
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「プレイ」「プログラムをつくる」、[domain.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/domain.md)「命令カード」「プログラム」「カードの並びの編集」
 
 1. `/tutorials/$no/play`を開くと、しょうさいと同じ決まりで遊んでよい問題かを確かめる（[play.tsx](../apps/student/src/app/routes/_student/tutorials/$no/play.tsx)、[TutorialPlayPage.tsx](../apps/student/src/pages/tutorial-detail/ui/TutorialPlayPage.tsx)）
 2. プレイ画面が「つくる」の状態で始まり、左にカメラ映像と3D、右にカードの並びを出す（[PlayScreen.tsx](../apps/student/src/widgets/play-screen/ui/PlayScreen.tsx)、[play-reducer.ts](../apps/student/src/widgets/play-screen/model/play-reducer.ts)）
@@ -405,7 +406,7 @@ sequenceDiagram
 
 ### S7：プログラムを送って結果を受け取る
 
-仕様: [README.md](specs/single/README.md)「ロボットを動かす」、[domain.md](specs/single/domain.md)「コンパイル」「成功・失敗の判定」「児童画面の文言」 ／ E2E: [main-flow.spec.ts](../e2e/main-flow.spec.ts)
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「ロボットを動かす」、[domain.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/domain.md)「コンパイル」「成功・失敗の判定」「児童画面の文言」 ／ E2E: [main-flow.spec.ts](../e2e/main-flow.spec.ts)
 
 1. 「ロボットを動かす」を押すと、作った木構造のプログラムをそのまま送る（[PlayControls.tsx](../apps/student/src/widgets/play-screen/ui/PlayControls.tsx)、[PlayScreen.tsx](../apps/student/src/widgets/play-screen/ui/PlayScreen.tsx)の`handleSend`）
 2. 問題なら`POST /me/tutorials/:no/attempts`、自分の迷路なら`POST /me/mazes/:mazeId/attempts`を呼ぶ（[send-program.ts](../apps/student/src/widgets/play-screen/api/send-program.ts)）
@@ -422,7 +423,7 @@ sequenceDiagram
 
 ### S8：ロボットの動きを3Dで再生する
 
-仕様: [README.md](specs/single/README.md)「ロボットを動かす」「迷路の3D」、[backend.md](specs/single/backend.md)「3D（React Three Fiber）」
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「ロボットを動かす」「迷路の3D」、[backend.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/backend.md)「3D（React Three Fiber）」
 
 1. 画面は自分ではコンパイルし直さず、届いた`steps`をなぞって、あるターンのロボットと迷路の状態を求める（[run-playback.ts](../apps/student/src/entities/maze/lib/run-playback.ts)の`robotAt`・`boardAt`）
 2. プレイの3Dを遅れて読み込み、カメラ映像の上に重ねる（[LazyPlayScene.tsx](../apps/student/src/entities/maze/ui/maze-3d/LazyPlayScene.tsx)、[PlayScene.tsx](../apps/student/src/entities/maze/ui/maze-3d/PlayScene.tsx)）
@@ -436,7 +437,7 @@ sequenceDiagram
 
 ### S9：迷路をつくる
 
-仕様: [README.md](specs/single/README.md)「めいろをつくる / 変える」「迷路の2D」、[domain.md](specs/single/domain.md)「迷路の正しさ」「迷路の編集」
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「めいろをつくる / 変える」「迷路の2D」、[domain.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/domain.md)「迷路の正しさ」「迷路の編集」
 
 1. ホームの「新しい迷路を作る」で`/mazes/new`が開き、問題を全部クリアしていなければホームへ戻す（[new.tsx](../apps/student/src/app/routes/_student/mazes/new.tsx)、[MazeNewPage.tsx](../apps/student/src/pages/maze-new/ui/MazeNewPage.tsx)）
 2. 5×5・1階の初期の迷路と、自分の迷路と重ならない「めいろ1」のような名前を用意して、エディタを開く（[maze-edit.ts](../apps/student/src/features/edit-maze/lib/maze-edit.ts)の`createMaze`、[maze-name.ts](../apps/student/src/features/edit-maze/lib/maze-name.ts)）
@@ -453,7 +454,7 @@ sequenceDiagram
 
 ### S10：自分の迷路を確かめる・変える・消す
 
-仕様: [README.md](specs/single/README.md)「もんだいのしょうさい / じぶんのめいろのしょうさい」「めいろをつくる / 変える」
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「もんだいのしょうさい / じぶんのめいろのしょうさい」「めいろをつくる / 変える」
 
 1. ホームで迷路を押すと`/mazes/$mazeId`が開き、一覧のキャッシュからその迷路を探す（[index.tsx](../apps/student/src/app/routes/_student/mazes/$mazeId/index.tsx)、[use-my-maze.ts](../apps/student/src/pages/maze-detail/model/use-my-maze.ts)）
    - 見つからなければホームへ戻す
@@ -469,7 +470,7 @@ sequenceDiagram
 
 ### S11：迷路をQRで見せる・もらう
 
-仕様: [README.md](specs/single/README.md)「めいろをもらう」、[domain.md](specs/single/domain.md)「迷路のQR」 ／ E2E: [maze-qr-import.spec.ts](../e2e/maze-qr-import.spec.ts)・[maze-qr-not-maze.spec.ts](../e2e/maze-qr-not-maze.spec.ts)
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「めいろをもらう」、[domain.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/domain.md)「迷路のQR」 ／ E2E: [maze-qr-import.spec.ts](../e2e/maze-qr-import.spec.ts)・[maze-qr-not-maze.spec.ts](../e2e/maze-qr-not-maze.spec.ts)
 
 1. しょうさいの「QRコードで見せる」で、サーバーを呼ばずに名前と迷路からQRを作り、大きく出す（[MazeQrModal.tsx](../apps/student/src/pages/maze-detail/ui/MazeQrModal.tsx)、[maze-qr.ts](../apps/student/src/features/share-maze/lib/maze-qr.ts)の`encodeMazeQr`）
    - 中身は`KASANE-MAZE:1:一辺:向き:マス:名前`の文字列
@@ -482,7 +483,7 @@ sequenceDiagram
 
 ### S12：授業の終わりを知る
 
-仕様: [README.md](specs/single/README.md)「画面遷移」の児童・「授業がおわりました」 ／ E2E: [ended-lesson.spec.ts](../e2e/ended-lesson.spec.ts)
+仕様: [README.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/README.md)「画面遷移」の児童・「授業がおわりました」 ／ E2E: [ended-lesson.spec.ts](../e2e/ended-lesson.spec.ts)
 
 1. 授業で使うモードのレイアウトが児童用のSSE（`GET /me/events`）に一つだけつなぎ、画面を移っても接続を持ち越す（C4の`_student.tsx`、[use-lesson-end.ts](../apps/student/src/entities/student/model/use-lesson-end.ts)、[watch-lesson-end.ts](../apps/student/src/entities/student/model/watch-lesson-end.ts)）
 2. APIが、トークンから決まった授業の送り先に登録し、授業が終わっていないかを読み直してから流し始める（[student.ts](../apps/api/src/presentation/controllers/student.ts)の`GET /me/events`、[watch-lesson-as-student.ts](../apps/api/src/application/usecases/watch-lesson-as-student.ts)）
@@ -498,7 +499,7 @@ sequenceDiagram
 
 ### F1：端末だけで遊ぶ（記録をlocalStorageに残す）
 
-仕様: [free-mode.md](specs/single/free-mode.md)「画面ごとの違い」「記録」 ／ E2E: [free-mode.spec.ts](../e2e/free-mode.spec.ts)・[free-mode-mazes.spec.ts](../e2e/free-mode-mazes.spec.ts)
+仕様: [free-mode.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/free-mode.md)「画面ごとの違い」「記録」 ／ E2E: [free-mode.spec.ts](../e2e/free-mode.spec.ts)・[free-mode-mazes.spec.ts](../e2e/free-mode-mazes.spec.ts)
 
 1. 入口か「授業がおわりました」の「自由に遊ぶ」で`/free`が開き、レイアウトが`mode="free"`を渡す（C4の`free.tsx`）
 2. 画面はS3〜S11と同じで、記録を読み書きする関数だけが、モードを見てlocalStorageの側を呼ぶ（[free-records.ts](../apps/student/src/entities/free-record/api/free-records.ts)）
@@ -513,7 +514,7 @@ sequenceDiagram
 
 ### F2：問題をリセットする
 
-仕様: [free-mode.md](specs/single/free-mode.md)「問題をリセットする」
+仕様: [free-mode.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/free-mode.md)「問題をリセットする」
 
 1. 自由モードのホームで、クリア数が1以上のときだけ「問題をリセットする」を出す（[HomePage.tsx（児童）](../apps/student/src/pages/home/ui/HomePage.tsx)、[ResetTutorials.tsx](../apps/student/src/pages/home/ui/ResetTutorials.tsx)）
 2. 確認の後に、クリア数を0にする（[free-records.ts](../apps/student/src/entities/free-record/api/free-records.ts)の`resetTutorials`）
@@ -524,7 +525,7 @@ sequenceDiagram
 
 ### F3：デスクトップアプリで開く
 
-仕様: [free-mode.md](specs/single/free-mode.md)「デスクトップアプリ」、[deploy.md](deploy.md)「デスクトップアプリの配布」 ／ E2E: [desktop.spec.ts](../e2e/desktop.spec.ts)
+仕様: [free-mode.md](https://github.com/katsudon08/kasane/blob/main/docs/specs/single/free-mode.md)「デスクトップアプリ」、[deploy.md](https://github.com/katsudon08/kasane/blob/main/docs/deploy.md)「デスクトップアプリの配布」 ／ E2E: [desktop.spec.ts](../e2e/desktop.spec.ts)
 
 1. アプリが、同梱した児童用アプリのビルドを専用のアドレス（`kasane://app/free`）で開く（[main.ts](../apps/desktop/src/main.ts)）
 2. そのアドレスへの要求には、ビルドの中のファイルだけをCSPを付けて返す（[main.ts](../apps/desktop/src/main.ts)の`respond`、[app-file.ts](../apps/desktop/src/app-file.ts)）
@@ -544,4 +545,3 @@ sequenceDiagram
 - **児童のルートは、授業で使うモード（`_student/`）と自由モード（`free/`）で同じ9画面を二重に定義している**
 - **APIの`domain/repositories`のインターフェースと`infrastructure/repositories`の実装は1対1**
   - ユースケースのテストの一部が、実装の代わりに偽物を渡している
-- **`docs/`には、終わった実装計画（`specs/single/plan.md`）と1行だけの`specs/pair/README.md`がある**
